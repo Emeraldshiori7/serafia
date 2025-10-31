@@ -10,6 +10,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
+  <script>
+  if(!localStorage.getItem('introSeen')){
+    window.location.replace('intro.html');
+  }
+</script>
 </head>
 <body>
   <div class="hall" aria-label="セラフィアの館 大広間">
@@ -58,5 +63,11 @@
   </div>
 
   <script src="script.js" defer></script>
+  <p style="margin-top:24px; opacity:.7; font-size:.9rem;">
+  <a href="#" onclick="localStorage.removeItem('introSeen'); location.href='intro.html'; return false;">
+    もう一度、儀式をやり直す
+  </a>
+</p>
+
 </body>
 </html>
