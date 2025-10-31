@@ -2,34 +2,38 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>儀式 — セラフィアの館</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>儀式 ─ セラフィアの館</title>
+  <link rel="preload" as="image" href="assets/intro/ring.svg">
+  <link rel="preload" as="image" href="assets/intro/crown.png">
+  <link rel="preload" as="image" href="assets/intro/beams.png">
   <link rel="stylesheet" href="intro.css" />
 </head>
 <body class="intro">
-  <!-- スキップ／サウンド -->
-  <button class="ui skip" id="skipBtn" aria-label="儀式を省略">儀式を省略</button>
-  <button class="ui sound" id="soundBtn" aria-pressed="false" aria-label="音を許可">🔇</button>
-
   <div class="stage">
-    <canvas id="stars" aria-hidden="true"></canvas>
-    <div class="vignette" aria-hidden="true"></div>
+    <!-- 紋章ブロック（中央にまとめる） -->
+    <div class="crest" aria-hidden="true">
+      <img class="ring"   src="assets/intro/ring.svg"  alt="">
+      <img class="shafts" src="assets/intro/beams.png" alt="">
+      <img class="crown"  src="assets/intro/crown.png" alt="">
+    </div>
 
-    <div class="title" aria-live="polite">
+    <!-- 題字（縦書き） -->
+    <div class="title title-vertical" aria-label="セラフィアの館">
       <h1>セラフィアの館</h1>
       <p class="subtitle">── 静寂の中、あなたを待つ光がある。</p>
     </div>
 
-    <!-- 円環＆金冠＆光の筋（画像） -->
-    <img class="ring"   src="assets/intro/ring.svg"   alt="" aria-hidden="true"/>
-    <img class="crown"  src="assets/intro/crown.png"  alt="" aria-hidden="true"/>
-    <img class="shafts" src="assets/intro/light_shafts.png" alt="" aria-hidden="true"/>
+    <!-- UI -->
+    <button class="ui skip"  id="skip">儀式を省略</button>
+    <button class="ui sound" id="sound" aria-pressed="false" aria-label="サウンド切替">🔇</button>
 
-    <!-- 白フェード -->
-    <div class="whiteout" id="whiteout" aria-hidden="true"></div>
+    <!-- 背景・効果 -->
+    <canvas id="stars" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="whiteout" aria-hidden="true"></div>
   </div>
 
   <script src="intro.js"></script>
 </body>
 </html>
-

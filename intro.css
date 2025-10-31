@@ -4,76 +4,140 @@
 @media (prefers-reduced-motion: no-preference) {
   :root { --dur: 1s; --slow: 1.2s; }
 }
+
 :root{
-  --bg:#000; --ink:#e4dcd4; --gold:#d4b77a; --glow: rgba(255,236,200,.35);
+  --bg:#000;
+  --ink:#e4dcd4;
+  --gold:#d4b77a;
+  --soft:#0d0d10;
+  --glow: rgba(255,236,200,.35);
 }
+
 *{ box-sizing:border-box; }
 html,body{ height:100%; margin:0; }
 body.intro{
   background: radial-gradient(1200px 800px at 50% 60%, #0a0a0e 0%, #000 60%);
   color: var(--ink);
-  font-family: "Yu Mincho","Hiragino Mincho ProN",serif;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
   overflow:hidden;
 }
+
 .stage{ position:relative; inset:0; width:100vw; height:100vh; }
 
-#stars{ position:absolute; inset:0; width:100%; height:100%; display:block; filter:brightness(.9); }
-.vignette{ position:absolute; inset:-12vmax; background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,.55) 78%); pointer-events:none; }
+/* ===== 星屑＆ビネット ===== */
+#stars{
+  position:absolute; inset:0; width:100%; height:100%;
+  display:block; filter: brightness(.9);
+}
+.vignette{
+  position:absolute; inset:-10vmax;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.55) 80%);
+  pointer-events:none;
+}
 
+/* ===== 題字（縦書き） ===== */
 .title{
-  position:absolute; width:100%; top: 36%; text-align:center;
-  opacity:0; transform: translateY(10px) scale(1.02);
-  animation: titleIn var(--slow) ease forwards; animation-delay: 1.2s;
+  position:absolute; width:auto;
+  right:min(6vw, 64px); top: 50%;
+  transform: translateY(-50%);
+  opacity:0;
+  animation: titleIn var(--slow) ease forwards;
+  animation-delay: 1.2s; /* 0–1.2s 黒 → 題字 */
 }
-.title h1{ margin:0; font-size: clamp(28px, 6vw, 56px); letter-spacing:.12em; text-shadow: 0 0 18px var(--glow); }
+.title-vertical{
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  text-align:center;
+}
+.title h1{
+  margin:0;
+  font-size: clamp(28px, 6vw, 56px);
+  letter-spacing:.12em;
+  text-shadow: 0 0 18px var(--glow);
+}
 .title .subtitle{
-  margin:.6rem 0 0; color:#b8aca4; font-style:italic; font-size:clamp(12px,2.3vw,16px);
-  opacity:0; transform: translateY(6px); animation: subIn var(--dur) ease forwards; animation-delay: 1.7s;
+  margin:.8rem 0 0;
+  color:#b8aca4; font-style:italic;
+  font-size: clamp(12px, 2.3vw, 16px);
+  opacity:0; transform: translateY(6px);
+  animation: subIn var(--dur) ease forwards;
+  animation-delay: 1.7s;
 }
 
-/* 画像たち */
+/* ===== 紋章（中央でレイヤー重ね） ===== */
+.crest{
+  position:absolute; left:50%; top:50%;
+  width:min(70vmin, 720px); height:min(70vmin, 720px);
+  transform: translate(-50%,-50%);
+}
 .ring{
-  position:absolute; left:50%; top:58%; width:min(42vmin,520px);
-  transform: translate(-50%,-50%) scale(.9) rotate(0deg);
-  opacity:0; filter: drop-shadow(0 0 10px rgba(255,226,170,.22));
-  animation: ringIn var(--dur) ease forwards 3.8s, ringSpin 12s linear infinite 3.8s;
+  position:absolute; left:50%; top:50%;
+  width:min(42vmin,520px); height:auto;
+  transform: translate(-50%, -50%) scale(.9) rotate(0deg);
+  opacity:0;
+  filter: drop-shadow(0 0 10px rgba(255,226,170,.2));
+  animation:
+    ringIn var(--dur) ease forwards 3.8s,
+    ringSpin 12s linear infinite 3.8s;
 }
 .crown{
-  position:absolute; left:50%; top:31%; width:min(20vmin,260px);
-  transform: translate(-50%,-50%) scale(1.05) rotate(-3deg);
+  position:absolute; left:50%; top:34%;
+  width:min(20vmin, 260px); height:auto;
+  transform: translate(-50%, -50%) scale(1.05) rotate(-3deg);
   opacity:0; filter: drop-shadow(0 0 18px rgba(255,248,220,.35));
   animation: crownIn var(--dur) ease forwards 3.9s;
 }
 .shafts{
-  position:absolute; left:50%; top:50%; width:min(70vmin,1100px);
-  transform: translate(-50%,-50%) scale(1.05);
-  mix-blend-mode: screen; opacity:0; filter: brightness(1.15) contrast(1.1);
+  position:absolute; left:50%; top:50%;
+  width:min(70vmin, 1100px); height:auto;
+  transform: translate(-50%, -50%) scale(1.05);
+  mix-blend-mode: screen; opacity:0.0;
   animation: shaftsIn 1.2s ease-out forwards 8s;
+  filter: brightness(1.15) contrast(1.1);
 }
 
-.whiteout{ position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none;
-  animation: whiteOut 1.0s ease forwards 10.5s; }
+/* ===== 白フェード ===== */
+.whiteout{
+  position:absolute; inset:0; background:#fff;
+  opacity:0; pointer-events:none;
+  animation: whiteOut 1.0s ease forwards 10.5s;
+}
 
-/* UI */
+/* ===== UI ===== */
 .ui{
-  position:absolute; z-index:5; background: rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.15); color:#e9e1d9; padding:.45rem .7rem; font-size:.85rem;
-  letter-spacing:.06em; backdrop-filter: blur(6px); border-radius:6px;
+  position:absolute; z-index:5;
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.15);
+  color:#e9e1d9; padding:.45rem .7rem; font-size:.85rem;
+  letter-spacing:.06em; border-radius:8px;
+  backdrop-filter: blur(6px);
 }
 .skip{ right:18px; top:16px; }
 .sound{ left:18px; bottom:16px; }
 .sound[aria-pressed="true"]{ background: rgba(255,255,255,.14); }
 
-/* keyframes */
-@keyframes titleIn{ to{ opacity:1; transform: translateY(0) scale(1); } }
+/* ===== keyframes ===== */
+@keyframes titleIn{
+  to{ opacity:1; transform: translateY(-50%) }
+}
 @keyframes subIn{ to{ opacity:.9; transform: translateY(0); } }
-@keyframes ringIn{ to{ opacity:1; transform: translate(-50%,-50%) scale(1) rotate(0deg); } }
-@keyframes ringSpin{ to{ transform: translate(-50%,-50%) scale(1) rotate(360deg); } }
-@keyframes crownIn{ from{ transform: translate(-50%,-58%) scale(1.12) rotate(-6deg); } to{ opacity:1; transform: translate(-50%,-50%) scale(1) rotate(-2deg); } }
-@keyframes shaftsIn{ 0%{ opacity:0; transform: translate(-50%,-50%) scale(1.05); } 100%{ opacity:.95; transform: translate(-50%,-50%) scale(1); } }
+@keyframes ringIn{
+  to{ opacity:1; transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+}
+@keyframes ringSpin{
+  to{ transform: translate(-50%,-50%) scale(1) rotate(360deg); }
+}
+@keyframes crownIn{
+  from{ transform: translate(-50%,-58%) scale(1.12) rotate(-6deg); }
+  to  { opacity:1; transform: translate(-50%,-50%) scale(1) rotate(-2deg); }
+}
+@keyframes shaftsIn{
+  0%{ opacity:0; transform: translate(-50%,-50%) scale(1.05); }
+  100%{ opacity:.95; transform: translate(-50%,-50%) scale(1); }
+}
 @keyframes whiteOut{ to{ opacity:1; } }
 
-/* 動きを減らす */
+/* ===== 動きを減らす設定 ===== */
 @media (prefers-reduced-motion: reduce) {
   .title{ animation-duration:.3s; }
   .ring{ animation: ringIn .3s ease forwards 1.2s; }

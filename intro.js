@@ -1,63 +1,74 @@
-// イントロ再生 → 白フェード後にトップへ
-const white = document.getElementById('whiteout');
-const skipBtn = document.getElementById('skipBtn');
-const soundBtn = document.getElementById('soundBtn');
-
-// 粒子（星屑）だけ軽量で描く
+// ===== 星屑（軽量Canvas）=====
 (() => {
-  const c = document.getElementById('stars');
-  const x = c.getContext('2d');
-  let w, h, ps=[];
-  const init = () => {
-    w = c.width = innerWidth; h = c.height = innerHeight;
-    ps = Array.from({length: 90}, () => ({
-      x: Math.random()*w, y: Math.random()*h,
-      z: Math.random()*0.7+0.3, v: Math.random()*0.15+0.05
+  const cvs = document.getElementById('stars');
+  const ctx = cvs.getContext('2d');
+  let W, H, stars = [];
+
+  function resize() {
+    W = cvs.width = window.innerWidth;
+    H = cvs.height = window.innerHeight;
+    stars = Array.from({length: Math.min(160, Math.floor(W*H/15000))}, () => ({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      z: Math.random()*0.6 + 0.4,
+      a: Math.random()*Math.PI*2,
+      s: Math.random()*0.6 + 0.2
     }));
-  };
-  const draw = () => {
-    x.clearRect(0,0,w,h);
-    ps.forEach(p=>{
-      p.y += p.v; if(p.y>h) p.y = -2;
-      x.globalAlpha = p.z*0.9;
-      x.fillStyle = '#ffffff';
-      x.fillRect(p.x, p.y, 1, 1);
+  }
+
+  function tick() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    stars.forEach(st => {
+      st.a += 0.002 + st.z*0.002;
+      const px = st.x + Math.cos(st.a)*st.z*8;
+      const py = st.y + Math.sin(st.a)*st.z*6;
+      ctx.globalAlpha = 0.25 + st.z*0.75;
+      ctx.fillRect(px, py, st.s, st.s);
     });
-    requestAnimationFrame(draw);
-  };
-  addEventListener('resize', init);
-  init(); draw();
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', resize);
+  resize(); tick();
 })();
 
-// 効果音（ユーザー操作後のみ鳴らす）
-let audioEnabled = false;
-const se = {
-  chime: new Audio('assets/intro/se_chime.mp3'),
-  pulse: new Audio('assets/intro/se_pulse.mp3'),
-  door:  new Audio('assets/intro/se_door.mp3')
+// ===== サウンド（任意。ファイルが無くても安全に無音）=====
+const S = {
+  on: false,
+  chime: null, pulse: null, door: null,
+  tryInit() {
+    try {
+      this.chime = new Audio('assets/intro/chime.mp3');
+      this.pulse = new Audio('assets/intro/pulse.mp3');
+      this.door  = new Audio('assets/intro/door.mp3');
+      [this.chime, this.pulse, this.door].forEach(a => { if(a){ a.volume = 0.25; } });
+    } catch(_) {}
+  },
+  playSafe(aud) { try { aud && aud.currentTime!==undefined && aud.play(); } catch(_){} }
 };
-Object.values(se).forEach(a => { a.volume = 0.18; a.preload = 'auto'; });
 
-soundBtn.addEventListener('click', () => {
-  audioEnabled = !audioEnabled;
-  soundBtn.setAttribute('aria-pressed', audioEnabled ? 'true' : 'false');
-  soundBtn.textContent = audioEnabled ? '🔊' : '🔇';
-  if(audioEnabled){
-    se.chime.currentTime = 0; se.chime.play().catch(()=>{});
-    setTimeout(()=>{ se.pulse.play().catch(()=>{}); }, 2800);
-    setTimeout(()=>{ se.door.play().catch(()=>{}); }, 7000);
-  }
+document.getElementById('sound').addEventListener('click', e => {
+  S.on = !S.on;
+  e.currentTarget.setAttribute('aria-pressed', S.on ? 'true':'false');
+  e.currentTarget.textContent = S.on ? '🔊' : '🔇';
+  if (S.on && !S.chime) S.tryInit();
+  if (S.on) S.playSafe(S.chime);
 });
 
-// スキップ
-skipBtn.addEventListener('click', () => {
+// ===== スキップ =====
+document.getElementById('skip').addEventListener('click', () => {
   localStorage.setItem('introSeen','1');
-  location.replace('index.html');
+  window.location.replace('index.html');
 });
 
-// 自動遷移（白抜けアニメ完了後に）
-setTimeout(()=>{
+// ===== キーフレームに合わせて軽いSE（任意）=====
+setTimeout(()=>{ if(S.on){ S.playSafe(S.pulse); } }, 4200);
+setTimeout(()=>{ if(S.on){ S.playSafe(S.pulse); } }, 5200);
+setTimeout(()=>{ if(S.on){ S.playSafe(S.door ); } }, 7500);
+
+// ===== 終了→ホームへ遷移 =====
+setTimeout(() => {
   localStorage.setItem('introSeen','1');
-  location.replace('index.html');
+  window.location.replace('index.html');
 }, 11500);
-
