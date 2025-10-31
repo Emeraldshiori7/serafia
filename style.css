@@ -1,0 +1,59 @@
+body {
+  background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+  color: #e4dcd4;
+  font-family: "Yu Mincho", serif;
+  margin: 0;
+  text-align: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.hall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+h1 {
+  font-size: 2.5em;
+  letter-spacing: 0.1em;
+  color: #d9c6b0;
+  text-shadow: 0 0 15px rgba(255, 230, 200, 0.2);
+}
+
+.intro {
+  margin: 10px 0 30px;
+  font-style: italic;
+  color: #b9a59c;
+}
+
+.doors {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  width: 80%;
+  max-width: 600px;
+}
+
+.door {
+  border: 1px solid #3b2c25;
+  padding: 10px;
+  background: rgba(255, 240, 230, 0.05);
+  text-decoration: none;
+  color: #e9dfd6;
+  transition: all 0.3s ease;
+}
+
+.door:hover {
+  background: rgba(255, 240, 230, 0.15);
+  transform: scale(1.05);
+}
+
+.seraphia {
+  margin-top: 30px;
+  font-size: 0.9em;
+  font-style: italic;
+  color: #9e8f85;
+}
