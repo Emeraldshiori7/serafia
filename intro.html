@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>儀式 — セラフィアの館</title>
+  <link rel="preload" as="image" href="assets/intro/seraphia_crown.png">
+  <link rel="preload" as="image" href="assets/intro/seraphia_light.png">
+  <link rel="preload" as="image" href="assets/intro/ring.svg">
+  <link rel="stylesheet" href="intro.css" />
+</head>
+<body class="intro">
+  <!-- アクセシビリティ：動きオフ設定の人は即スキップ -->
+  <noscript>
+    <div class="noscript">
+      <p>儀式を省略して大広間へ移動します。</p>
+      <meta http-equiv="refresh" content="0; url=index.html">
+    </div>
+  </noscript>
+
+  <!-- 画面全体 -->
+  <div class="stage" aria-label="儀式の間">
+
+    <!-- 粒子（canvas） -->
+    <canvas id="stars" aria-hidden="true"></canvas>
+
+    <!-- 黒→淡い黒のフェード背景 -->
+    <div class="vignette" aria-hidden="true"></div>
+
+    <!-- タイトル -->
+    <div class="title">
+      <h1>セラフィアの館</h1>
+      <p class="subtitle">── 静寂の中、あなたを待つ光がある。</p>
+    </div>
+
+    <!-- 金の円環＋刻印 -->
+    <img class="ring" src="assets/intro/ring.svg" alt="" aria-hidden="true"/>
+
+    <!-- 金冠（王冠） -->
+    <img class="crown" src="assets/intro/seraphia_crown.png" alt="" aria-hidden="true"/>
+
+    <!-- 天からの光の筋 -->
+    <img class="shafts" src="assets/intro/seraphia_light.png" alt="" aria-hidden="true"/>
+
+    <!-- ホワイトフェード -->
+    <div class="whiteout" aria-hidden="true"></div>
+
+    <!-- UI -->
+    <button id="skip" class="ui skip" aria-label="儀式を省略">儀式を省略</button>
+    <button id="sound" class="ui sound" aria-pressed="false" aria-label="サウンドを有効化">🔇</button>
+  </div>
+
+  <!-- 音源（初期ミュート） -->
+  <audio id="se-chime" src="assets/intro/sounds/chime.mp3" preload="auto"></audio>
+  <audio id="se-pulse" src="assets/intro/sounds/pulse.mp3" preload="auto"></audio>
+  <audio id="se-door"  src="assets/intro/sounds/door_creak.mp3" preload="auto"></audio>
+
+  <script src="intro.js"></script>
+</body>
+</html>
