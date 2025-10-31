@@ -1,34 +1,62 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>セラフィアの館</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>セラフィアの館 — 大広間</title>
+
+  <!-- フォント -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="hall">
-    <h1>セラフィアの館</h1>
-    <p class="intro">──静寂の中、あなたを待つ光がある。</p>
+  <div class="hall" aria-label="セラフィアの館 大広間">
+    <!-- 背景レイヤー -->
+    <canvas id="stars" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
 
-    <div class="doors">
-      <a href="#" class="door">鏡の間</a>
-      <a href="#" class="door">書斎の間</a>
-      <a href="#" class="door">礼拝堂</a>
-      <a href="#" class="door">アトリエ</a>
-      <a href="#" class="door">錬金術室</a>
-      <a href="#" class="door">庭園</a>
-      <a href="#" class="door">私室</a>
-      <a href="#" class="door">客室</a>
-      <a href="#" class="door">儀式の間</a>
+    <!-- 音の切替 -->
+    <button class="sound-toggle" id="soundToggle" aria-pressed="false" title="音の切替">🔇</button>
+
+    <!-- タイトル -->
+    <header class="header">
+      <div class="logo-crown" aria-hidden="true">✧</div>
+      <h1>セラフィアの館</h1>
+      <p class="intro" id="subtitle">── 静寂の中、あなたを待つ光がある。</p>
+    </header>
+
+    <!-- 扉（部屋） -->
+    <div class="doors" role="navigation" aria-label="部屋の一覧">
+      <!-- 既存の9室 + 追加の部屋を多数 -->
+      <a href="mirror.html" class="door"><span>鏡の間</span></a>
+      <a href="library.html" class="door"><span>書斎の間</span></a>
+      <a href="chapel.html" class="door"><span>礼拝堂</span></a>
+      <a href="atelier.html" class="door"><span>アトリエ</span></a>
+      <a href="alchemia.html" class="door"><span>錬金術室</span></a>
+      <a href="garden.html" class="door"><span>庭園</span></a>
+      <a href="private.html" class="door"><span>私室</span></a>
+      <a href="guest.html" class="door"><span>客室</span></a>
+      <a href="ritual.html" class="door"><span>儀式の間</span></a>
+
+      <!-- 追加 -->
+      <a href="observatory.html" class="door"><span>天文塔</span></a>
+      <a href="gallery.html" class="door"><span>肖像の回廊</span></a>
+      <a href="crypt.html" class="door"><span>地下廟</span></a>
+      <a href="conservatory.html" class="door"><span>温室</span></a>
+      <a href="clock.html" class="door"><span>時の間</span></a>
+      <a href="salon.html" class="door"><span>蒐集室</span></a>
     </div>
 
-    <div class="seraphia">
-      <p class="line">「……また、ここに戻ってきたのね。」</p>
-    </div>
+    <!-- 囁き（タイプライター＋ローテーション） -->
+    <p class="line" id="whisper"
+       data-lines="……また、ここに戻ってきたのね。|静かに。セラフィアは、あなたを見ている。|扉を開ける？ それとも、まだここにいる？|影が濃くなるほど、光はやさしくなるの。">
+      「……また、ここに戻ってきたのね。」
+    </p>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
