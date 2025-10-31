@@ -1,87 +1,63 @@
-// 1) introを見たらフラグを立てる（ホームで自動スキップ用）
-localStorage.setItem('introSeen', '1');
+// イントロ再生 → 白フェード後にトップへ
+const white = document.getElementById('whiteout');
+const skipBtn = document.getElementById('skipBtn');
+const soundBtn = document.getElementById('soundBtn');
 
-// 2) 粒子（星屑）
-const cvs = document.getElementById('stars');
-const ctx = cvs.getContext('2d', { alpha: true });
-let W, H, particles = [];
+// 粒子（星屑）だけ軽量で描く
+(() => {
+  const c = document.getElementById('stars');
+  const x = c.getContext('2d');
+  let w, h, ps=[];
+  const init = () => {
+    w = c.width = innerWidth; h = c.height = innerHeight;
+    ps = Array.from({length: 90}, () => ({
+      x: Math.random()*w, y: Math.random()*h,
+      z: Math.random()*0.7+0.3, v: Math.random()*0.15+0.05
+    }));
+  };
+  const draw = () => {
+    x.clearRect(0,0,w,h);
+    ps.forEach(p=>{
+      p.y += p.v; if(p.y>h) p.y = -2;
+      x.globalAlpha = p.z*0.9;
+      x.fillStyle = '#ffffff';
+      x.fillRect(p.x, p.y, 1, 1);
+    });
+    requestAnimationFrame(draw);
+  };
+  addEventListener('resize', init);
+  init(); draw();
+})();
 
-function resize(){
-  W = cvs.width = window.innerWidth;
-  H = cvs.height = window.innerHeight;
-}
-window.addEventListener('resize', resize); resize();
+// 効果音（ユーザー操作後のみ鳴らす）
+let audioEnabled = false;
+const se = {
+  chime: new Audio('assets/intro/se_chime.mp3'),
+  pulse: new Audio('assets/intro/se_pulse.mp3'),
+  door:  new Audio('assets/intro/se_door.mp3')
+};
+Object.values(se).forEach(a => { a.volume = 0.18; a.preload = 'auto'; });
 
-function initParticles(){
-  const count = Math.floor((W*H)/18000); // 画面サイズに連動
-  particles = Array.from({length: count}, ()=>({
-    x: Math.random()*W,
-    y: Math.random()*H,
-    z: Math.random()*1.2 + .3,
-    a: Math.random()*0.6 + 0.2
-  }));
-}
-initParticles();
-
-function draw(){
-  ctx.clearRect(0,0,W,H);
-  for(const p of particles){
-    ctx.globalAlpha = p.a;
-    ctx.fillStyle = '#ffffff';
-    const r = p.z*1.1;
-    ctx.fillRect(p.x, p.y, r, r);
-    // 奥行き流れ
-    p.y -= (0.15 + p.z*0.6);
-    p.x += (p.z*0.15);
-    if(p.y < -5) p.y = H+5;
-    if(p.x > W+5) p.x = -5;
-  }
-  requestAnimationFrame(draw);
-}
-draw();
-
-// 3) サウンド（ユーザー操作後のみ）
-const seChime = document.getElementById('se-chime');
-const sePulse = document.getElementById('se-pulse');
-const seDoor  = document.getElementById('se-door');
-let soundEnabled = false;
-
-const soundBtn = document.getElementById('sound');
-soundBtn.addEventListener('click', async ()=>{
-  soundEnabled = !soundEnabled;
-  soundBtn.setAttribute('aria-pressed', soundEnabled ? 'true' : 'false');
-  soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
-  if(soundEnabled){
-    try{
-      await seChime.play(); seChime.pause(); seChime.currentTime = 0;
-    }catch(e){}
+soundBtn.addEventListener('click', () => {
+  audioEnabled = !audioEnabled;
+  soundBtn.setAttribute('aria-pressed', audioEnabled ? 'true' : 'false');
+  soundBtn.textContent = audioEnabled ? '🔊' : '🔇';
+  if(audioEnabled){
+    se.chime.currentTime = 0; se.chime.play().catch(()=>{});
+    setTimeout(()=>{ se.pulse.play().catch(()=>{}); }, 2800);
+    setTimeout(()=>{ se.door.play().catch(()=>{}); }, 7000);
   }
 });
 
-// タイムライン（約12秒）
-function timeline(){
-  // 0.8s 鐘
-  setTimeout(()=>{ if(soundEnabled) seChime.play(); }, 800);
-
-  // 4.2s 心音1、5.3s 心音2（円環に合わせる）
-  setTimeout(()=>{ if(soundEnabled){ sePulse.currentTime = 0; sePulse.play(); }}, 4200);
-  setTimeout(()=>{ if(soundEnabled){ sePulse.currentTime = 0; sePulse.play(); }}, 5300);
-
-  // 7.8s 扉の気配
-  setTimeout(()=>{ if(soundEnabled) seDoor.play(); }, 7800);
-
-  // 10.5s 白フェード → 遷移
-  setTimeout(()=>{ 
-    const w = document.querySelector('.whiteout');
-    w.style.opacity = '1';
-  }, 10500);
-
-  // 11.5s 大広間へ
-  setTimeout(()=>{ window.location.replace('index.html'); }, 11500);
-}
-timeline();
-
-// 4) スキップ
-document.getElementById('skip').addEventListener('click', ()=>{
-  window.location.replace('index.html');
+// スキップ
+skipBtn.addEventListener('click', () => {
+  localStorage.setItem('introSeen','1');
+  location.replace('index.html');
 });
+
+// 自動遷移（白抜けアニメ完了後に）
+setTimeout(()=>{
+  localStorage.setItem('introSeen','1');
+  location.replace('index.html');
+}, 11500);
+
