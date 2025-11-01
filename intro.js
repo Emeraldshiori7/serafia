@@ -1,31 +1,37 @@
-// ===== 星屑（簡易パーティクル） =====
-const cvs = document.getElementById('stars');
-const ctx = cvs.getContext('2d', { alpha: true });
-let W,H,stars=[];
+// ===== 星屑アニメーション =====
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+let w, h;
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
 
-function resize(){
-  W = cvs.width  = window.innerWidth  * devicePixelRatio;
-  H = cvs.height = window.innerHeight * devicePixelRatio;
+const stars = Array.from({ length: 140 }, () => ({
+  x: Math.random() * w,
+  y: Math.random() * h,
+  size: Math.random() * 1.2 + 0.2,
+  speed: Math.random() * 0.2 + 0.05,
+  alpha: Math.random() * 0.8 + 0.2
+}));
+
+function drawStars() {
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "#fff";
+  for (const s of stars) {
+    ctx.globalAlpha = s.alpha;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+    ctx.fill();
+    s.y += s.speed;
+    if (s.y > h) s.y = 0;
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(drawStars);
 }
-function initStars(n=160){
-  stars = Array.from({length:n}, () => ({
-    x: Math.random()*W,
-    y: Math.random()*H,
-    r: (Math.random()*1.1+0.2)*devicePixelRatio,
-    v: Math.random()*0.15 + 0.02
-  }));
-}
-function tick(){
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle = 'rgba(255,255,255,.9)';
-  stars.forEach(s=>{
-    s.y -= s.v; if(s.y < -4) s.y = H+4;
-    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
-  });
-  requestAnimationFrame(tick);
-}
-resize(); initStars(); tick();
-addEventListener('resize', ()=>{ resize(); initStars(stars.length); });
+drawStars();
 
 // ===== UI：スキップ & サウンド =====
 const skipBtn  = document.getElementById('skipBtn');

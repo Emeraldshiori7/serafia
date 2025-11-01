@@ -177,27 +177,31 @@ animation: shaftsIn 1.2s ease-out forwards 8s, glowPulse 4s ease-in-out infinite
   50% { filter: brightness(1.2) contrast(1.15); }
 }
 /* Seraphia silhouette */
-.seraphia{
-  position:absolute; left:50%; top:54%;
-  width:min(40vmin, 520px); height:auto;
-  transform: translate(-50%,-50%) scale(1.02);
-  opacity:0; filter: blur(0.3px) brightness(0.85);
-  mix-blend-mode: lighten;               /* 輪の光に馴染ませる */
-  image-rendering: -webkit-optimize-contrast;
+.seraphia {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: min(45vmin, 520px);
+  height: auto;
+  transform: translate(-50%, -50%) scale(1.02);
+  opacity: 0;
+  filter: brightness(1.05) contrast(1.1) drop-shadow(0 0 12px rgba(255, 255, 255, 0.15));
+  mix-blend-mode: screen;
+  z-index: 2;
   animation:
-    seraphiaIn 0.8s ease forwards 4.8s,  /* フェードイン */
-    seraphiaStep 1.4s steps(2,end) 5.2s; /* カクっと2段階の“人形感” */
+    seraphiaIn 1.4s ease forwards 7.9s,  /* 光と一緒に浮かび上がる */
+    seraphiaStep 1.4s steps(2, end) 8.2s; /* カクカクした動き */
 }
 
-@keyframes seraphiaIn{
-  from{ opacity:0; transform: translate(-50%,-50%) scale(1.04); }
-  to  { opacity:.9; transform: translate(-50%,-50%) scale(1.0);  }
+
+@keyframes seraphiaIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(1.04); }
+  to { opacity: 0.95; transform: translate(-50%, -50%) scale(1.0); }
 }
-/* 2ステップで微妙に位置をずらす */
-@keyframes seraphiaStep{
-  0%  { transform: translate(calc(-50% - 1px), calc(-50% - 2px)) scale(1.0); }
-  50% { transform: translate(calc(-50% + 1px), calc(-50% + 1px)) scale(1.0); }
-  100%{ transform: translate(-50%,-50%) scale(1.0); }
+@keyframes seraphiaStep {
+  0% { transform: translate(-50%, -51%) scale(1.0); }
+  50% { transform: translate(-50%, -49%) scale(1.0); }
+  100% { transform: translate(-50%, -50%) scale(1.0); }
 }
 
 /* 囁き字幕 */
