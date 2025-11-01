@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <!-- 日本語題字用：重心が低い上品な明朝 -->
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>儀式 ─ セラフィアの館</title>
-  <link rel="preload" as="image" href="assets/intro/ring.svg">
-  <link rel="preload" as="image" href="assets/intro/crown.png">
-  <link rel="preload" as="image" href="assets/intro/beams.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>儀式 — セラフィアの館</title>
+
+  <!-- 題字用フォント（上品な明朝） -->
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="intro.css" />
 </head>
 <body class="intro">
-  <div class="stage">
-    <!-- 紋章ブロック（中央にまとめる） -->
+
+  <!-- 画面全体の舞台 -->
+  <main class="stage" aria-label="入場シーン">
+    <!-- 星屑キャンバス（JSで描画） -->
+    <canvas id="stars" aria-hidden="true"></canvas>
+
+    <!-- 紋章ブロック（リング・光・冠） -->
     <div class="crest" aria-hidden="true">
-      <img class="ring"   src="assets/intro/ring.svg"  alt="">
-      <img class="shafts" src="assets/intro/beams.png" alt="">
-      <img class="crown"  src="assets/intro/crown.png" alt="">
+      <img class="ring"   src="assets/intro/ring.svg"   alt="" />
+      <img class="shafts" src="assets/intro/beams.png"  alt="" />
+      <img class="crown"  src="assets/intro/crown.png"  alt="" />
     </div>
 
-    <!-- 題字（縦書き） -->
-    <div class="title title-vertical" aria-label="セラフィアの館">
+    <!-- 題字 -->
+    <header class="title" role="img" aria-label="セラフィアの館 ── 静寂の中、あなたを待つ光がある。">
       <h1>セラフィアの館</h1>
       <p class="subtitle">── 静寂の中、あなたを待つ光がある。</p>
-    </div>
+    </header>
 
     <!-- UI -->
-    <button class="ui skip"  id="skip">儀式を省略</button>
-    <button class="ui sound" id="sound" aria-pressed="false" aria-label="サウンド切替">🔇</button>
+    <button class="ui skip" id="skipBtn" aria-label="儀式を省略">儀式を省略</button>
+    <button class="ui sound" id="soundBtn" aria-pressed="false" aria-label="音の切り替え">🔇</button>
 
-    <!-- 背景・効果 -->
-    <canvas id="stars" aria-hidden="true"></canvas>
-    <div class="vignette" aria-hidden="true"></div>
+    <!-- 画面ホワイトアウト -->
     <div class="whiteout" aria-hidden="true"></div>
-  </div>
+    <!-- 周辺減光＆質感オーバーレイ -->
+    <div class="vignette" aria-hidden="true"></div>
+  </main>
 
   <script src="intro.js"></script>
 </body>
