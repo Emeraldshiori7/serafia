@@ -90,15 +90,24 @@ body.intro{
   transform: translate(-50%,-50%) scale(1.04);
   mix-blend-mode: screen; opacity:0;
   filter: brightness(1.05) contrast(1.08);
-  animation: shaftsIn 1.2s ease-out forwards 8s;
+animation: shaftsIn 1.2s ease-out forwards 8s, glowPulse 4s ease-in-out infinite 9s;
+
 }
-.crown{
-  position:absolute; left:50%; top:33%;
-  width:min(18vmin, 230px); height:auto; object-fit:contain;
-  transform: translate(-50%, -50%) rotate(-4deg);
-  opacity:0; filter: drop-shadow(0 0 18px rgba(255,248,220,.35));
-  animation: crownIn var(--dur) ease forwards 3.9s;
+.crown {
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  width: min(18vmin, 230px);
+  height: auto;
+  object-fit: contain;
+  opacity: 0;
+  transform: translate(-50%, -60%) scale(1.08) rotate(-6deg);
+  filter: drop-shadow(0 0 0px rgba(255, 248, 220, 0));
+  /* 光の筋とほぼ同時にフェードイン開始（7.9秒） */
+  animation:
+    crownIn 1.4s ease-out forwards 7.9s;
 }
+
 
 /* ホワイトアウト→遷移 */
 .whiteout{
@@ -125,10 +134,29 @@ body.intro{
 @keyframes subIn{   to{ opacity:.92; transform: translateY(0) } }
 @keyframes ringIn{  to{ opacity:1; transform: translate(-50%,-50%) scale(1) rotate(0deg) } }
 @keyframes ringSpin{to{ transform: translate(-50%,-50%) scale(1) rotate(360deg) } }
-@keyframes crownIn{
-  from{ transform: translate(-50%,-58%) rotate(-7deg) scale(1.08); }
-  to  { opacity:1; transform: translate(-50%,-50%) rotate(-4deg) scale(1); }
+@keyframes crownIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(1.08) rotate(-6deg);
+    filter: drop-shadow(0 0 0px rgba(255, 248, 220, 0));
+  }
+  40% {
+    opacity: 0.5;
+    transform: translate(-50%, -54%) scale(1.02) rotate(-4deg);
+    filter: drop-shadow(0 0 8px rgba(255, 248, 220, 0.2));
+  }
+  70% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1) rotate(-3deg);
+    filter: drop-shadow(0 0 15px rgba(255, 248, 220, 0.35));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(-2deg);
+    filter: drop-shadow(0 0 20px rgba(255, 248, 220, 0.45));
+  }
 }
+
 @keyframes shaftsIn{
   0%  { opacity:0;   transform: translate(-50%,-50%) scale(1.05); }
   60% { opacity:.85; transform: translate(-50%,-50%) scale(1.01); }
@@ -143,4 +171,8 @@ body.intro{
   .crown{ animation: crownIn .3s ease forwards 1.3s; }
   .shafts{animation: shaftsIn .4s ease forwards 2s; }
   .whiteout{ animation: whiteOut .6s ease forwards 2.7s; }
+}
+@keyframes glowPulse {
+  0%, 100% { filter: brightness(1.05) contrast(1.08); }
+  50% { filter: brightness(1.2) contrast(1.15); }
 }
