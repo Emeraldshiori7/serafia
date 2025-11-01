@@ -37,13 +37,13 @@ body.intro{
 
 /* ===== 題字（縦書き） ===== */
 .title{
-  position:absolute; width:auto;
-  right:min(6vw, 64px); top: 50%;
+  right:min(8vw, 84px); /* ← 64px → 84px くらいに広げる */
+  top:50%;
   transform: translateY(-50%);
   opacity:0;
-  animation: titleIn var(--slow) ease forwards;
-  animation-delay: 1.2s; /* 0–1.2s 黒 → 題字 */
+  animation: titleIn var(--slow) ease forwards; animation-delay: 1.2s;
 }
+
 .title-vertical{
   writing-mode: vertical-rl;
   text-orientation: mixed;
@@ -51,25 +51,29 @@ body.intro{
 }
 .title h1{
   margin:0;
-  font-size: clamp(28px, 6vw, 56px);
-  letter-spacing:.12em;
-  text-shadow: 0 0 18px var(--glow);
+  font-family: "Shippori Mincho B1","Yu Mincho","Hiragino Mincho ProN",serif;
+  font-weight: 800;
+  font-size: clamp(30px, 6.5vw, 62px);
+  letter-spacing:.14em;
+  /* 白インクに金の縁取りっぽい輝き */
+  color:#f4efe8;
+  -webkit-text-stroke: 0.8px rgba(210,180,120,.35);
+  text-shadow:
+    0 0 24px rgba(255,240,210,.28),
+    0 0 2px rgba(255,255,255,.9);
 }
 .title .subtitle{
-  margin:.8rem 0 0;
-  color:#b8aca4; font-style:italic;
-  font-size: clamp(12px, 2.3vw, 16px);
+  margin:.9rem 0 0;
+  font-family: "Shippori Mincho B1","Yu Mincho",serif;
+  letter-spacing:.08em;
+  color:#cabab1;
   opacity:0; transform: translateY(6px);
-  animation: subIn var(--dur) ease forwards;
-  animation-delay: 1.7s;
+  animation: subIn var(--dur) ease forwards; animation-delay: 1.7s;
 }
 
+
 /* ===== 紋章（中央でレイヤー重ね） ===== */
-.crest{
-  position:absolute; left:50%; top:50%;
-  width:min(70vmin, 720px); height:min(70vmin, 720px);
-  transform: translate(-50%,-50%);
-}
+
 .ring{
   position:absolute; left:50%; top:50%;
   width:min(42vmin,520px); height:auto;
@@ -80,21 +84,27 @@ body.intro{
     ringIn var(--dur) ease forwards 3.8s,
     ringSpin 12s linear infinite 3.8s;
 }
+/* 紋章を少し大きく＆ほんの少し下に */
+.crest{
+  position:absolute; left:50%; top:52%;
+  width:min(74vmin, 760px); height:min(74vmin, 760px);
+  transform: translate(-50%,-50%);
+}
+/* 冠は光源に寄せてやや右上、サイズも少し控えめに */
 .crown{
-  position:absolute; left:50%; top:34%;
-  width:min(20vmin, 260px); height:auto;
-  transform: translate(-50%, -50%) scale(1.05) rotate(-3deg);
-  opacity:0; filter: drop-shadow(0 0 18px rgba(255,248,220,.35));
-  animation: crownIn var(--dur) ease forwards 3.9s;
+  top:33%;
+  width:min(18vmin, 230px);
+  transform: translate(-50%, -50%) rotate(-4deg);
 }
+/* 光の筋はリングより一回り大きく、強すぎない発光に */
 .shafts{
-  position:absolute; left:50%; top:50%;
-  width:min(70vmin, 1100px); height:auto;
-  transform: translate(-50%, -50%) scale(1.05);
-  mix-blend-mode: screen; opacity:0.0;
-  animation: shaftsIn 1.2s ease-out forwards 8s;
-  filter: brightness(1.15) contrast(1.1);
+  width:min(78vmin, 1180px);
+  mix-blend-mode: screen;
+  opacity:0;
+  filter: brightness(1.05) contrast(1.08);
 }
+
+
 
 /* ===== 白フェード ===== */
 .whiteout{
@@ -132,9 +142,11 @@ body.intro{
   to  { opacity:1; transform: translate(-50%,-50%) scale(1) rotate(-2deg); }
 }
 @keyframes shaftsIn{
-  0%{ opacity:0; transform: translate(-50%,-50%) scale(1.05); }
-  100%{ opacity:.95; transform: translate(-50%,-50%) scale(1); }
+  0%  { opacity:0;   transform: translate(-50%,-50%) scale(1.05); }
+  60% { opacity:.85; transform: translate(-50%,-50%) scale(1.01); }
+  100%{ opacity:.80; transform: translate(-50%,-50%) scale(1); }
 }
+
 @keyframes whiteOut{ to{ opacity:1; } }
 
 /* ===== 動きを減らす設定 ===== */
@@ -144,4 +156,15 @@ body.intro{
   .crown{ animation: crownIn .3s ease forwards 1.3s; }
   .shafts{ animation: shaftsIn .4s ease forwards 2s; }
   .whiteout{ animation: whiteOut .6s ease forwards 2.7s; }
+}
+/* 画面に微細グレインを常時乗せる（画像不要） */
+.stage::after{
+  content:""; position:absolute; inset:-2vmax; pointer-events:none;
+  background:
+    radial-gradient(1200px 800px at 50% 60%, rgba(255,255,255,.02), transparent 60%),
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,.018) 0 1px,
+      rgba(0,0,0,0) 1px 2px);
+  mix-blend-mode: overlay;
+  opacity:.45;
 }
