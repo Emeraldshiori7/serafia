@@ -2,44 +2,90 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>儀式 — セラフィアの館</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>儀式 ― セラフィアの館</title>
 
-  <!-- 題字用フォント（上品な明朝） -->
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&display=swap" rel="stylesheet">
-
+  <!-- 入場シーン用のスタイル（前に作った intro.css を使う） -->
   <link rel="stylesheet" href="intro.css" />
+
+  <!-- フォント（お好みで） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
 </head>
+
+<!-- bodyに intro クラスが付いている前提（intro.css が参照） -->
 <body class="intro">
+  <!-- 星屑レイヤー（canvas） -->
+  <canvas id="stars" aria-hidden="true"></canvas>
 
-  <!-- 画面全体の舞台 -->
-  <main class="stage" aria-label="入場シーン">
-    <!-- 星屑キャンバス（JSで描画） -->
-    <canvas id="stars" aria-hidden="true"></canvas>
-
-    <!-- 紋章ブロック（リング・光・冠） -->
-    <div class="crest" aria-hidden="true">
-      <img class="ring"   src="assets/intro/ring.svg"   alt="" />
-      <img class="shafts" src="assets/intro/beams.png"  alt="" />
-      <img class="crown"  src="assets/intro/crown.png"  alt="" />
+  <!-- 全体ステージ -->
+  <div class="stage" role="presentation">
+    <!-- タイトル -->
+    <div class="title" aria-label="セラフィアの館・題字">
+      <h1>セラフィアの館</h1>
+      <div class="subtitle">── 静寂の中、あなたを待つ光がある。</div>
     </div>
 
-    <!-- 題字 -->
-    <header class="title" role="img" aria-label="セラフィアの館 ── 静寂の中、あなたを待つ光がある。">
-      <h1>セラフィアの館</h1>
-      <p class="subtitle">── 静寂の中、あなたを待つ光がある。</p>
-    </header>
+    <!-- 天使の輪（王冠の代わり）…既存の .crown アニメを流用するため class は crown のまま -->
+    <!-- 画像パスは /assets/intro/halo.png に置き換えてね -->
+    <img class="crown" src="assets/intro/halo.png" alt="天使の輪" width="600" height="400" decoding="async" />
+
+    <!-- 金の円環（SVG） -->
+    <img class="ring" src="assets/intro/ring.svg" alt="" aria-hidden="true" width="800" height="800" decoding="async" />
+
+    <!-- 光の筋（PNG） -->
+    <img class="shafts" src="assets/intro/beams.png" alt="" aria-hidden="true" width="1400" height="900" decoding="async" />
+
+    <!-- ビネット効果 -->
+    <div class="vignette" aria-hidden="true"></div>
+
+    <!-- フル白フェード → 大広間へ遷移 -->
+    <div class="whiteout" aria-hidden="true"></div>
 
     <!-- UI -->
-    <button class="ui skip" id="skipBtn" aria-label="儀式を省略">儀式を省略</button>
-    <button class="ui sound" id="soundBtn" aria-pressed="false" aria-label="音の切り替え">🔇</button>
+    <button class="ui skip" id="skip" type="button" aria-label="儀式を省略">儀式を省略</button>
+    <button class="ui sound" id="sound" type="button" aria-pressed="false" aria-label="音をオンにする">🔇</button>
+  </div>
 
-    <!-- 画面ホワイトアウト -->
-    <div class="whiteout" aria-hidden="true"></div>
-    <!-- 周辺減光＆質感オーバーレイ -->
-    <div class="vignette" aria-hidden="true"></div>
-  </main>
+  <!-- ここから最小限の制御スクリプト（外部 intro.js があれば外してOK） -->
+  <script>
+    // 画像のプリロード完了を待ってから開始（軽い同期）
+    const imgs = Array.from(document.images);
+    Promise.allSettled(imgs.map(img =>
+      img.complete ? Promise.resolve() : new Promise(r => img.addEventListener('load', r, { once: true }))
+    )).then(() => {
+      // 11秒後に自動遷移（intro.css のアニメと秒数を合わせてある）
+      const go = () => {
+        try { localStorage.setItem('introSeen', '1'); } catch (e) {}
+        window.location.replace('index.html');
+      };
+      // 白フェード終了付近で実行（保険としてタイマーも）
+      setTimeout(go, 11500);
+    });
 
-  <script src="intro.js"></script>
+    // スキップ：即座にホームへ
+    document.getElementById('skip').addEventListener('click', () => {
+      try { localStorage.setItem('introSeen', '1'); } catch (e) {}
+      window.location.replace('index.html');
+    });
+
+    // 音ボタン（SE/BGM を入れる場合の土台。今はトグル表示だけ）
+    const soundBtn = document.getElementById('sound');
+    soundBtn.addEventListener('click', () => {
+      const on = soundBtn.getAttribute('aria-pressed') === 'true';
+      soundBtn.setAttribute('aria-pressed', String(!on));
+      soundBtn.textContent = on ? '🔇' : '🔊';
+      // 実際のオーディオ再生は、ここに Audio 要素を用意して再生/停止を書く
+    });
+
+    // reduce motion の人向け：短縮（CSSも対応済み）
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setTimeout(() => {
+        try { localStorage.setItem('introSeen', '1'); } catch (e) {}
+        window.location.replace('index.html');
+      }, 3000);
+    }
+  </script>
 </body>
 </html>

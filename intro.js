@@ -70,3 +70,74 @@ function gotoHome(){
   window.location.replace('index.html');
 }
 setTimeout(gotoHome, 11500);
+// ===== サウンドの解禁と制御 =====
+const btnSound = document.getElementById('soundBtn');
+const seChime  = document.getElementById('seChime');
+const sePulse  = document.getElementById('sePulse');
+const seCreak  = document.getElementById('seCreak');
+const bgDrone  = document.getElementById('bgDrone');
+
+let soundEnabled = false;
+[seChime, sePulse, seCreak, bgDrone].forEach(a => a.volume = 0.22);
+
+function enableSound() {
+  if (soundEnabled) return;
+  soundEnabled = true;
+  btnSound.setAttribute('aria-pressed','true');
+  btnSound.textContent = '🔊';
+  try {
+    // 一度だけユーザー操作時に再生を初期化
+    seChime.play().then(()=> seChime.pause());
+    sePulse.play().then(()=> sePulse.pause());
+    seCreak.play().then(()=> seCreak.pause());
+    bgDrone.play().then(()=> bgDrone.pause());
+  } catch(e){}
+}
+btnSound.addEventListener('click', () => {
+  if (!soundEnabled) { enableSound(); }
+  else {
+    soundEnabled = false;
+    btnSound.setAttribute('aria-pressed','false');
+    btnSound.textContent = '🔇';
+    [seChime, sePulse, seCreak, bgDrone].forEach(a => { a.pause(); a.currentTime = 0; });
+  }
+});
+// クリックやキー押下の最初の操作でも解禁
+window.addEventListener('pointerdown', enableSound, { once:true });
+window.addEventListener('keydown',     enableSound, { once:true });
+
+// ===== 演出タイミング =====
+const whisper = document.querySelector('.whisper');
+
+// 0.8s：鈴
+setTimeout(()=> { if(soundEnabled) { seChime.currentTime=0; seChime.play(); } }, 800);
+
+// 4.2s/5.0s：パルス二回（輪と同期）
+setTimeout(()=> { if(soundEnabled) { sePulse.currentTime=0; sePulse.play(); } }, 4200);
+setTimeout(()=> { if(soundEnabled) { sePulse.currentTime=0; sePulse.play(); } }, 5000);
+
+// 6.7s：扉の“気配”
+setTimeout(()=> { if(soundEnabled) { seCreak.currentTime=0; seCreak.play(); } }, 6700);
+
+// 9.2s：囁き表示
+setTimeout(()=>{
+  whisper.textContent = "……来たのね、しおり。";
+  whisper.classList.add('show');
+}, 9200);
+
+// 10.5s～：白転 → 大広間、BGMは遷移後にフェードイン
+setTimeout(()=>{
+  if (soundEnabled) {
+    bgDrone.volume = 0;
+    bgDrone.play().catch(()=>{});
+    const fade = setInterval(()=>{
+      bgDrone.volume = Math.min(bgDrone.volume + 0.04, 0.2);
+      if (bgDrone.volume >= 0.2) clearInterval(fade);
+    }, 120);
+  }
+}, 10800);
+
+// Skip
+document.getElementById('skipBtn').addEventListener('click', ()=>{
+  window.location.replace('index.html');
+});

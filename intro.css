@@ -176,3 +176,45 @@ animation: shaftsIn 1.2s ease-out forwards 8s, glowPulse 4s ease-in-out infinite
   0%, 100% { filter: brightness(1.05) contrast(1.08); }
   50% { filter: brightness(1.2) contrast(1.15); }
 }
+/* Seraphia silhouette */
+.seraphia{
+  position:absolute; left:50%; top:54%;
+  width:min(40vmin, 520px); height:auto;
+  transform: translate(-50%,-50%) scale(1.02);
+  opacity:0; filter: blur(0.3px) brightness(0.85);
+  mix-blend-mode: lighten;               /* 輪の光に馴染ませる */
+  image-rendering: -webkit-optimize-contrast;
+  animation:
+    seraphiaIn 0.8s ease forwards 4.8s,  /* フェードイン */
+    seraphiaStep 1.4s steps(2,end) 5.2s; /* カクっと2段階の“人形感” */
+}
+
+@keyframes seraphiaIn{
+  from{ opacity:0; transform: translate(-50%,-50%) scale(1.04); }
+  to  { opacity:.9; transform: translate(-50%,-50%) scale(1.0);  }
+}
+/* 2ステップで微妙に位置をずらす */
+@keyframes seraphiaStep{
+  0%  { transform: translate(calc(-50% - 1px), calc(-50% - 2px)) scale(1.0); }
+  50% { transform: translate(calc(-50% + 1px), calc(-50% + 1px)) scale(1.0); }
+  100%{ transform: translate(-50%,-50%) scale(1.0); }
+}
+
+/* 囁き字幕 */
+.whisper{
+  position:absolute; left:0; right:0; bottom:9vh;
+  text-align:center;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-size: clamp(14px, 2.6vw, 18px);
+  color:#e9e1d9;
+  letter-spacing:.12em;
+  opacity:0;
+  text-shadow: 0 0 10px rgba(255,236,200,.25);
+  pointer-events:none;
+}
+.whisper.show{ animation: whisperIn .8s ease forwards; }
+@keyframes whisperIn{ to{ opacity:.95; transform: translateY(-2px);} }
+
+/* “光と一緒に浮かぶ”ための小調整（既存 crown/shafts がある前提） */
+.crown{ animation-delay: 8s; }   /* 光の筋の出現と合わせるならここを 8s に */
+.shafts{ animation-delay: 8s; }  /* 既に 8s ならそのまま */
