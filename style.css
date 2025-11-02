@@ -148,8 +148,8 @@ body.hall{
   left: 50%;
   top: 50%;
   /* ▼ 見た目で合わせる微調整（px / % どちらでも） */
-  --seraphia-offset-x: 0px;
-  --seraphia-offset-y: -400px;     /* 少し上へ（合わなければ値を±で調整） */
+  --seraphia-offset-x: -100px;
+  --seraphia-offset-y: 100px;     /* 少し上へ（合わなければ値を±で調整） */
 
   transform:
     translate(-50%, -50%)

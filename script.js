@@ -92,7 +92,7 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   // ★ 初期化＋リサイズ追従（これが重要）
   addEventListener('resize', resize, { passive:true });
   resize();
-let ORBIT_BIAS_Y = -400;   // 楕円の中心を上下へ（px）。セラフィアの offset-y と同じ値に
+let ORBIT_BIAS_x = -o  // 楕円の中心を上下へ（px）。セラフィアの offset-y と同じ値に
 
   let t = 0, rot = 0;
   function loop(){
