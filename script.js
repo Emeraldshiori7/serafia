@@ -55,61 +55,43 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   location.href = './intro.html?ritual';
 });
 
-// ───────── 楕円リング配置（祭壇＋浮遊） 安定版 ─────────
+// ───────── 楕円リング配置（祭壇＋浮遊） ─────────
 (() => {
-  const wrap = document.querySelector('.hall-stage .doors--orbit');
+  const wrap  = document.querySelector('.hall-stage .doors--orbit');
   if (!wrap) return;
-  let doors = [...wrap.querySelectorAll('.door')];
+  const doors = [...wrap.querySelectorAll('.door')];
+  if (doors.length <= 1) { console.warn('扉が1枚以下です'); return; }
 
-  // 万一1枚以下なら、何もせず終了（重なり続けるのを防ぐ）
-  if (doors.length <= 1) {
-    console.warn('扉が1枚以下です。HTMLに複数の<a class="door">があるか確認してください。');
-    return;
-  }
+  // 呼吸・回転のパラメータ
+  let ROT_SPEED = 0.0007;  // ゆっくり厳かに
+  let SWAY_X    = 4;
+  let SWAY_Y    = 3;
 
-  // パラメータ（お好みで）
-  let ROT_SPEED = 0.0008;   // 全体の回転速度（小さいほどゆっくり）
-  let SWAY_X    = 6;        // 個別ゆらぎX
-  let SWAY_Y    = 4;        // 個別ゆらぎY
-
-  // 角度の初期配置（均等割）
+  // 均等角度
   const base  = doors.map((_, i) => (i / doors.length) * Math.PI * 2);
   const phase = doors.map(() => Math.random() * Math.PI * 2);
 
   // 中心と半径
   let cx = 0, cy = 0, rx = 0, ry = 0;
 
-function resize(){
-  // 1) ラッパの実寸を取る（失敗したら 0 が返ることがある）
-  const r = wrap.getBoundingClientRect();
+  function resize(){
+    // ステージの実寸、取れないときはビューポートで代用
+    const r = wrap.getBoundingClientRect();
+    let w = Math.max(800, r.width  || innerWidth  * 0.92);
+    let h = Math.max(600, r.height || innerHeight * 0.80);
 
-  // 2) 取れない時の堅牢なフォールバック
-  //    - 親要素の内寸
-  //    - それも無理ならビューポートの 90% を使う
-  const parent = wrap.parentElement;
-  const pw = parent ? parent.clientWidth  : 0;
-  const ph = parent ? parent.clientHeight : 0;
+    // 中心はステージ中央
+    cx = w / 2;
+    cy = h / 2;
 
-  let w = Math.max(r.width  || 0, pw || 0, innerWidth  * 0.90);
-  let h = Math.max(r.height || 0, ph || 0, innerHeight * 0.70);
+    // 扉サイズに依存せず、常に広い半径を確保
+    rx = Math.max(320, w * 0.48);   // 横半径（増やすなら 0.50〜0.52）
+    ry = Math.max(260, h * 0.46);   // 縦半径（増やすなら 0.48〜0.50）
+  }
 
-  // 最低サイズ（小さく潰れるのを防止）
-  w = Math.max(w, 800);
-  h = Math.max(h, 600);
-
-  // 3) 中心＝ステージ中央
-  cx = w / 2;
-  cy = h / 2;
-
-  // 4) ★ 半径は比率＋大きめの下限で“必ず”広い楕円に
-  //     もっと大きくしたければ 0.50 / 0.48 に上げてOK
-  rx = Math.max(320, w * 0.46);
-  ry = Math.max(260, h * 0.44);
-}
-
-
-
-
+  // ★ 初期化＋リサイズ追従（これが重要）
+  addEventListener('resize', resize, { passive:true });
+  resize();
 
   let t = 0, rot = 0;
   function loop(){
@@ -124,12 +106,10 @@ function resize(){
       const x = cx + rx * Math.cos(a) + sx;
       const y = cy + ry * Math.sin(a) + sy;
 
-      // 深度 → z-index（手前に来たものを少し明るく）
       const depth = (y - (cy - ry)) / (ry * 2); // 0〜1
       el.style.zIndex = String(100 + Math.round(depth * 100));
       el.dataset.front = depth > 0.62 ? '1' : '';
 
-      // translateは必ず最後に
       el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
       el.style.opacity = '1';
       el.style.visibility = 'visible';

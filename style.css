@@ -22,8 +22,6 @@ body.hall{
   width:min(90vw,1100px);height:26vh;
   background:radial-gradient(60% 100% at 50% 0%, rgba(170,160,140,.18), transparent 70%);
   filter:blur(10px)}
-
-/* 奥のレリーフ */
 .relief{
   position:absolute; inset:0; opacity:.22; filter:blur(.2px);
   animation:reliefFloat 18s ease-in-out infinite alternate;
@@ -45,23 +43,25 @@ body.hall{
 .subtitle{ margin:.6rem 0 0; color:#b8aca4; opacity:0; transform:translateY(8px); animation:fadeUp .8s ease .6s forwards }
 @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
 
-/* ───────── 祭壇ステージ ───────── */
+/* ───────── 祭壇ステージ（画面中央に固定） ───────── */
 .hall-stage{
-  position: relative;
-  width: min(1100px, 92vw);
-  height: min(68vh, 640px);
-  margin: 2rem auto 6vh;
+  position: fixed;
+  left: 50%;
+  top: 52vh;                          /* セラフィアと揃える */
+  transform: translate(-50%, -50%);
+  width: min(1200px, 96vw);
+  height: min(86vh, 760px);
+  margin: 0;
+  z-index: 2;
   isolation: isolate;
 }
-
-/* 楕円リングの外枠にフィット */
 .hall-stage .doors--orbit{
-  position: absolute;
-  inset: 0;
-  margin: 0; width: 100%; height: 100%;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
 }
 
-/* 扉の基本スタイル（共通） */
+/* ───────── 扉（共通） ───────── */
 .door{
   position:relative; aspect-ratio:3/4; border-radius:10px; overflow:hidden; text-decoration:none;
   display:flex; align-items:end; justify-content:center; padding:14px 10px; color:#f1e9df; letter-spacing:.12em;
@@ -80,17 +80,6 @@ body.hall{
 .door::before{content:""; position:absolute; inset:8px; border-radius:8px;
   border:1px solid rgba(235,205,120,.45); box-shadow: inset 0 0 12px rgba(235,205,120,.15); mix-blend-mode:screen; opacity:.9}
 .door::after{content:""; position:absolute; inset:16px; border-radius:6px; border:1px solid rgba(235,205,120,.25); box-shadow: inset 0 0 18px rgba(235,205,120,.08); opacity:.85}
-.glare{position:absolute; inset:0; background:linear-gradient(65deg,transparent 40%,rgba(255,245,210,.28) 50%,transparent 60%); transform:translateX(-120%); filter:blur(1px); opacity:0; transition:opacity .4s ease, transform .9s ease}
-.sparks{position:absolute; inset:0; background:
-  radial-gradient(2px 2px at 20% 30%, rgba(255,240,200,.7), transparent 60%),
-  radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,240,200,.5), transparent 60%),
-  radial-gradient(1.5px 1.5px at 40% 75%, rgba(255,240,200,.35), transparent 60%); opacity:0; transition:opacity .6s ease}
-@media (hover:hover){
-  .door:hover{ transform:translateY(-4px) scale(1.02); box-shadow: inset 0 0 0 1px rgba(255,230,160,.5), inset 0 0 0 6px rgba(255,230,160,.08), inset 0 0 34px rgba(0,0,0,.6), 0 10px 35px rgba(255,210,120,.18); filter:saturate(1.08) contrast(1.05) }
-  .door:hover .glare{ opacity:.9; transform:translateX(120%) }
-  .door:hover .sparks{ opacity:.7 }
-}
-.door:focus-visible{ outline:2px solid rgba(255,230,160,.8); outline-offset:3px }
 .door__label{
   position:relative; z-index:2; font-size:clamp(14px,1.5vw,18px);
   padding:.35rem .7rem; background:rgba(0,0,0,.45);
@@ -98,13 +87,14 @@ body.hall{
   box-shadow:0 0 12px rgba(255,220,150,.08);
 }
 
-/* ───────── 楕円リング：浮遊配置 ───────── */
+/* ───────── 楕円リング用：絶対配置＋サイズ明示 ───────── */
 .hall-stage .doors--orbit .door{
   position: absolute;
   top: 50%; left: 50%;
+  width: clamp(140px, 18vmin, 220px);
+  aspect-ratio: 3/4;
   transform: translate(-50%, -50%); /* JSで上書き */
   will-change: transform, filter;
-  transition: transform .45s ease, filter .45s ease;
   z-index: 1;
 }
 .hall-stage .doors--orbit .door[data-front="1"]{
@@ -114,32 +104,39 @@ body.hall{
   .hall-stage .doors--orbit .door:hover{
     transform: translate(-50%,-50%) scale(1.06) !important;
   }
-  .hall-stage .doors--orbit .door .glare,
-  .hall-stage .doors--orbit .door .sparks{
-    display:none !important;
-  }
 }
 
-/* モバイル：読みやすさ優先でグリッドに退避 */
-@media (max-width: 720px){
-  .hall-stage{ height: auto; }
-  .hall-stage .doors--orbit{
-    position: static;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-    width: min(92vw, 720px);
-    margin: 0 auto;
-    height: auto;
-  }
-  .hall-stage .doors--orbit .door{
-    position: static; transform:none; will-change:auto; z-index:auto;
-  }
+/* ───────── 個別扉の画像（必要に応じて差し替え） ───────── */
+.door--1{
+  --mirror-zoom: 180%; --mirror-x: 50%; --mirror-y: 48%;
+  background: none !important;
+  background-image: url('assets/doors/door_mirror.png') !important;
+  background-repeat: no-repeat !important;
+  background-size: var(--mirror-zoom) !important;
+  background-position: var(--mirror-x) var(--mirror-y) !important;
+  border: none !important; box-shadow: none !important; outline: none !important;
+  background-color: rgba(0,0,0,.25);
+  filter: grayscale(100%) contrast(110%) brightness(98%);
+}
+.door--1::before, .door--1::after{ border:none !important; box-shadow:none !important; }
+
+.door--2{
+  --study-zoom: 180%; --study-x: 50%; --study-y: 50%;
+  background: none !important;
+  background-image: url('assets/doors/door_study.png') !important;
+  background-repeat: no-repeat !important;
+  background-size: var(--study-zoom) !important;
+  background-position: var(--study-x) var(--study-y) !important;
+  border: none !important; box-shadow: none !important; outline: none !important;
+  background-color: rgba(0,0,0,.25);
+  filter: contrast(110%) brightness(104%) saturate(115%);
 }
 
 /* ───────── セラフィア（中央固定） ───────── */
 .seraphia-silhouette{
   position: fixed;
   left: 50%;
-  top: 52vh; /* 50〜56vhで好みに調整 */
+  top: 52vh;
   transform: translate(-50%, -50%);
   width: min(28vmin, 320px);
   aspect-ratio: 3/5;
@@ -191,229 +188,10 @@ body.hall{
 .ghost{ background:transparent; border:1px solid rgba(255,255,255,.22); color:#e9e1d9; padding:.5rem .8rem; border-radius:8px; letter-spacing:.06em; cursor:pointer; transition:background .2s ease, transform .2s ease }
 .ghost:hover{ background:rgba(255,255,255,.08); transform:translateY(-1px) }
 
-/* モバイル細調整 */
+/* モバイル 軽めに */
 @media (max-width:768px){
   .hero{ padding: 5vh 16px 8px; }
   .hero h1{ letter-spacing:.12em; font-size: clamp(22px, 6vw, 32px); text-shadow: none; }
   .subtitle{ font-size: clamp(11px, 3.8vw, 14px); opacity:.75; }
   .whisper{ bottom: calc(12px + env(safe-area-inset-bottom)); max-width: 30ch; font-size: clamp(11px, 3.4vw, 14px) }
-}
-
-/* ───────── 個別扉の仕上げ ───────── */
-
-/* 鏡の間：鏡面だけを大きく、白ハイライトは出さない */
-.door--1{
-  --mirror-zoom: 180%;  /* 大きすぎれば 160% などに */
-  --mirror-x: 50%; --mirror-y: 48%;
-  background: none !important;
-  background-image: url('assets/doors/door_mirror.png') !important;
-  background-repeat: no-repeat !important;
-  background-size: var(--mirror-zoom) !important;
-  background-position: var(--mirror-x) var(--mirror-y) !important;
-  border: none !important; box-shadow: none !important; outline: none !important;
-  background-color: rgba(0,0,0,.25);
-  filter: grayscale(100%) contrast(110%) brightness(98%);
-  position: relative;
-}
-.door--1::before,
-.door--1::after{ border:none !important; box-shadow:none !important; }
-.door--1::before{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.10) 0%, transparent 35%),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, rgba(255,255,255,0) 1px 4px);
-  mix-blend-mode: screen; opacity:.45; transition:opacity .4s ease;
-}
-.door--1::after{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background: radial-gradient(40% 60% at 78% 52%, rgba(255,200,120,.18), transparent 70%);
-  mix-blend-mode: screen; opacity:.35; transition:opacity .4s ease, transform .6s ease;
-}
-@media (hover:hover){
-  .door--1:hover{ transform: translate(-50%,-50%) scale(1.05) !important; filter: grayscale(100%) contrast(115%) brightness(103%) }
-  .door--1:hover::before{ opacity:.6 }
-  .door--1:hover::after{ opacity:.5; transform: translateX(-1px) }
-}
-
-/* 書斎の間：蝋燭が内側から“ほわっ”と広がる */
-.door--2{
-  --study-zoom: 180%;  /* 小さくするなら 160% 等に */
-  --study-x: 50%; --study-y: 50%;
-  background: none !important;
-  background-image: url('assets/doors/door_study.png') !important;
-  background-repeat: no-repeat !important;
-  background-size: var(--study-zoom) !important;
-  background-position: var(--study-x) var(--study-y) !important;
-  border: none !important; box-shadow: none !important; outline: none !important;
-  background-color: rgba(0,0,0,.25);
-  filter: contrast(110%) brightness(104%) saturate(115%);
-  position: relative;
-  transition: transform .45s ease, filter .45s ease;
-}
-.door--2::before{
-  content:""; position:absolute; inset:0; pointer-events:none;
-  background:
-    radial-gradient(circle at 50% 55%, rgba(255, 210, 150, .22), transparent 60%),
-    radial-gradient(circle at 50% 55%, rgba(255, 190, 120, .15), transparent 80%);
-  mix-blend-mode: screen; opacity:.25; transform: scale(0.95); filter: blur(2px);
-  transition: opacity .8s ease, transform 1s ease, filter 1s ease;
-}
-.door--2::after{
-  content:""; position:absolute; inset:0;
-  background: radial-gradient(50% 60% at 50% 75%, rgba(255, 180, 100, .18), transparent 80%);
-  mix-blend-mode: screen; opacity:.25; transition: opacity 1.2s ease;
-}
-@media (hover:hover){
-  .door--2:hover{ transform: translate(-50%,-50%) scale(1.06) !important; filter: contrast(120%) brightness(110%) saturate(125%) }
-  .door--2:hover::before{ opacity:.65; transform: scale(1.1); filter: blur(6px) }
-  .door--2:hover::after{ opacity:.45 }
-}
-/* === 楕円リングの安定化：扉サイズを明示 === */
-.hall-stage .doors--orbit .door{
-  width: clamp(150px, 22vmin, 240px); /* ← 扉の大きさを固定（環境差で縮まず中央に収まる） */
-  aspect-ratio: 3 / 4;
-}
-
-/* ステージの高さを少しだけ増やして余裕を持たせる */
-.hall-stage{
-  height: min(72vh, 680px);
-}
-/* === 楕円リングの安定化：扉サイズと表示を強制 === */
-.hall-stage .doors--orbit{ position: relative !important; }
-
-.hall-stage .doors--orbit .door{
-  position: absolute !important;
-  display: block !important;
-  width: clamp(160px, 22vmin, 240px) !important;  /* 扉の基本サイズ */
-  aspect-ratio: 3 / 4 !important;
-  transform: translate(-50%, -50%);               /* JSで上書きされる前の初期値 */
-  z-index: 1;
-}
-/* === セラフィア中央固定の強制リセット === */
-.seraphia-silhouette{
-  right: auto !important;       /* 旧：right: calc(...) を無効化 */
-  left: 50% !important;
-  top: 52vh !important;         /* 50〜56vhで好みに */
-  transform: translate(-50%, -50%) !important;
-  z-index: 3 !important;
-}
-/* === セラフィアは必ず中央 === */
-.seraphia-silhouette{
-  right: auto !important;
-  left: 50% !important;
-  top: 52vh !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 3 !important;
-}
-
-/* === 楕円リング安定化：扉の存在と大きさを強制 === */
-.hall-stage .doors--orbit{ position: relative !important; }
-
-.hall-stage .doors--orbit .door{
-  position: absolute !important;
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  width: clamp(160px, 22vmin, 240px) !important; /* 扉サイズ固定 */
-  aspect-ratio: 3 / 4 !important;
-  transform: translate(-50%, -50%); /* JSが上書きする初期値 */
-  z-index: 1;
-}
-/* === 祭壇ステージを画面の真ん中に固定（セラフィアと同じ基準） === */
-.hall-stage{
-  position: fixed !important;
-  left: 50% !important;
-  top: 52vh !important;              /* セラフィアの top と合わせる */
-  transform: translate(-50%, -50%) !important;
-  width: min(1100px, 92vw) !important;
-  height: min(68vh, 640px) !important;
-  margin: 0 !important;              /* 中央固定なので margin は不要 */
-  z-index: 2;                         /* セラフィア(z=3)の一段下 */
-}
-
-/* ステージ内のリング枠はステージ一杯に広げる */
-.hall-stage .doors--orbit{
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* 扉サイズを明示（環境差で縮まないよう固定） */
-.hall-stage .doors--orbit .door{
-  position: absolute !important;
-  width: clamp(160px, 22vmin, 240px) !important;
-  aspect-ratio: 3 / 4 !important;
-  transform: translate(-50%, -50%);
-  opacity: 1; visibility: visible;
-}
-/* 扉をほんの少し小さめに（ぶつかり防止・任意） */
-.hall-stage .doors--orbit .door{
-  width: clamp(150px, 20vmin, 230px) !important;
-}
-/* === 楕円ステージを大きく、画面中央に固定（強制） === */
-.hall-stage{
-  position: fixed !important;
-  left: 50% !important;
-  top: 52vh !important;                 /* セラフィアの top と同じ */
-  transform: translate(-50%, -50%) !important;
-  width: min(1200px, 96vw) !important;  /* ← ステージを拡大 */
-  height: min(86vh, 760px) !important;  /* ← 高さも拡大 */
-  margin: 0 !important;
-  z-index: 2;
-}
-.hall-stage .doors--orbit{
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* 扉は少しだけ小さめにして、リングに余白を作る */
-.hall-stage .doors--orbit .door{
-  position: absolute !important;
-  width: clamp(140px, 18vmin, 220px) !important;  /* ← 余白を確保 */
-  aspect-ratio: 3 / 4 !important;
-  transform: translate(-50%, -50%);
-  opacity: 1; visibility: visible;
-}
-
-/* セラフィアは必ず中央（保険） */
-.seraphia-silhouette{
-  right: auto !important;
-  left: 50% !important;
-  top: 52vh !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 3 !important;
-}
-/* 測定の安定化：ステージとリング枠を明示 */
-.hall-stage{
-  position: fixed !important;
-  left: 50% !important;
-  top: 52vh !important;
-  transform: translate(-50%, -50%) !important;
-  width: min(1200px, 96vw) !important;
-  height: min(86vh, 760px) !important;
-  margin: 0 !important;
-  z-index: 2;
-}
-.hall-stage .doors--orbit{
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  display: block !important;          /* 念のため grid を無効化 */
-}
-.hall-stage .doors--orbit .door{
-  position: absolute !important;
-  width: clamp(140px, 18vmin, 220px) !important;
-  aspect-ratio: 3 / 4 !important;
-  transform: translate(-50%, -50%);
-  opacity: 1; visibility: visible;
-}
-
-/* セラフィアは中央固定（保険） */
-.seraphia-silhouette{
-  right: auto !important; left: 50% !important; top: 52vh !important;
-  transform: translate(-50%, -50%) !important; z-index: 3 !important;
 }
