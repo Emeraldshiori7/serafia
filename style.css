@@ -357,3 +357,39 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   .floor-glow{ height: 20vh; filter: blur(8px); }
 }
 /* ============= モバイル調整ここまで ============= */
+/* 鏡の間：画像適用＋冷たい鏡質感 */
+.door--1{
+  background-image: url('assets/doors/door_mirror.png');
+  background-size: cover;
+  background-position: center;
+  /* 鏡っぽい冷たさを足すフィルタ（好みで調整） */
+  filter: grayscale(100%) contrast(104%) brightness(94%);
+  position: relative;
+}
+
+/* うっすら縦筋（ヘアライン） */
+.door--1::marker{ content:""; } /* Safari の擬似要素バグ回避用の無害行 */
+.door--1::before{
+  content:""; position:absolute; inset:0;
+  background:
+    linear-gradient(90deg,
+      rgba(255,255,255,.06) 0,
+      rgba(255,255,255,0) 22%,
+      rgba(255,255,255,.04) 50%,
+      rgba(255,255,255,0) 78%,
+      rgba(255,255,255,.06) 100%);
+  mix-blend-mode: screen;
+  opacity: .35; pointer-events:none;
+}
+
+/* ホバー時：鏡面の冷光がわずかに強まる（PC） */
+@media (hover:hover){
+  .door--1:hover{
+    filter: grayscale(100%) contrast(110%) brightness(100%);
+  }
+  .door--1:hover::before{ opacity: .5; }
+}
+/* 鏡の間だけグリント長め */
+.door--1 .glare{
+  transition: opacity .5s ease, transform 1.3s ease; /* 既存より少し長め */
+}
