@@ -55,69 +55,79 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   location.href = './intro.html?ritual';
 });
 
-// ───────── 楕円リング配置（祭壇＋浮遊） ─────────
+// ───────── 楕円リング配置（祭壇＋浮遊） 安定版 ─────────
 (() => {
   const wrap = document.querySelector('.hall-stage .doors--orbit');
   if (!wrap) return;
-  const doors = [...wrap.querySelectorAll('.door')];
-  if (doors.length === 0) return;
+  let doors = [...wrap.querySelectorAll('.door')];
 
-  // 楕円パラメータ（好みで調整）
-  let ROT_SPEED = 0.0009;   // 全体回転の速さ（小さいほどゆっくり）
-  let SWAY_X    = 6;        // 個別ゆらぎ（px）
-  let SWAY_Y    = 4;
+  // 万一1枚以下なら、何もせず終了（重なり続けるのを防ぐ）
+  if (doors.length <= 1) {
+    console.warn('扉が1枚以下です。HTMLに複数の<a class="door">があるか確認してください。');
+    return;
+  }
 
-  let cx = 0, cy = 0, rx = 0, ry = 0;
+  // パラメータ（お好みで）
+  let ROT_SPEED = 0.0008;   // 全体の回転速度（小さいほどゆっくり）
+  let SWAY_X    = 6;        // 個別ゆらぎX
+  let SWAY_Y    = 4;        // 個別ゆらぎY
+
+  // 角度の初期配置（均等割）
   const base  = doors.map((_, i) => (i / doors.length) * Math.PI * 2);
   const phase = doors.map(() => Math.random() * Math.PI * 2);
 
- function resize(){
-  // ステージの内寸を厳密に計算
-  const r = wrap.getBoundingClientRect();
-  const style = getComputedStyle(wrap);
-  const padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
-  const padY = parseFloat(style.paddingTop)  + parseFloat(style.paddingBottom);
+  // 中心と半径
+  let cx = 0, cy = 0, rx = 0, ry = 0;
 
-  const w = Math.max(360, r.width  - padX);
-  const h = Math.max(360, r.height - padY);
+  function resize(){
+    const r = wrap.getBoundingClientRect();
+    const style = getComputedStyle(wrap);
+    const padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+    const padY = parseFloat(style.paddingTop)  + parseFloat(style.paddingBottom);
 
-  cx = w / 2;
-  cy = h / 2;
+    // 内寸（最低値で潰れを防止）
+    const w = Math.max(480, r.width  - padX);
+    const h = Math.max(420, r.height - padY);
 
-  // 扉幅を参照して、半径に余白を確保
-  const dw = doors[0]?.getBoundingClientRect().width || 200;
-  const margin = dw * 0.7;
+    cx = w / 2;
+    cy = h / 2;
 
-  rx = Math.max(140, (w / 2) - margin);
-  ry = Math.max(110, (h / 2) - margin * 0.85);
-}
+    // 扉幅から安全マージンを算出
+    const dw = doors[0]?.getBoundingClientRect().width || 200;
+    const margin = dw * 0.75; // リング内側の余白
 
-function loop(){
-  t += 16/1000;
-  rot += ROT_SPEED;
+    // 半径（最低値を持たせて同一点化を防止）
+    rx = Math.max(160, (w / 2) - margin);
+    ry = Math.max(130, (h / 2) - margin * 0.85);
+  }
+  addEventListener('resize', resize, {passive:true});
+  resize();
 
-  doors.forEach((el, i) => {
-    const a  = base[i] + rot;
-    const sx = Math.sin(t*0.8 + phase[i]) * SWAY_X;
-    const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y;
+  let t = 0, rot = 0;
+  function loop(){
+    t += 16/1000;
+    rot += ROT_SPEED;
 
-    const x = cx + rx * Math.cos(a) + sx;
-    const y = cy + ry * Math.sin(a) + sy;
+    doors.forEach((el, i) => {
+      const a  = base[i] + rot;
+      const sx = Math.sin(t*0.8 + phase[i]) * SWAY_X;
+      const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y;
 
-    // 深度による前後（数値は文字列で安全に）
-    const depth = (y - (cy - ry)) / (ry * 2); // 0〜1
-    el.style.zIndex = String(100 + Math.round(depth * 100));
-    el.dataset.front = depth > 0.62 ? '1' : '';
+      const x = cx + rx * Math.cos(a) + sx;
+      const y = cy + ry * Math.sin(a) + sy;
 
-    // 画面中央へ寄せるための平行移動
-    el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-    el.style.opacity = '1';
-    el.style.visibility = 'visible';
-  });
+      // 深度 → z-index（手前に来たものを少し明るく）
+      const depth = (y - (cy - ry)) / (ry * 2); // 0〜1
+      el.style.zIndex = String(100 + Math.round(depth * 100));
+      el.dataset.front = depth > 0.62 ? '1' : '';
 
-  requestAnimationFrame(loop);
-}
+      // translateは必ず最後に
+      el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+      el.style.opacity = '1';
+      el.style.visibility = 'visible';
+    });
 
+    requestAnimationFrame(loop);
+  }
   requestAnimationFrame(loop);
 })();
-

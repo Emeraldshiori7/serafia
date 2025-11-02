@@ -297,3 +297,25 @@ body.hall{
   transform: translate(-50%, -50%) !important;
   z-index: 3 !important;
 }
+/* === セラフィアは必ず中央 === */
+.seraphia-silhouette{
+  right: auto !important;
+  left: 50% !important;
+  top: 52vh !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 3 !important;
+}
+
+/* === 楕円リング安定化：扉の存在と大きさを強制 === */
+.hall-stage .doors--orbit{ position: relative !important; }
+
+.hall-stage .doors--orbit .door{
+  position: absolute !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: clamp(160px, 22vmin, 240px) !important; /* 扉サイズ固定 */
+  aspect-ratio: 3 / 4 !important;
+  transform: translate(-50%, -50%); /* JSが上書きする初期値 */
+  z-index: 1;
+}
