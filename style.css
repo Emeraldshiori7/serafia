@@ -149,28 +149,51 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   align-items: end;
 }
 
-/* 扉は手前、セラフィアは奥（重なり防止） */
+/* 2カラム：左=扉 右=セラフィア用スペース */
+.hall-grid{
+  width: min(1100px, 92vw);
+  margin: 4vh auto 8vh;
+  padding: 0 22px;
+  display: grid;
+  grid-template-columns: 1fr min(28vw, 320px);
+  gap: 28px;
+  align-items: end;
+}
 .hall-grid .doors{ grid-column: 1 / 2; z-index: 2; }
-.hall-grid .seraphia-silhouette{
-  grid-column: 2 / 3;
-  justify-self: end;           /* 右寄せ */
-  align-self: end;             /* 下寄せ */
-  position: sticky; bottom: 8vh; /* 少し“貼り付く”感（任意） */
-  right: auto; bottom: auto;   /* 既存の固定配置を打ち消す */
-  z-index: 1;                  /* 扉より奥に */
-  width: min(26vw, 300px);     /* 専用列に収まる幅に微調整 */
+.hall-grid .seraphia-space{ grid-column: 2 / 3; min-height: 40vh; }
+
+/* 画面に“固定”されたセラフィア本体（右列の内側にぴったり） */
+.seraphia-silhouette{
+  position: fixed;
+  /* 右マージン = (画面幅 - コンテナ幅)/2 + コンテナの左右padding */
+  right: calc((100vw - min(1100px, 92vw)) / 2 + 22px);
+  bottom: 8vh;
+
+  width: min(26vw, 300px);
+  aspect-ratio: 3/5;
+  background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
+  opacity: .10;
+  filter: grayscale(100%) contrast(110%) brightness(108%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;               /* 扉より奥に */
 }
 
-/* モバイル時は1カラムにして重なりなし */
+/* ほんのり呼吸（任意） */
+@keyframes seraphiaSway{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+@media (prefers-reduced-motion: no-preference){
+  .seraphia-silhouette{ animation: seraphiaSway 14s ease-in-out infinite; }
+}
+
+/* モバイルは1カラムにして重なり回避 */
 @media (max-width: 768px){
-  .hall-grid{
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-  .hall-grid .seraphia-silhouette{
-    grid-column: 1 / 2;
-    justify-self: end;
+  .hall-grid{ grid-template-columns: 1fr; gap: 18px; }
+  .hall-grid .seraphia-space{ display:none; }
+  .seraphia-silhouette{
+    right: 16px;            /* 右端に寄せる */
     width: min(42vw, 220px);
-    opacity: .08;              /* 少し薄めに */
+    opacity: .08;
   }
 }
+
