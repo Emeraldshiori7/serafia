@@ -46,7 +46,7 @@
   const phase = doors.map(() => Math.random()*Math.PI*2);
 
   // ★ 扉ごとの“脈動”パラメータ（振幅・速度・初期位相）
-  const amp   = doors.map(() => 0.02 + Math.random()*0.035);   // 2%〜5.5%
+  const amp   = doors.map(() => 0.025 + Math.random()*0.035);   // 2%〜5.5%
   const freq  = doors.map(() => 0.3  + Math.random()*0.5);     // 0.3〜0.8 Hz
   const phi   = doors.map(() => Math.random()*Math.PI*2);
 
