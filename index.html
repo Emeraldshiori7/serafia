@@ -28,69 +28,41 @@
     <p class="subtitle">── 静寂の中、あなたを待つ光がある。</p>
   </header>
 
- <section class="hall-grid">
-    <!-- 左側：扉グリッド -->
+  <!-- 祭壇ステージ（中央：セラフィア／周囲：楕円リング） -->
+  <section class="hall-stage">
     <div class="doors doors--orbit">
-     <a href="/mirror" class="door door--1"
-   style="background: url('assets/doors/door_mirror.png') center/contain no-repeat;">
-  <span class="door__label">鏡の間</span>
-</a>
-     <!-- 書斎の間 -->
-<a href="study.html" class="door door--2" title="書斎の間">
-  <span class="door__label">書斎の間</span>
-  <i class="glare" aria-hidden="true"></i>
-  <i class="sparks" aria-hidden="true"></i>
-</a>
-
-      <a href="#" class="door door--3">
-        <span class="door__label">礼拝堂</span>
+      <!-- 鏡の間 -->
+      <a href="mirror.html" class="door door--1" title="鏡の間">
+        <span class="door__label">鏡の間</span>
         <i class="glare" aria-hidden="true"></i>
         <i class="sparks" aria-hidden="true"></i>
       </a>
-      <a href="#" class="door door--4">
-        <span class="door__label">アトリエ</span>
+      <!-- 書斎の間 -->
+      <a href="study.html" class="door door--2" title="書斎の間">
+        <span class="door__label">書斎の間</span>
         <i class="glare" aria-hidden="true"></i>
         <i class="sparks" aria-hidden="true"></i>
       </a>
-      <a href="#" class="door door--5">
-        <span class="door__label">錬金術室</span>
-        <i class="glare" aria-hidden="true"></i>
-        <i class="sparks" aria-hidden="true"></i>
-      </a>
-      <a href="#" class="door door--6">
-        <span class="door__label">庭園</span>
-        <i class="glare" aria-hidden="true"></i>
-        <i class="sparks" aria-hidden="true"></i>
-      </a>
-      <a href="#" class="door door--7">
-        <span class="door__label">私室</span>
-        <i class="glare" aria-hidden="true"></i>
-        <i class="sparks" aria-hidden="true"></i>
-      </a>
-      <a href="#" class="door door--8">
-        <span class="door__label">客室</span>
-        <i class="glare" aria-hidden="true"></i>
-        <i class="sparks" aria-hidden="true"></i>
-      </a>
-      <a href="#" class="door door--9">
-        <span class="door__label">儀式の間</span>
-        <i class="glare" aria-hidden="true"></i>
-        <i class="sparks" aria-hidden="true"></i>
-      </a>
+      <!-- 以下、必要に応じて部屋を追加（タイトルだけ変更すればOK） -->
+      <a href="#" class="door door--3"><span class="door__label">礼拝堂</span><i class="glare" aria-hidden="true"></i><i class="sparks" aria-hidden="true"></i></a>
+      <a href="#" class="door door--4"><span class="door__label">アトリエ</span><i class="glare" aria-hidden="true"></i><i class="sparks" aria-hidden="true"></i></a>
+      <a href="#" class="door door--5"><span class="door__label">錬金術室</span><i class="glare" aria-hidden="true"></i><i class="sparks" aria-hidden="true"></i></a>
+      <a href="#" class="door door--6"><span class="door__label">庭園</span><i class="glare" aria-hidden="true"></i><i class="sparks" aria-hidden="true"></i></a>
+      <a href="#" class="door door--7"><span class="door__label">私室</span><i class="glare" aria-hidden="true"></i><i class="sparks" aria-hidden="true"></i></a>
+      <a href="#" class="door door--8"><span class="door__label">客室</span><i class="glare" aria-hidden="true"></i><i class="sparks" aria-hidden="true"></i></a>
+      <a href="#" class="door door--9"><span class="door__label">儀式の間</span><i class="glare" aria-hidden="true"></i><i class="sparks" aria-hidden="true"></i></a>
     </div>
-
-    <!-- 右側：セラフィアちゃん -->
-    <div class="seraphia-space" aria-hidden="true"></div>
   </section>
 
-<div class="seraphia-silhouette" aria-hidden="true"></div>
-  
-<!-- 囁き（薄れても消えない） -->
+  <!-- セラフィア（中央固定） -->
+  <div class="seraphia-silhouette" aria-hidden="true"></div>
+
+  <!-- 囁き（中央下） -->
   <div class="whisper" aria-live="polite">
     <span class="line">「……ここにいるわ。」</span>
   </div>
 
-  <!-- フッター（ミニ） -->
+  <!-- フッター -->
   <footer class="mini" aria-label="補助操作">
     <button id="reintro" class="ghost" type="button">儀式をもう一度</button>
   </footer>
@@ -98,5 +70,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
-

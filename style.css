@@ -2,16 +2,28 @@
   --ink:#e9dfd6; --bg:#000; --gold:#d5bd86;
   --panel:rgba(255,240,230,0.05); --glow:rgba(255,236,200,.35);
 }
-*{box-sizing:border-box} html,body{height:100%;margin:0}
-body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);background:var(--bg);letter-spacing:.03em;overflow-x:hidden}
+
+/* 基本 */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body.hall{
+  font-family:"Cormorant Garamond","Yu Mincho",serif;
+  color:var(--ink); background:var(--bg); letter-spacing:.03em;
+  overflow-x:hidden;
+}
 
 /* 背景 */
-.bg{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(1200px 800px at 50% 55%, #0b0b0f 0%, #000 65%)}
+.bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(1200px 800px at 50% 55%, #0b0b0f 0%, #000 65%)}
 #dust{position:absolute;inset:0;display:block;filter:brightness(.9) contrast(1.05)}
-.vignette{position:absolute;inset:-8vmax;background:radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0,0,0,.65) 80%)}
-.floor-glow{position:absolute;left:50%;bottom:-8vh;transform:translateX(-50%);width:min(90vw,1100px);height:26vh;background:radial-gradient(60% 100% at 50% 0%, rgba(170,160,140,.18), transparent 70%);filter:blur(10px)}
+.vignette{position:absolute;inset:-8vmax;
+  background:radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0,0,0,.65) 80%)}
+.floor-glow{position:absolute;left:50%;bottom:-8vh;transform:translateX(-50%);
+  width:min(90vw,1100px);height:26vh;
+  background:radial-gradient(60% 100% at 50% 0%, rgba(170,160,140,.18), transparent 70%);
+  filter:blur(10px)}
 
-/* 奥のレリーフ（CSSパターン） */
+/* 奥のレリーフ */
 .relief{
   position:absolute; inset:0; opacity:.22; filter:blur(.2px);
   animation:reliefFloat 18s ease-in-out infinite alternate;
@@ -33,72 +45,52 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 .subtitle{ margin:.6rem 0 0; color:#b8aca4; opacity:0; transform:translateY(8px); animation:fadeUp .8s ease .6s forwards }
 @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
 
-/* セラフィアの“気配”（薄いシルエット画像を推奨 /img/seraphia.png） */
-/* セラフィアの“佇み”＋中心からの淡い光 */
-.seraphia-silhouette{
-  position:fixed; right:6vw; bottom:8vh;
-  width:min(24vw, 340px); aspect-ratio:3/5;
-  background:url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
-  opacity:.10;                          /* うっすら */
-  filter: grayscale(100%) contrast(120%) brightness(120%);
-  mix-blend-mode:screen;                /* 冷たい神々しさ */
-  pointer-events:none; user-select:none;
-  animation: seraphiaSway 14s ease-in-out infinite;
+/* ───────── 祭壇ステージ ───────── */
+.hall-stage{
+  position: relative;
+  width: min(1100px, 92vw);
+  height: min(68vh, 640px);
+  margin: 2rem auto 6vh;
+  isolation: isolate;
 }
 
-/* 中心からの柔らかい光（後光） */
-.seraphia-silhouette::after{
-  content:""; position:absolute; inset:-12%;
-  background:
-    conic-gradient(from -90deg at 50% 8%, rgba(255,250,230,.12), transparent 40%)
-  radial-gradient(60% 60% at 50% 55%, rgba(255,220,160,.18), transparent 80%),
-  radial-gradient(40% 40% at 50% 55%, rgba(255,240,210,.32), transparent 70%),
-  radial-gradient(18% 18% at 50% 55%, rgba(255,255,255,.35), transparent 80%);
-
-  opacity:.1; pointer-events:none;
+/* 楕円リングの外枠にフィット */
+.hall-stage .doors--orbit{
+  position: absolute;
+  inset: 0;
+  margin: 0; width: 100%; height: 100%;
 }
 
-/* ごく僅かな呼吸（揺らぎ） */
-@keyframes seraphiaSway{
-  0%,100%{ transform: translateY(0) }
-  50%    { transform: translateY(-3px) }
-}
-
-/* 動作を控えたい環境へ配慮 */
-@media (prefers-reduced-motion: reduce){
-  .seraphia-silhouette{ animation:none }
-}
-
-
-/* 扉グリッド */
-.doors{ width:min(900px,88vw); margin:32px auto 6vh; display:grid; grid-template-columns:repeat(3,minmax(200px,1fr)); gap:18px }
+/* 扉の基本スタイル（共通） */
 .door{
   position:relative; aspect-ratio:3/4; border-radius:10px; overflow:hidden; text-decoration:none;
   display:flex; align-items:end; justify-content:center; padding:14px 10px; color:#f1e9df; letter-spacing:.12em;
-  background: radial-gradient(180% 100% at 50% 0%, rgba(255,220,160,.06), transparent 60%),
-             repeating-linear-gradient(90deg,#0b0b0d 0 6px,#0f0f12 6px 12px),
-             linear-gradient(180deg,#0a0a0c,#141419);
-  box-shadow: inset 0 0 0 1px rgba(235,205,120,.25), inset 0 0 0 6px rgba(235,205,120,.06),
-              inset 0 0 24px rgba(0,0,0,.65), 0 0 25px rgba(255,220,140,.06);
+  background:
+    radial-gradient(180% 100% at 50% 0%, rgba(255,220,160,.06), transparent 60%),
+    repeating-linear-gradient(90deg,#0b0b0d 0 6px,#0f0f12 6px 12px),
+    linear-gradient(180deg,#0a0a0c,#141419);
+  box-shadow:
+    inset 0 0 0 1px rgba(235,205,120,.25),
+    inset 0 0 0 6px rgba(235,205,120,.06),
+    inset 0 0 24px rgba(0,0,0,.65),
+    0 0 25px rgba(255,220,140,.06);
   transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
   filter: grayscale(20%) contrast(104%) brightness(92%);
 }
 .door::before{content:""; position:absolute; inset:8px; border-radius:8px;
   border:1px solid rgba(235,205,120,.45); box-shadow: inset 0 0 12px rgba(235,205,120,.15); mix-blend-mode:screen; opacity:.9}
 .door::after{content:""; position:absolute; inset:16px; border-radius:6px; border:1px solid rgba(235,205,120,.25); box-shadow: inset 0 0 18px rgba(235,205,120,.08); opacity:.85}
-
-/* 扉の個別画像（差し替えOK） */
-.door--1{background-image:url('assets/doors/ebony1.jpg'); background-size:cover; background-position:center}
-.door--2{background-image:url('assets/doors/ebony2.jpg'); background-size:cover; background-position:center}
-.door--3{background-image:url('assets/doors/ebony3.jpg'); background-size:cover; background-position:center}
-.door--4{background-image:url('assets/doors/ebony4.jpg'); background-size:cover; background-position:center}
-.door--5{background-image:url('assets/doors/ebony5.jpg'); background-size:cover; background-position:center}
-.door--6{background-image:url('assets/doors/ebony6.jpg'); background-size:cover; background-position:center}
-.door--7{background-image:url('assets/doors/ebony7.jpg'); background-size:cover; background-position:center}
-.door--8{background-image:url('assets/doors/ebony8.jpg'); background-size:cover; background-position:center}
-.door--9{background-image:url('assets/doors/ebony9.jpg'); background-size:cover; background-position:center}
-
-/* ラベル（銘板） */
+.glare{position:absolute; inset:0; background:linear-gradient(65deg,transparent 40%,rgba(255,245,210,.28) 50%,transparent 60%); transform:translateX(-120%); filter:blur(1px); opacity:0; transition:opacity .4s ease, transform .9s ease}
+.sparks{position:absolute; inset:0; background:
+  radial-gradient(2px 2px at 20% 30%, rgba(255,240,200,.7), transparent 60%),
+  radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,240,200,.5), transparent 60%),
+  radial-gradient(1.5px 1.5px at 40% 75%, rgba(255,240,200,.35), transparent 60%); opacity:0; transition:opacity .6s ease}
+@media (hover:hover){
+  .door:hover{ transform:translateY(-4px) scale(1.02); box-shadow: inset 0 0 0 1px rgba(255,230,160,.5), inset 0 0 0 6px rgba(255,230,160,.08), inset 0 0 34px rgba(0,0,0,.6), 0 10px 35px rgba(255,210,120,.18); filter:saturate(1.08) contrast(1.05) }
+  .door:hover .glare{ opacity:.9; transform:translateX(120%) }
+  .door:hover .sparks{ opacity:.7 }
+}
+.door:focus-visible{ outline:2px solid rgba(255,230,160,.8); outline-offset:3px }
 .door__label{
   position:relative; z-index:2; font-size:clamp(14px,1.5vw,18px);
   padding:.35rem .7rem; background:rgba(0,0,0,.45);
@@ -106,292 +98,130 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   box-shadow:0 0 12px rgba(255,220,150,.08);
 }
 
-/* グリントと星粉 */
-.glare{position:absolute; inset:0; background:linear-gradient(65deg,transparent 40%,rgba(255,245,210,.28) 50%,transparent 60%); transform:translateX(-120%); filter:blur(1px); opacity:0; transition:opacity .4s ease, transform .9s ease}
-.sparks{position:absolute; inset:0; background:
-  radial-gradient(2px 2px at 20% 30%, rgba(255,240,200,.7), transparent 60%),
-  radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,240,200,.5), transparent 60%),
-  radial-gradient(1.5px 1.5px at 40% 75%, rgba(255,240,200,.35), transparent 60%); opacity:0; transition:opacity .6s ease}
-
-/* ホバー＆フォーカス */
-@media (hover:hover){
-  .door:hover{ transform:translateY(-4px) scale(1.02); box-shadow: inset 0 0 0 1px rgba(255,230,160,.5), inset 0 0 0 6px rgba(255,230,160,.08), inset 0 0 34px rgba(0,0,0,.6), 0 10px 35px rgba(255,210,120,.18); filter:saturate(1.08) contrast(1.05) }
-  .door:hover .glare{ opacity:.9; transform:translateX(120%) }
-  .door:hover .sparks{ opacity:.7 }
+/* ───────── 楕円リング：浮遊配置 ───────── */
+.hall-stage .doors--orbit .door{
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%); /* JSで上書き */
+  will-change: transform, filter;
+  transition: transform .45s ease, filter .45s ease;
+  z-index: 1;
 }
-.door:focus-visible{ outline:2px solid rgba(255,230,160,.8); outline-offset:3px }
+.hall-stage .doors--orbit .door[data-front="1"]{
+  filter: saturate(110%) brightness(104%);
+}
+@media (hover:hover){
+  .hall-stage .doors--orbit .door:hover{
+    transform: translate(-50%,-50%) scale(1.06) !important;
+  }
+  .hall-stage .doors--orbit .door .glare,
+  .hall-stage .doors--orbit .door .sparks{
+    display:none !important;
+  }
+}
 
-/* 囁き（薄れても消えない） */
-.whisper{ position:fixed; right:max(20px,4vw); bottom:max(18px,4vh); max-width:38ch; font-size:clamp(12px,1.2vw,16px); line-height:1.9; letter-spacing:.06em; color:#cbbfb6; pointer-events:none; user-select:none }
-.whisper .line{ display:inline-block; opacity:0; filter:blur(.3px); animation:appear 1800ms ease forwards, breathe 6s ease-in-out infinite }
-@keyframes appear{0%{opacity:0; transform:translateY(6px)}100%{opacity:.85; transform:translateY(0)}}
-@keyframes breathe{0%,100%{opacity:.85; transform:translateY(0)}50%{opacity:.45; transform:translateY(-3px)}}
+/* モバイル：読みやすさ優先でグリッドに退避 */
+@media (max-width: 720px){
+  .hall-stage{ height: auto; }
+  .hall-stage .doors--orbit{
+    position: static;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    width: min(92vw, 720px);
+    margin: 0 auto;
+    height: auto;
+  }
+  .hall-stage .doors--orbit .door{
+    position: static; transform:none; will-change:auto; z-index:auto;
+  }
+}
+
+/* ───────── セラフィア（中央固定） ───────── */
+.seraphia-silhouette{
+  position: fixed;
+  left: 50%;
+  top: 52vh; /* 50〜56vhで好みに調整 */
+  transform: translate(-50%, -50%);
+  width: min(28vmin, 320px);
+  aspect-ratio: 3/5;
+  background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
+  opacity: .12;
+  filter: grayscale(100%) contrast(128%) brightness(128%);
+  mix-blend-mode: screen;
+  pointer-events: none; user-select: none;
+  z-index: 3;
+  animation: seraphiaSway 14s ease-in-out infinite;
+}
+.seraphia-silhouette::after{
+  content:""; position:absolute; inset:-12%;
+  background:
+    radial-gradient(60% 60% at 50% 55%, rgba(255,220,160,.18), transparent 80%),
+    radial-gradient(40% 40% at 50% 55%, rgba(255,240,210,.32), transparent 70%),
+    radial-gradient(18% 18% at 50% 55%, rgba(255,255,255,.35), transparent 80%);
+  filter: blur(14px);
+  opacity: .9;
+  animation: glowPulse 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes seraphiaSway{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+@keyframes glowPulse{ 0%,100%{ opacity:.8; filter:blur(12px) } 50%{ opacity:1; filter:blur(16px) } }
+
+/* ───────── 囁き（中央下） ───────── */
+.whisper{
+  position: fixed;
+  left: 50%;
+  bottom: 7vh;
+  transform: translateX(-50%);
+  max-width: 42ch;
+  text-align: center;
+  color: #cbbfb6;
+  font-style: italic;
+  letter-spacing: .06em;
+  z-index: 4;
+  pointer-events: none; user-select: none;
+}
+.whisper .line{
+  display:inline-block; opacity:0; filter: blur(.3px);
+  animation: appear 1400ms ease forwards, breathe 6s ease-in-out infinite;
+}
+@keyframes appear{ to{ opacity:.85; transform:none } }
+@keyframes breathe{ 0%,100%{ opacity:.85; transform:translateY(0) } 50%{ opacity:.45; transform:translateY(-3px) } }
 
 /* フッター */
 .mini{ display:flex; justify-content:center; padding:14px 0 24px }
 .ghost{ background:transparent; border:1px solid rgba(255,255,255,.22); color:#e9e1d9; padding:.5rem .8rem; border-radius:8px; letter-spacing:.06em; cursor:pointer; transition:background .2s ease, transform .2s ease }
 .ghost:hover{ background:rgba(255,255,255,.08); transform:translateY(-1px) }
 
-/* レスポンシブ */
-@media (max-width:768px){ .doors{ grid-template-columns:1fr 1fr; gap:14px } .door{ aspect-ratio:5/4 } }
-.seraphia-silhouette{ opacity:0; animation: seraphiaIn 1.6s ease .6s forwards }
-@keyframes seraphiaIn{
-  from{ opacity:0; transform:translateY(6px) }
-  to  { opacity:.10; transform:translateY(0) }
-}
-/* 大広間の2カラム：左=扉、右=セラフィアの余白 */
-.hall-grid{
-  width: min(1100px, 92vw);
-  margin: 4vh auto 8vh;
-  padding: 0 22px;
-  display: grid;
-  grid-template-columns: 1fr min(26vw, 300px); /* 右に専用スペース */
-  gap: 28px;
-  align-items: end;
-}
-
-/* 2カラム：左=扉 右=セラフィア用スペース */
-.hall-grid{
-  width: min(1100px, 92vw);
-  margin: 4vh auto 8vh;
-  padding: 0 22px;
-  display: grid;
-  grid-template-columns: 1fr min(28vw, 320px);
-  gap: 28px;
-  align-items: end;
-}
-.hall-grid .doors{ grid-column: 1 / 2; z-index: 2; }
-.hall-grid .seraphia-space{ grid-column: 2 / 3; min-height: 40vh; }
-
-/* 画面に“固定”されたセラフィア本体（右列の内側にぴったり） */
-.seraphia-silhouette{
-  position: fixed;
-  /* 右マージン = (画面幅 - コンテナ幅)/2 + コンテナの左右padding */
-  right: calc((100vw - min(1100px, 92vw)) / 2 - 140px);
-  bottom: 8vh;
-
-  width: min(50vw, 300px);
-  aspect-ratio: 3/5;
-  background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
-  opacity: .10;
-  filter: grayscale(100%) contrast(120%) brightness(130%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-  user-select: none;
-  z-index: 1;               /* 扉より奥に */
-}
-
-/* ほんのり呼吸（任意） */
-@keyframes seraphiaSway{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
-@media (prefers-reduced-motion: no-preference){
-  .seraphia-silhouette{ animation: seraphiaSway 14s ease-in-out infinite; }
-}
-
-/* モバイルは1カラムにして重なり回避 */
-@media (max-width: 768px){
-  .hall-grid{ grid-template-columns: 1fr; gap: 18px; }
-  .hall-grid .seraphia-space{ display:none; }
-  .seraphia-silhouette{
-    right: 16px;            /* 右端に寄せる */
-    width: min(42vw, 220px);
-    opacity: .08;
-  }
-}
-@keyframes glowPulse {
-  0%,100% { opacity: .8; filter: blur(12px); }
-  50%     { opacity: 1;   filter: blur(16px); }
-}
-
-.seraphia-silhouette::after {
-  animation: glowPulse 6s ease-in-out infinite;
-}
-/* ✨ 基本のセラフィア（通常時） */
-.seraphia-silhouette {
-  opacity: .12;
-  filter: grayscale(100%) contrast(120%) brightness(128%);
-  transition: filter 1.2s ease, opacity 1.2s ease;
-}
-
-/* 後光（通常時） */
-.seraphia-silhouette::after {
-  content:"";
-  position:absolute; inset:-12%;
-  background:
-    radial-gradient(60% 60% at 50% 55%, rgba(255,220,160,.18), transparent 80%),
-    radial-gradient(40% 40% at 50% 55%, rgba(255,240,210,.32), transparent 70%),
-    radial-gradient(18% 18% at 50% 55%, rgba(255,255,255,.35), transparent 80%);
-  filter: blur(14px);
-  opacity:.9;
-  transition: filter 1.2s ease, opacity 1.2s ease;
-  animation: glowPulse 6s ease-in-out infinite;
-  pointer-events: none;
-}
-
-/* 💫 マウスが触れた瞬間、輝きが強くなる */
-.seraphia-silhouette:hover {
-  opacity: .16;
-  filter: grayscale(100%) contrast(135%) brightness(150%);
-}
-
-.seraphia-silhouette:hover::after {
-  opacity: 1;
-  filter: blur(24px) brightness(150%);
-}
-
-/* 扉を必ず前面に。セラフィアは奥に */
-.doors{ position: relative; z-index: 2; }
-.seraphia-silhouette{ z-index: 1; } /* PC時も一応明示 */
-
-/* モバイルではブレンドを通常に、光をやや控えめに */
-@media (max-width: 768px){
-  .seraphia-silhouette{
-    right: 16px;              /* 右端寄せ（好みでOK） */
-    width: min(42vw, 220px);  /* 画面に合わせて小さめ */
-    opacity: .08;
-    mix-blend-mode: normal;   /* ← これが重要：画面全体の“洗い”を防ぐ */
-    filter: grayscale(100%) contrast(112%) brightness(112%);
-  }
-  .seraphia-silhouette::after{
-    /* 発光の範囲を小さく＆弱めにして、画面全体を白くしない */
-    inset: -4%;
-    background:
-      radial-gradient(36% 36% at 58% 58%, rgba(255,240,210,.22), transparent 70%),
-      radial-gradient(18% 18% at 58% 58%, rgba(255,255,255,.26), transparent 80%);
-    filter: blur(10px);
-    opacity: .85;
-    animation: none;          /* 呼吸アニメを止めるとさらに安定（好みで） */
-  }
-}
-/* =============== モバイル調整パック =============== */
-@media (max-width: 768px){
-
-  /* タイトル周り：少しだけコンパクトに */
+/* モバイル細調整 */
+@media (max-width:768px){
   .hero{ padding: 5vh 16px 8px; }
   .hero h1{ letter-spacing:.12em; font-size: clamp(22px, 6vw, 32px); text-shadow: none; }
   .subtitle{ font-size: clamp(11px, 3.8vw, 14px); opacity:.75; }
-
-  /* 大広間2カラム → 1カラムへ。扉の下に余白を少し増やす */
-  .hall-grid{
-    grid-template-columns: 1fr;
-    gap: 14px;
-    width: min(96vw, 720px);
-    margin: 12px auto 56px;
-    padding: 0 12px;
-  }
-  /* 右列の“空席”は不要 */
-  .hall-grid .seraphia-space{ display:none; }
-
-  /* セラフィア：右下固定のまま、サイズと発光を抑える（画面が白く洗われないように） */
-  .seraphia-silhouette{
-    right: 12px;           /* もう少し右へ寄せたいなら 8px → 4px もOK */
-    bottom: 10vh;          /* 指が当たりづらい高さ */
-    width: min(46vw, 220px);
-    opacity: .08;
-    mix-blend-mode: normal; /* ← 重要：全体が白っぽくならないように */
-    filter: grayscale(100%) contrast(112%) brightness(112%);
-    z-index: 1;             /* 扉より奥 */
-  }
-  .seraphia-silhouette::after{
-    inset: -2%;
-    background:
-      radial-gradient(36% 36% at 58% 58%, rgba(255,240,210,.22), transparent 70%),
-      radial-gradient(18% 18% at 58% 58%, rgba(255,255,255,.24), transparent 80%);
-    filter: blur(10px);
-    opacity: .9;
-    animation: none;        /* 動きを止めて視認性と省電力 */
-  }
-
-  /* 扉グリッド：2列 → 画面幅に応じて1〜2列に自動調整 */
-  .doors{
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
-    gap: 12px;
-    width: 100%;
-    margin: 8px auto 0;
-  }
-  @media (max-width: 420px){
-    .doors{ grid-template-columns: 1fr; }
-  }
-
-  /* 扉カード：比率・影・タップしやすい余白に最適化 */
-  .door{
-    aspect-ratio: 16/9;              /* 横長にして文字が収まりやすく */
-    border-radius: 12px;
-    padding: 10px;
-    box-shadow:
-      inset 0 0 0 1px rgba(235,205,120,.22),
-      inset 0 0 0 5px rgba(235,205,120,.05),
-      inset 0 0 18px rgba(0,0,0,.55),
-      0 6px 18px rgba(0,0,0,.35);
-    filter: grayscale(16%) contrast(102%) brightness(96%);
-  }
-  .door::before{ inset: 7px; border-radius: 9px; box-shadow: inset 0 0 10px rgba(235,205,120,.12); }
-  .door::after { inset: 14px; border-radius: 7px; }
-
-  /* ラベル（銘板）：指で読みやすいサイズに */
-  .door__label{
-    font-size: clamp(13px, 3.6vw, 15px);
-    padding: .35rem .6rem;
-    border-radius: 8px;
-    background: rgba(0,0,0,.5);
-  }
-
-  /* ホバー演出はスマホでは効かないので、視覚負荷を軽く */
-  .glare, .sparks{ display:none; }   /* 省電力 + 誤タップ防止 */
-
-  /* 囁き：下ナビに隠れないように安全域を確保 */
-  .whisper{
-    right: 12px;
-    bottom: calc(12px + env(safe-area-inset-bottom));
-    max-width: 30ch;
-    font-size: clamp(11px, 3.4vw, 14px);
-    line-height: 1.8;
-    opacity: .9;
-  }
-
-  /* フッター：指で押しやすく */
-  footer.mini{ padding: 10px 0 calc(12px + env(safe-area-inset-bottom)); }
-  .ghost{ padding: .55rem .9rem; border-radius: 10px; font-size: 14px; }
-
-  /* 背景のビネットを少し弱めて“真っ白化”を回避 */
-  .vignette{ inset: -10vmax; background: radial-gradient(ellipse at 50% 40%, transparent 52%, rgba(0,0,0,.6) 82%); }
-  .floor-glow{ height: 20vh; filter: blur(8px); }
+  .whisper{ bottom: calc(12px + env(safe-area-inset-bottom)); max-width: 30ch; font-size: clamp(11px, 3.4vw, 14px) }
 }
-/* ============= モバイル調整ここまで ============= */
-/* 鏡の間：ズーム量を変数で調整できる */
-.door--1{
-  /* ← ここが「つまみ」：大きすぎるなら 200% → 170% / 160% へ下げる */
-  --mirror-zoom: 100%;
-  --mirror-x: 50%;
-  --mirror-y: 48%;
 
+/* ───────── 個別扉の仕上げ ───────── */
+
+/* 鏡の間：鏡面だけを大きく、白ハイライトは出さない */
+.door--1{
+  --mirror-zoom: 180%;  /* 大きすぎれば 160% などに */
+  --mirror-x: 50%; --mirror-y: 48%;
   background: none !important;
   background-image: url('assets/doors/door_mirror.png') !important;
   background-repeat: no-repeat !important;
   background-size: var(--mirror-zoom) !important;
   background-position: var(--mirror-x) var(--mirror-y) !important;
-
-  /* 共通の枠や木目を無効化 */
-  box-shadow: inset 0 0 24px rgba(0,0,0,.55), 0 10px 24px rgba(0,0,0,.45);
-  border: none !important;
+  border: none !important; box-shadow: none !important; outline: none !important;
   background-color: rgba(0,0,0,.25);
   filter: grayscale(100%) contrast(110%) brightness(98%);
   position: relative;
 }
-
-/* 縦線テクスチャ・枠を完全OFF */
 .door--1::before,
-.door--1::after{
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* “鏡のキラッ”だけ再定義（必要に応じて残す） */
+.door--1::after{ border:none !important; box-shadow:none !important; }
 .door--1::before{
   content:""; position:absolute; inset:0; pointer-events:none;
   background:
     linear-gradient(180deg, rgba(255,255,255,.10) 0%, transparent 35%),
-    repeating-linear-gradient(90deg,
-      rgba(255,255,255,.06) 0 1px, rgba(255,255,255,0) 1px 4px);
+    repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, rgba(255,255,255,0) 1px 4px);
   mix-blend-mode: screen; opacity:.45; transition:opacity .4s ease;
 }
 .door--1::after{
@@ -400,134 +230,41 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   mix-blend-mode: screen; opacity:.35; transition:opacity .4s ease, transform .6s ease;
 }
 @media (hover:hover){
-  .door--1:hover{ filter: grayscale(100%) contrast(115%) brightness(103%); }
-  .door--1:hover::before{ opacity:.6; }
-  .door--1:hover::after{ opacity:.5; transform: translateX(-1px); }
+  .door--1:hover{ transform: translate(-50%,-50%) scale(1.05) !important; filter: grayscale(100%) contrast(115%) brightness(103%) }
+  .door--1:hover::before{ opacity:.6 }
+  .door--1:hover::after{ opacity:.5; transform: translateX(-1px) }
 }
-/* ===== 鏡の間：白い光を消して、拡大だけ残す ===== */
-@media (hover:hover){
-  .door--1 {
-    transition: transform .45s ease, filter .45s ease;
-  }
 
-  .door--1:hover {
-    transform: scale(1.05); /* ← これで少しだけふわっと拡大 */
-    filter: grayscale(100%) contrast(115%) brightness(102%);
-    box-shadow:
-      inset 0 0 24px rgba(0,0,0,.55),
-      0 10px 24px rgba(0,0,0,.45) !important; /* 白い縁は出さない */
-  }
-
-  /* 白いグレア線・星粉は非表示のまま */
-  .door--1 .glare,
-  .door--1 .sparks {
-    display: none !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
-
-  /* 自前ハイライトは固定（光が強まらないように） */
-  .door--1::before { opacity: .45 !important; }
-  .door--1::after  { opacity: .35 !important; transform: none !important; }
-}
-/* ===== 書斎の間：金枠・装飾を完全OFF ===== */
+/* 書斎の間：蝋燭が内側から“ほわっ”と広がる */
 .door--2{
-  --study-zoom: 100%;
-  --study-x: 50%;
-  --study-y: 50%;
-
+  --study-zoom: 180%;  /* 小さくするなら 160% 等に */
+  --study-x: 50%; --study-y: 50%;
   background: none !important;
   background-image: url('assets/doors/door_study.png') !important;
   background-repeat: no-repeat !important;
   background-size: var(--study-zoom) !important;
   background-position: var(--study-x) var(--study-y) !important;
-
-  /* 共通の金枠を無効化 */
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-
-  /* 金の縁や装飾を上書きで消す */
+  border: none !important; box-shadow: none !important; outline: none !important;
   background-color: rgba(0,0,0,.25);
-  background-blend-mode: normal;
   filter: contrast(110%) brightness(104%) saturate(115%);
   position: relative;
   transition: transform .45s ease, filter .45s ease;
 }
-
-/* 共通フレームの疑似要素を上書きで打ち消す */
-/* 書斎の間：内側から“ほわっ”と光を広げる */
-.door--2::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+.door--2::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
   background:
     radial-gradient(circle at 50% 55%, rgba(255, 210, 150, .22), transparent 60%),
     radial-gradient(circle at 50% 55%, rgba(255, 190, 120, .15), transparent 80%);
-  mix-blend-mode: screen;
-  opacity: .25;
-  transform: scale(0.95);
-  filter: blur(2px);
-  transition: opacity 0.8s ease, transform 1s ease;
+  mix-blend-mode: screen; opacity:.25; transform: scale(0.95); filter: blur(2px);
+  transition: opacity .8s ease, transform 1s ease, filter 1s ease;
 }
-
-/* ゆるやかに光が広がる（蝋燭が息をするように） */
-.door--2:hover::before {
-  opacity: .65;
-  transform: scale(1.1);
-  filter: blur(6px);
+.door--2::after{
+  content:""; position:absolute; inset:0;
+  background: radial-gradient(50% 60% at 50% 75%, rgba(255, 180, 100, .18), transparent 80%);
+  mix-blend-mode: screen; opacity:.25; transition: opacity 1.2s ease;
 }
-
-/* 柔らかい反射光：扉の下の方が少し暖かくなる */
-.door--2::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(50% 60% at 50% 75%, rgba(255, 180, 100, .18), transparent 80%);
-  mix-blend-mode: screen;
-  opacity: .25;
-  transition: opacity 1.2s ease;
-}
-
-.door--2:hover::after {
-  opacity: .45;
-}
-/* 楕円リング：中央にセラフィア、周囲に部屋が漂う */
-.doors--orbit{
-  position: relative;
-  display: block;              /* グリッドを解除 */
-  width: min(980px, 92vw);
-  height: min(66vh, 620px);    /* リング領域の高さ */
-  margin: 2rem auto 6vh;
-  isolation: isolate;
-}
-.doors--orbit .door{
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%); /* JSで上書き */
-  will-change: transform, filter;
-  transition: transform .45s ease, filter .45s ease;
-  z-index: 1;
-}
-/* 手前に来たものを少しだけ明るく（JSのz-indexと相性◎） */
-.doors--orbit .door[data-front="1"]{
-  filter: saturate(110%) brightness(104%);
-}
-/* ホバー時は“ふわっ”と拡大だけ（白い光は出さない） */
 @media (hover:hover){
-  .doors--orbit .door:hover{ transform: translate(-50%,-50%) scale(1.06) !important; }
-  .doors--orbit .door .glare,
-  .doors--orbit .door .sparks{ display:none !important; }
-}
-/* モバイルは自動で2列グリッドに戻す（読みやすさ優先） */
-@media (max-width: 720px){
-  .doors--orbit{
-    display:grid; grid-template-columns: 1fr 1fr; gap:12px;
-    height: auto; width: min(92vw, 720px);
-  }
-  .doors--orbit .door{
-    position: static; transform:none; will-change:auto; z-index:auto;
-  }
+  .door--2:hover{ transform: translate(-50%,-50%) scale(1.06) !important; filter: contrast(120%) brightness(110%) saturate(125%) }
+  .door--2:hover::before{ opacity:.65; transform: scale(1.1); filter: blur(6px) }
+  .door--2:hover::after{ opacity:.45 }
 }
