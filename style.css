@@ -357,57 +357,55 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   .floor-glow{ height: 20vh; filter: blur(8px); }
 }
 /* ============= モバイル調整ここまで ============= */
-/* 鏡の間：外枠は見切らせて“鏡面だけ”を見せる */
+/* ---- 鏡の間：外枠を完全OFFにして鏡面だけ見せる ---- */
 .door--1{
-  /* 画像を拡大して外の装飾枠を画面外に追い出す */
   background-image: url('assets/doors/door_mirror.png');
   background-repeat: no-repeat;
-  background-size: 140%;      /* ← 枠を隠すために拡大（120〜170%で微調整） */
-  background-position: 50% 48%; /* ← 鏡面の中心に合わせる（上下左右で調整） */
+  background-size: 200%;        /* ← さらに拡大（180〜240%で調整可） */
+  background-position: 50% 48%; /* ← 中央合わせはここで微調整 */
 
-  /* ベースの冷たいトーン（お好みで微調整） */
-  filter: grayscale(100%) contrast(108%) brightness(96%);
+  /* 共通の金枠を無効化（この行が“白い枠”対策の核心） */
+  box-shadow: inset 0 0 0 0 transparent,
+              inset 0 0 0 0 transparent,
+              inset 0 0 24px rgba(0,0,0,.55),
+              0 10px 24px rgba(0,0,0,.45);
 
-  /* 透過部の下に薄い黒を入れて、額縁の金と喧嘩しないように */
   background-color: rgba(0,0,0,.25);
+  filter: grayscale(100%) contrast(110%) brightness(98%);
   position: relative;
 }
 
-/* 常時の“鏡のキラッ”を足す：縦筋＋上からのハイライト */
+/* 共通フレームが ::before/::after に付いていた場合をリセット */
+.door--1::before,
+.door--1::after{
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ここから“鏡のキラッ”だけを再定義して上書き */
 .door--1::before{
   content:""; position:absolute; inset:0; pointer-events:none;
   background:
-    /* 上からの柔らかい光 */
     linear-gradient(180deg, rgba(255,255,255,.10) 0%, transparent 35%),
-    /* 鏡の縦筋（ヘアラインっぽい筋） */
     repeating-linear-gradient(90deg,
-      rgba(255,255,255,.05) 0 1px,
-      rgba(255,255,255,0)   1px 5px);
+      rgba(255,255,255,.06) 0 1px,
+      rgba(255,255,255,0)   1px 4px);
   mix-blend-mode: screen;
-  opacity: .42;               /* 0.35〜0.55 の範囲で好み */
+  opacity: .45;                 /* 0.35〜0.65で好み調整 */
   transition: opacity .4s ease;
 }
-
-/* 右側に蝋燭のほのかな反射（常時うっすら） */
 .door--1::after{
   content:""; position:absolute; inset:0; pointer-events:none;
-  background:
-    radial-gradient(40% 60% at 78% 52%, rgba(255,200,120,.18), transparent 70%);
+  background: radial-gradient(40% 60% at 78% 52%, rgba(255,200,120,.18), transparent 70%);
   mix-blend-mode: screen;
   opacity:.35;
   transition: opacity .4s ease, transform .6s ease;
 }
 
-/* ホバー時（PC）：さらに“キラッ” */
+/* PCホバー時に“少しだけ”強く */
 @media (hover:hover){
   .door--1:hover{ filter: grayscale(100%) contrast(115%) brightness(103%); }
-  .door--1:hover::before{ opacity:.58; }
+  .door--1:hover::before{ opacity:.6; }
   .door--1:hover::after{ opacity:.5; transform: translateX(-1px); }
-}
-
-/* 銘板は少し濃くして読みやすく */
-.door--1 .door__label{
-  background: rgba(0,0,0,.55);
-  border-color: rgba(235,205,120,.45);
 }
 
