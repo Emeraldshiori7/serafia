@@ -432,7 +432,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 }
 /* 書斎の間：深い焦げ茶の木製扉＋蝋燭の暖光 */
 .door--2{
-  --study-zoom: 180%;   /* ← 大きさの調整。大きければ数字を下げてね */
+  --study-zoom: 100%;   /* ← 大きさの調整。大きければ数字を下げてね */
   --study-x: 50%;
   --study-y: 50%;
 
