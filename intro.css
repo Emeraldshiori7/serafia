@@ -1,19 +1,8 @@
-/* 速度変数（端末の設定に追従） */
-@media (prefers-reduced-motion: reduce) {
-  :root { --dur: .4s; --slow: .6s; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  :root { --dur: 1s; --slow: 1.2s; }
-}
-
 :root{
   --ink:#e4dcd4;
   --glow: rgba(255,236,200,.35);
 }
 
-/* 全体 */
-*{ box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
 body.intro{
   background: radial-gradient(1200px 800px at 50% 60%, #0a0a0e 0%, #000 60%);
   color: var(--ink);
@@ -21,31 +10,34 @@ body.intro{
   overflow: hidden;
 }
 
-/* 星屑キャンバス（全面・背面固定） */
+/* 星屑レイヤー */
 #stars{
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-  display: block;
   z-index: 0;
-  filter: brightness(.95);
+  display: block;
+  filter: brightness(0.95);
 }
 
-/* 画面要素 */
-.stage{
-  position: relative;
-  width: 100vw; height: 100vh;
-  z-index: 1; /* 星より前に */
-  pointer-events: none; /* ボタン以外はクリック透過 */
-}
-
+/* タイトル */
 .title{
-  position: absolute; top: 36%; left: 50%;
-  transform: translate(-50%, -50%) translateY(10px) scale(1.02);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1.05);
   text-align: center;
   opacity: 0;
-  animation: titleIn var(--slow) ease forwards 1.2s;
+  transition: opacity 1.5s ease, transform 1.5s ease;
+}
+.title.show{
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.title.fade{
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.96);
 }
 .title h1{
   margin: 0;
@@ -53,36 +45,47 @@ body.intro{
   letter-spacing: .12em;
   text-shadow: 0 0 18px var(--glow);
 }
-.title .subtitle{
-  margin: .6rem 0 0;
-  color:#b8aca4; font-style: italic;
+.subtitle{
+  margin-top: .5rem;
+  font-style: italic;
   font-size: clamp(12px, 2.3vw, 16px);
-  opacity: 0; transform: translateY(6px);
-  animation: subIn var(--dur) ease forwards 1.9s;
+  color: #b8aca4;
+  opacity: 0;
+  transition: opacity 1.2s ease;
 }
-
-/* スキップボタン */
-.ui{ pointer-events: auto; }
-.skip{
-  position: absolute; right: 18px; top: 16px;
-  z-index: 5;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.15);
-  color: #e9e1d9; padding: .45rem .7rem; font-size: .85rem;
-  letter-spacing: .06em; border-radius: 6px;
-  backdrop-filter: blur(6px);
+.subtitle.show{
+  opacity: 0.8;
+}
+.subtitle.fade{
+  opacity: 0;
 }
 
 /* 白フェード */
 .whiteout{
-  position: fixed; inset:0; background:#fff;
-  opacity: 0; pointer-events: none; z-index: 10;
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 1s ease;
+}
+.whiteout.show{
+  opacity: 1;
 }
 
-/* アニメ */
-@keyframes titleIn{
-  to{ opacity:1; transform: translate(-50%, -50%) translateY(0) scale(1); }
-}
-@keyframes subIn{
-  to{ opacity:.9; transform: translateY(0); }
+/* スキップボタン */
+.skip{
+  position: absolute;
+  right: 18px;
+  top: 16px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.15);
+  color: #e9e1d9;
+  padding: .45rem .7rem;
+  font-size: .85rem;
+  border-radius: 6px;
+  letter-spacing: .06em;
+  backdrop-filter: blur(6px);
+  z-index: 20;
 }

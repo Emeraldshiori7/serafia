@@ -1,4 +1,6 @@
-// ========== 星屑（canvas） ==========
+// -------------------------
+// 光の粒（星屑）エフェクト
+// -------------------------
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
@@ -6,7 +8,6 @@ let W, H;
 let stars = [];
 
 function fit() {
-  // デバイスピクセル比に対応
   const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
   W = canvas.width  = Math.floor(window.innerWidth  * dpr);
   H = canvas.height = Math.floor(window.innerHeight * dpr);
@@ -18,38 +19,39 @@ function fit() {
 
 function makeStars() {
   stars = [];
-  // 画面サイズに応じて密度を決定
   const count = Math.floor((window.innerWidth * window.innerHeight) / 6000);
   for (let i = 0; i < count; i++) {
     stars.push({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
       r: Math.random() * 1.2 + 0.3,
-      a: Math.random() * Math.PI * 2, // 進行角
-      s: Math.random() * 0.35 + 0.1,   // 速度
-      f: Math.random() * Math.PI * 2   // 点滅位相
+      a: Math.random() * Math.PI * 2,
+      s: Math.random() * 0.35 + 0.1,
+      f: Math.random() * Math.PI * 2
     });
   }
 }
 
+let glowPhase = 0;
 function draw() {
   ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-  ctx.fillStyle = "#ffffff";
+
+  // 全体の明滅（呼吸のような光）
+  glowPhase += 0.008;
+  const globalGlow = 0.3 + 0.7 * Math.sin(glowPhase);
 
   for (const p of stars) {
-    // ふわっとした点滅
-    const alpha = 0.55 + 0.45 * Math.sin(p.f);
-    ctx.globalAlpha = alpha;
+    const alpha = 0.4 + 0.4 * Math.sin(p.f + glowPhase * 0.5);
+    ctx.globalAlpha = alpha * globalGlow;
+    ctx.fillStyle = "#ffffff";
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
     ctx.fill();
 
-    // ゆっくり漂う
     p.x += Math.cos(p.a) * p.s;
     p.y += Math.sin(p.a) * p.s;
     p.f += 0.02;
 
-    // 端でループ
     if (p.x < 0) p.x = window.innerWidth;
     if (p.x > window.innerWidth) p.x = 0;
     if (p.y < 0) p.y = window.innerHeight;
@@ -58,12 +60,38 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-// 初期化
 window.addEventListener("resize", fit);
 fit();
 draw();
 
-// ========== スキップ（今は白フェードせず即終了・必要なら後で追加） ==========
+// -------------------------
+// 題名・フェード遷移制御
+// -------------------------
+const title = document.querySelector(".title");
+const subtitle = document.querySelector(".subtitle");
+const whiteout = document.querySelector(".whiteout");
+
+// 1. 題名表示
+setTimeout(() => {
+  title.classList.add("show");
+  subtitle.classList.add("show");
+}, 1000);
+
+// 2. 題名フェードアウト
+setTimeout(() => {
+  title.classList.add("fade");
+  subtitle.classList.add("fade");
+}, 6000);
+
+// 3. 白フェード＆遷移
+setTimeout(() => {
+  whiteout.classList.add("show");
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 1000);
+}, 8000);
+
+// スキップボタン
 document.getElementById("skipBtn").addEventListener("click", () => {
   window.location.href = "index.html";
 });
