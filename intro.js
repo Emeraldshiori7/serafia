@@ -64,34 +64,40 @@ window.addEventListener("resize", fit);
 fit();
 draw();
 
-// -------------------------
-// 題名・フェード遷移制御
-// -------------------------
-const title = document.querySelector(".title");
-const subtitle = document.querySelector(".subtitle");
-const whiteout = document.querySelector(".whiteout");
+// ===== 遷移ユーティリティ =====
+function goHome() {
+  // intro.html と同じフォルダにある index.html に確実に解決
+  const url = new URL('./index.html', window.location.href).toString();
+  window.location.assign(url);        // historyに残してOKなら assign
+  // 履歴を残したくなければ → window.location.replace(url);
+}
 
-// 1. 題名表示
+// ===== フロー制御 =====
+const whiteout  = document.querySelector('.whiteout');
+const title     = document.querySelector('.title');
+const subtitle  = document.querySelector('.subtitle');
+
+// 1. 題名出現
 setTimeout(() => {
-  title.classList.add("show");
-  subtitle.classList.add("show");
+  title?.classList.add('show');
+  subtitle?.classList.add('show');
 }, 1000);
 
 // 2. 題名フェードアウト
 setTimeout(() => {
-  title.classList.add("fade");
-  subtitle.classList.add("fade");
+  title?.classList.add('fade');
+  subtitle?.classList.add('fade');
 }, 6000);
 
-// 3. 白フェード＆遷移
+// 3. 白フェード → 遷移
 setTimeout(() => {
-  whiteout.classList.add("show");
-  setTimeout(() => {
-    window.location.href = "index.html";
-  }, 1000);
+  whiteout?.classList.add('show');
+  setTimeout(goHome, 1000);
 }, 8000);
 
-// スキップボタン
-document.getElementById("skipBtn").addEventListener("click", () => {
-  window.location.href = "index.html";
-});
+// 4. スキップでも遷移
+document.getElementById('skipBtn')?.addEventListener('click', goHome);
+
+// （デバッグ用）失敗時にコンソールへ
+setTimeout(() => console.log('intro done – trying to go home…'), 7900);
+
