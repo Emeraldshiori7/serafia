@@ -1,56 +1,55 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <script>
-  // まだ見てないときだけ intro へ
-  if (localStorage.getItem('introSeen') !== '1') {
-    window.location.replace('./intro.html');
-  }
-</script>
-
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>セラフィアの館 — 大広間</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    body{margin:0; height:100vh; display:grid; place-items:center;
-      background: radial-gradient(1100px 800px at 50% 60%, #0b0b10 0%, #000 60%); color:#e9e2da;
-      font-family: "Shippori Mincho B1","Yu Mincho","Hiragino Mincho ProN",serif;
-    }
-    .hall{ text-align:center }
-    h1{ margin:0 0 .6rem; letter-spacing:.14em; font-weight:800 }
-    .doors{ display:grid; grid-template-columns: repeat(3, minmax(120px, 1fr));
-      gap:12px; margin-top:18px; max-width:640px }
-    .door{ text-decoration:none; color:#e9e2da; padding:.6rem .8rem;
-      border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06);
-      border-radius:8px; backdrop-filter: blur(6px); }
-    .door:hover{ background: rgba(255,255,255,.12) }
-    .again{ display:block; margin-top:18px; opacity:.8; font-size:.9rem }
-  </style>
-  <script>
-    // まだ儀式を見てなければintroへ
-    if(!localStorage.getItem('introSeen')){
-      window.location.replace('intro.html');
-    }
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>セラフィアの館</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
 </head>
-<body>
-  <div class="hall">
-    <h1>セラフィアの館</h1>
-    <p>── 大広間。あなたの足音だけが響く。</p>
-    <div class="doors">
-      <a class="door" href="#">鏡の間</a>
-      <a class="door" href="#">書斎</a>
-      <a class="door" href="#">礼拝堂</a>
-      <a class="door" href="#">アトリエ</a>
-      <a class="door" href="#">錬金術室</a>
-      <a class="door" href="#">庭園</a>
-      <a class="door" href="#">私室</a>
-      <a class="door" href="#">客室</a>
-      <a class="door" href="#">儀式の間</a>
-    </div>
-    <a class="again" href="intro.html" onclick="localStorage.removeItem('introSeen')">もう一度、儀式を見る</a>
+<body class="hall">
+  <!-- 背景レイヤー -->
+  <div class="bg">
+    <canvas id="dust" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="floor-glow" aria-hidden="true"></div>
   </div>
+
+  <!-- タイトル -->
+  <header class="hero">
+    <h1>セラフィアの館</h1>
+    <p class="subtitle">── 静寂の中、あなたを待つ光がある。</p>
+  </header>
+
+  <!-- セラフィアの影（立っている気配）-->
+  <div class="seraphia-silhouette" aria-hidden="true"></div>
+
+  <!-- 扉グリッド -->
+  <main class="doors">
+    <a class="door" href="#" data-sub="記録と回想">鏡の間</a>
+    <a class="door" href="#" data-sub="知と静謐">書斎の間</a>
+    <a class="door" href="#" data-sub="祈りと休息">礼拝堂</a>
+    <a class="door" href="#" data-sub="創作の温度">アトリエ</a>
+    <a class="door" href="#" data-sub="術式と記録">錬金術室</a>
+    <a class="door" href="#" data-sub="夜気の庭">庭園</a>
+    <a class="door" href="#" data-sub="秘められた間">私室</a>
+    <a class="door" href="#" data-sub="過ごす部屋">客室</a>
+    <a class="door" href="#" data-sub="静かな儀">儀式の間</a>
+  </main>
+
+  <!-- ささやき -->
+  <div class="whisper">
+    <span class="line">「……ここにいるわ。」</span>
+  </div>
+
+  <!-- フッターメニュー（ミニ） -->
+  <footer class="mini">
+    <button id="reintro" class="ghost">儀式をもう一度</button>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
 
