@@ -238,3 +238,27 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   filter: blur(24px) brightness(150%);
 }
 
+/* 扉を必ず前面に。セラフィアは奥に */
+.doors{ position: relative; z-index: 2; }
+.seraphia-silhouette{ z-index: 1; } /* PC時も一応明示 */
+
+/* モバイルではブレンドを通常に、光をやや控えめに */
+@media (max-width: 768px){
+  .seraphia-silhouette{
+    right: 16px;              /* 右端寄せ（好みでOK） */
+    width: min(42vw, 220px);  /* 画面に合わせて小さめ */
+    opacity: .08;
+    mix-blend-mode: normal;   /* ← これが重要：画面全体の“洗い”を防ぐ */
+    filter: grayscale(100%) contrast(112%) brightness(112%);
+  }
+  .seraphia-silhouette::after{
+    /* 発光の範囲を小さく＆弱めにして、画面全体を白くしない */
+    inset: -4%;
+    background:
+      radial-gradient(36% 36% at 58% 58%, rgba(255,240,210,.22), transparent 70%),
+      radial-gradient(18% 18% at 58% 58%, rgba(255,255,255,.26), transparent 80%);
+    filter: blur(10px);
+    opacity: .85;
+    animation: none;          /* 呼吸アニメを止めるとさらに安定（好みで） */
+  }
+}
