@@ -51,10 +51,11 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   content:""; position:absolute; inset:-12%;
   background:
     conic-gradient(from -90deg at 50% 8%, rgba(255,250,230,.12), transparent 40%)
-    radial-gradient(40% 40% at 50% 55%, rgba(255,240,210,.18), transparent 70%),
-    radial-gradient(18% 18% at 50% 55%, rgba(255,255,255,.22), transparent 80%);
-  filter: blur(10px);
-  opacity:.9; pointer-events:none;
+  radial-gradient(60% 60% at 50% 55%, rgba(255,220,160,.18), transparent 80%),
+  radial-gradient(40% 40% at 50% 55%, rgba(255,240,210,.32), transparent 70%),
+  radial-gradient(18% 18% at 50% 55%, rgba(255,255,255,.35), transparent 80%);
+
+  opacity:.1; pointer-events:none;
 }
 
 /* ごく僅かな呼吸（揺らぎ） */
@@ -173,7 +174,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   aspect-ratio: 3/5;
   background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
   opacity: .10;
-  filter: grayscale(100%) contrast(110%) brightness(108%);
+  filter: grayscale(100%) contrast(120%) brightness(130%);
   mix-blend-mode: screen;
   pointer-events: none;
   user-select: none;
@@ -195,5 +196,13 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
     width: min(42vw, 220px);
     opacity: .08;
   }
+}
+@keyframes glowPulse {
+  0%,100% { opacity: .8; filter: blur(12px); }
+  50%     { opacity: 1;   filter: blur(16px); }
+}
+
+.seraphia-silhouette::after {
+  animation: glowPulse 6s ease-in-out infinite;
 }
 
