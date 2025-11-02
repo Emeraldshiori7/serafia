@@ -456,45 +456,41 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 }
 
 /* 共通フレームの疑似要素を上書きで打ち消す */
-.door--2::before,
-.door--2::after{
-  border: none !important;
-  box-shadow: none !important;
+./* 書斎の間：内側から“ほわっ”と光を広げる */
+door--2::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 55%, rgba(255, 210, 150, .22), transparent 60%),
+    radial-gradient(circle at 50% 55%, rgba(255, 190, 120, .15), transparent 80%);
+  mix-blend-mode: screen;
+  opacity: .25;
+  transform: scale(0.95);
+  filter: blur(2px);
+  transition: opacity 0.8s ease, transform 1s ease;
 }
 
-/* 書斎の間専用：蝋燭の光だけを重ねる */
-.door--2::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
+/* ゆるやかに光が広がる（蝋燭が息をするように） */
+.door--2:hover::before {
+  opacity: .65;
+  transform: scale(1.1);
+  filter: blur(6px);
+}
+
+/* 柔らかい反射光：扉の下の方が少し暖かくなる */
+.door--2::after {
+  content: "";
+  position: absolute;
+  inset: 0;
   background:
-    radial-gradient(40% 60% at 70% 55%, rgba(255,200,130,.25), transparent 80%),
-    linear-gradient(180deg, rgba(255,230,180,.12), transparent 70%);
+    radial-gradient(50% 60% at 50% 75%, rgba(255, 180, 100, .18), transparent 80%);
   mix-blend-mode: screen;
+  opacity: .25;
+  transition: opacity 1.2s ease;
+}
+
+.door--2:hover::after {
   opacity: .45;
-  transition: opacity .5s ease;
 }
-
-/* 反射光（蝋燭の“ゆらぎ”） */
-.door--2::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(35% 60% at 75% 60%, rgba(255,180,100,.12), transparent 75%);
-  mix-blend-mode: screen;
-  opacity:.3;
-  transition: opacity .5s ease;
-}
-
-/* ホバー時（PC） */
-@media (hover:hover){
-  .door--2:hover{
-    transform: scale(1.05);
-    filter: contrast(120%) brightness(110%) saturate(125%);
-  }
-  .door--2:hover::before{ opacity: .65; }
-  .door--2:hover::after{ opacity: .45; }
-}
-
