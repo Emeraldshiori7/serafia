@@ -54,6 +54,8 @@
 
 /* 「儀式をもう一度」 */
 document.getElementById('reintro')?.addEventListener('click', () => {
-  localStorage.removeItem('introSeen');
-  location.href = '/intro';
+  // 消す必要はないけれど、残っていてもritualで無視されます
+  // localStorage.removeItem('introSeen');
+  location.href = './intro.html?ritual';   // ← ここがポイント（相対パス＋?ritual）
 });
+
