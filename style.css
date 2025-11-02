@@ -37,6 +37,82 @@ body.hall{ font-family:"Cormorant Garamond","Yu Mincho",serif; color:var(--ink);
   transform: translate(var(--tx), var(--ty)) translate(-50%,-50%) scale(1.06);
 }
 .door__label{ background:rgba(0,0,0,.5); padding:.35rem .6rem; border-radius:8px; margin:10px }
+/* === 扉をカード→立体的な“古いドア”風に === */
+.door {
+  position: relative;
+  border-radius: 4px; /* 扉なので角をやや鋭く */
+  overflow: hidden;
+  background: linear-gradient(180deg, #201a16, #0e0a07);
+  box-shadow:
+    inset 0 0 0 2px rgba(120,100,60,.35),
+    inset 0 0 0 6px rgba(70,50,30,.25),
+    inset 0 0 20px rgba(0,0,0,.8),
+    0 8px 20px rgba(0,0,0,.6);
+  border: none;
+  transition: transform .4s ease, box-shadow .4s ease, filter .4s ease;
+}
+
+/* 外枠の金属風フレーム */
+.door::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 3px solid rgba(190,160,100,.45);
+  border-radius: 3px;
+  box-shadow:
+    inset 0 0 14px rgba(255,220,150,.15),
+    0 0 8px rgba(255,220,150,.08);
+  pointer-events: none;
+}
+
+/* 扉の中央部分に“段差”と“陰影”を付けて奥行きを出す */
+.door::after {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  border-radius: 2px;
+  background:
+    linear-gradient(145deg, rgba(60,45,25,.3), rgba(0,0,0,.6)),
+    repeating-linear-gradient(0deg, rgba(255,240,200,.05) 0 1px, transparent 1px 3px);
+  box-shadow: inset 0 0 18px rgba(0,0,0,.8);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transition: opacity .4s ease;
+}
+
+/* ハイライトを“縁”に少し加える（木のツヤっぽく） */
+.door::before {
+  background:
+    linear-gradient(90deg, rgba(255,250,200,.06) 0%, transparent 20%, transparent 80%, rgba(255,250,200,.06) 100%);
+}
+
+/* 扉にマウスを当てた時の動き：軽く浮いて、柔らかく光る */
+@media (hover:hover){
+  .door:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow:
+      inset 0 0 0 2px rgba(255,230,170,.5),
+      inset 0 0 0 6px rgba(90,70,40,.25),
+      inset 0 0 24px rgba(0,0,0,.7),
+      0 10px 30px rgba(255,210,120,.18);
+    filter: brightness(1.05) contrast(1.08) saturate(1.1);
+  }
+  .door:hover::after {
+    opacity: .7;
+  }
+}
+
+/* ラベル（部屋名）をドアの“金属プレート”風に */
+.door__label {
+  background: linear-gradient(180deg, rgba(40,35,25,.85), rgba(10,10,8,.9));
+  border: 1px solid rgba(235,205,120,.4);
+  border-radius: 4px;
+  padding: .4rem .9rem;
+  box-shadow:
+    inset 0 1px 3px rgba(255,255,255,.08),
+    0 2px 6px rgba(0,0,0,.6);
+  text-shadow: 0 1px 2px rgba(0,0,0,.9);
+}
 
 /* ── セラフィア：ステージの幾何学中心に絶対配置 ── */
 .seraphia-silhouette{
