@@ -358,6 +358,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 }
 /* ============= モバイル調整ここまで ============= */
 /* 鏡の間：外枠は見切らせて“鏡面だけ”を見せる */
+/* 鏡の間：外枠は見切らせて“鏡面だけ”を見せる */
 .door--1{
   /* 画像を拡大して外の装飾枠を画面外に追い出す */
   background-image: url('assets/doors/door_mirror.png');
@@ -397,6 +398,20 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   opacity:.35;
   transition: opacity .4s ease, transform .6s ease;
 }
+
+/* ホバー時（PC）：さらに“キラッ” */
+@media (hover:hover){
+  .door--1:hover{ filter: grayscale(100%) contrast(115%) brightness(103%); }
+  .door--1:hover::before{ opacity:.58; }
+  .door--1:hover::after{ opacity:.5; transform: translateX(-1px); }
+}
+
+/* 銘板は少し濃くして読みやすく */
+.door--1 .door__label{
+  background: rgba(0,0,0,.55);
+  border-color: rgba(235,205,120,.45);
+}
+
 
 /* ホバー時（PC）：さらに“キラッ” */
 @media (hover:hover){
