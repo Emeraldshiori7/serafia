@@ -224,3 +224,34 @@ body.hall{ font-family:"Cormorant Garamond","Yu Mincho",serif; color:var(--ink);
 
 /* 囁き：画面中央下（ステージとは独立） */
 .whisper{ position:fixed; left:50%; bottom:7vh; transform:translateX(-50%); opacity:.9; text-align:center }
+/* ===== タイトル層を扉より手前に配置 ===== */
+.hero {
+  position: relative;
+  z-index: 5; /* ← 扉(z=2)やセラフィア(z=3)より前に出す */
+  text-align: center;
+  pointer-events: none; /* ← 背景の扉をクリックできるように */
+}
+
+.hero h1 {
+  position: relative;
+  display: inline-block;
+  font-family: "Cinzel", serif;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  font-size: clamp(28px, 6vw, 60px);
+  color: #f3eadf;
+  text-shadow: 0 0 22px rgba(255, 240, 200, 0.6),
+               0 0 48px rgba(255, 220, 150, 0.3);
+  z-index: 5;
+}
+
+.hero .subtitle {
+  position: relative;
+  display: inline-block;
+  margin-top: 0.6rem;
+  color: #d0c4b6;
+  font-size: clamp(13px, 2.6vw, 18px);
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 18px rgba(255, 220, 150, 0.4);
+  z-index: 5;
+}
