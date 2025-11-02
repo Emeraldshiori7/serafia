@@ -58,4 +58,58 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   // localStorage.removeItem('introSeen');
   location.href = './intro.html?ritual';   // ← ここがポイント（相対パス＋?ritual）
 });
+// ===== 楕円リング配置（祭壇＋浮遊） =====
+(() => {
+  const wrap = document.querySelector('.doors--orbit');
+  if (!wrap) return;
+  const doors = [...wrap.querySelectorAll('.door')];
+  if (doors.length === 0) return;
+
+  // 配置パラメータ（好みで調整OK）
+  let ROT_SPEED = 0.0009;   // 全体回転の速さ（小さいほどゆっくり）
+  let SWAY_X    = 6;        // 個別ゆらぎ（px）
+  let SWAY_Y    = 4;
+
+  let cx = 0, cy = 0, rx = 0, ry = 0;
+  const base = doors.map((_, i) => (i / doors.length) * Math.PI * 2);
+  const phase = doors.map((_, i) => Math.random() * Math.PI * 2);
+
+  function resize(){
+    const r = wrap.getBoundingClientRect();
+    cx = r.width  / 2;
+    cy = r.height / 2;
+    // 楕円の半径：画面に合わせて自動
+    rx = Math.min(r.width  * 0.38, 360);  // 横方向の半径
+    ry = Math.min(r.height * 0.42, 260);  // 縦方向の半径
+  }
+  addEventListener('resize', resize, {passive:true});
+  resize();
+
+  let t = 0, rot = 0;
+  function loop(){
+    t += 16/1000;              // 時間（秒相当）
+    rot += ROT_SPEED;          // ゆっくり回転
+
+    doors.forEach((el, i) => {
+      const a  = base[i] + rot;                      // 角度（全体回転）
+      const sx = Math.sin(t*0.8 + phase[i]) * SWAY_X; // 個別ゆらぎX
+      const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y; // 個別ゆらぎY
+
+      const x = cx + rx * Math.cos(a) + sx;
+      const y = cy + ry * Math.sin(a) + sy;
+
+      // 前後関係：手前に来たものほどZを高く
+      const depth = (y - (cy - ry)) / (ry*2); // 0〜1
+      const z = 100 + Math.round(depth * 100);
+      el.style.zIndex = z;
+      el.dataset.front = depth > 0.62 ? '1' : '';
+
+      // 実配置
+      el.style.transform = `translate(${x}px, ${y}px) translate(-50%,-50%)`;
+    });
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
 
