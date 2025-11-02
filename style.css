@@ -116,3 +116,73 @@ body{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);backgro
   .doors{ grid-template-columns: 1fr 1fr; gap:12px }
   .door{ aspect-ratio: 5/4; font-size:1.02rem }
 }
+/* ================================
+   背景レイヤー（大広間のレリーフ）
+   ================================ */
+
+:root{
+  /* お好みで微調整できるトーン */
+  --hall-bg: #000;
+  --hall-ink: #e4dcd4;
+  --relief-ink: 255,240,220;   /* レリーフの“金石”色ベース（RGB） */
+}
+
+/* 全体が前面になるよう、背景は最背面に固定 */
+.bg{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(1200px 800px at 50% 55%, #0b0b0f 0%, #000 65%);
+}
+
+/* レリーフ模様本体
+   CSSだけで“ダマスク風＋幾何学”の薄い模様を重ねています。
+   2枚のパターンを重ね、ほんの少しだけ上下に呼吸するように動かす。 */
+.relief{
+  position: absolute;
+  inset: 0;
+  opacity: .22;            /* 模様の濃さ（0.18〜0.30がおすすめ） */
+  filter: blur(.2px);      /* ほんの少し柔らかく */
+  animation: reliefFloat 18s ease-in-out infinite alternate;
+
+  /* ①ダマスク風（repeating-conic の織り柄） */
+  background:
+    repeating-conic-gradient(
+      from 45deg,
+      rgba(var(--relief-ink), .045) 0 25%,
+      transparent 0 50%
+    ) 0 0/ 38px 38px,
+
+    /* ②格子＋唐草のにじみ（重ねると金唐紙っぽい） */
+    radial-gradient(closest-side,
+      rgba(var(--relief-ink), .06) 0%,
+      rgba(var(--relief-ink), .015) 55%,
+      transparent 62%
+    ) 24px 20px/ 120px 120px repeat,
+
+    /* ベースの暗色（万一パターンが出ない環境の保険） */
+    linear-gradient(#070709, #000);
+}
+
+/* 周辺減光（中央に視線を集める） */
+.vignette{
+  position: absolute;
+  inset: -6vmax;
+  background:
+    radial-gradient(ellipse at center,
+      rgba(0,0,0,0) 40%,
+      rgba(0,0,0,.55) 78%,
+      rgba(0,0,0,.75) 100%);
+}
+
+/* レリーフに“呼吸感”を与える微小アニメーション */
+@keyframes reliefFloat{
+  from { transform: translateY(-4px); opacity: .20; }
+  to   { transform: translateY(4px);  opacity: .25; }
+}
+
+/* 動きを控えめにする設定に合わせる */
+@media (prefers-reduced-motion: reduce){
+  .relief{ animation: none; }
+}
