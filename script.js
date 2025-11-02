@@ -31,6 +31,7 @@
 })();
 
 // ☆ 楕円リング（ステージ中心に完全同期）
+// ☆ 楕円リング（…省略…）
 (() => {
   const stage = document.getElementById('hall-stage');
   const wrap  = document.getElementById('orbit-doors');
@@ -38,28 +39,27 @@
   const doors = [...wrap.querySelectorAll('.door')];
   if (doors.length < 2) return;
 
-  // 回転・揺らぎ
   const ROT_SPEED = 0.0007;
   const SWAY_X = 4, SWAY_Y = 3;
 
-  // 均等角度 & 揺らぎ位相
   const base  = doors.map((_, i) => (i/doors.length)*Math.PI*2);
   const phase = doors.map(() => Math.random()*Math.PI*2);
 
-  // ステージ基準の中心＆半径
-  let cx=0, cy=0, rx=0, ry=0;
+  // ★ 扉ごとの“脈動”パラメータ（振幅・速度・初期位相）
+  const amp   = doors.map(() => 0.02 + Math.random()*0.035);   // 2%〜5.5%
+  const freq  = doors.map(() => 0.3  + Math.random()*0.5);     // 0.3〜0.8 Hz
+  const phi   = doors.map(() => Math.random()*Math.PI*2);
 
+  let cx=0, cy=0, rx=0, ry=0;
   const resize = () => {
     const r = stage.getBoundingClientRect();
-    // 失敗保険
     const w = Math.max(800, r.width  || innerWidth*0.9);
     const h = Math.max(600, r.height || innerHeight*0.7);
-    cx = w/2;  cy = h/2;
-    // 半径（広めに）
+    cx = w/2; cy = h/2;
     rx = Math.max(320, w*0.48);
     ry = Math.max(260, h*0.46);
   };
-  addEventListener('resize', resize, {passive:true}); resize(); // ← 初回に必ず呼ぶ
+  addEventListener('resize', resize, {passive:true}); resize();
 
   let t = 0, rot = 0;
   (function loop(){
@@ -70,17 +70,18 @@
       const a  = base[i] + rot;
       const sx = Math.sin(t*0.8 + phase[i]) * SWAY_X;
       const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y;
-
       const x = cx + rx * Math.cos(a) + sx;
       const y = cy + ry * Math.sin(a) + sy;
 
-      // 位置は transform を直接書かず、CSS変数に流す
       el.style.setProperty('--tx', `${x}px`);
       el.style.setProperty('--ty', `${y}px`);
 
-      // 手前に来たものを少し明るくしたい時の z（任意）
       const depth = (y - (cy - ry)) / (ry*2);
       el.style.zIndex = String(100 + Math.round(depth*100));
+
+      // ★ ゆっくり脈動（1 ± amp）：sin波で個体差あり
+      const s = 1 + amp[i] * Math.sin(2*Math.PI*freq[i]*t + phi[i]);
+      el.style.setProperty('--pulse', s.toFixed(4));
     });
   })();
 })();
