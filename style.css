@@ -262,3 +262,98 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
     animation: none;          /* 呼吸アニメを止めるとさらに安定（好みで） */
   }
 }
+/* =============== モバイル調整パック =============== */
+@media (max-width: 768px){
+
+  /* タイトル周り：少しだけコンパクトに */
+  .hero{ padding: 5vh 16px 8px; }
+  .hero h1{ letter-spacing:.12em; font-size: clamp(22px, 6vw, 32px); text-shadow: none; }
+  .subtitle{ font-size: clamp(11px, 3.8vw, 14px); opacity:.75; }
+
+  /* 大広間2カラム → 1カラムへ。扉の下に余白を少し増やす */
+  .hall-grid{
+    grid-template-columns: 1fr;
+    gap: 14px;
+    width: min(96vw, 720px);
+    margin: 12px auto 56px;
+    padding: 0 12px;
+  }
+  /* 右列の“空席”は不要 */
+  .hall-grid .seraphia-space{ display:none; }
+
+  /* セラフィア：右下固定のまま、サイズと発光を抑える（画面が白く洗われないように） */
+  .seraphia-silhouette{
+    right: 12px;           /* もう少し右へ寄せたいなら 8px → 4px もOK */
+    bottom: 10vh;          /* 指が当たりづらい高さ */
+    width: min(46vw, 220px);
+    opacity: .08;
+    mix-blend-mode: normal; /* ← 重要：全体が白っぽくならないように */
+    filter: grayscale(100%) contrast(112%) brightness(112%);
+    z-index: 1;             /* 扉より奥 */
+  }
+  .seraphia-silhouette::after{
+    inset: -2%;
+    background:
+      radial-gradient(36% 36% at 58% 58%, rgba(255,240,210,.22), transparent 70%),
+      radial-gradient(18% 18% at 58% 58%, rgba(255,255,255,.24), transparent 80%);
+    filter: blur(10px);
+    opacity: .9;
+    animation: none;        /* 動きを止めて視認性と省電力 */
+  }
+
+  /* 扉グリッド：2列 → 画面幅に応じて1〜2列に自動調整 */
+  .doors{
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    gap: 12px;
+    width: 100%;
+    margin: 8px auto 0;
+  }
+  @media (max-width: 420px){
+    .doors{ grid-template-columns: 1fr; }
+  }
+
+  /* 扉カード：比率・影・タップしやすい余白に最適化 */
+  .door{
+    aspect-ratio: 16/9;              /* 横長にして文字が収まりやすく */
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow:
+      inset 0 0 0 1px rgba(235,205,120,.22),
+      inset 0 0 0 5px rgba(235,205,120,.05),
+      inset 0 0 18px rgba(0,0,0,.55),
+      0 6px 18px rgba(0,0,0,.35);
+    filter: grayscale(16%) contrast(102%) brightness(96%);
+  }
+  .door::before{ inset: 7px; border-radius: 9px; box-shadow: inset 0 0 10px rgba(235,205,120,.12); }
+  .door::after { inset: 14px; border-radius: 7px; }
+
+  /* ラベル（銘板）：指で読みやすいサイズに */
+  .door__label{
+    font-size: clamp(13px, 3.6vw, 15px);
+    padding: .35rem .6rem;
+    border-radius: 8px;
+    background: rgba(0,0,0,.5);
+  }
+
+  /* ホバー演出はスマホでは効かないので、視覚負荷を軽く */
+  .glare, .sparks{ display:none; }   /* 省電力 + 誤タップ防止 */
+
+  /* 囁き：下ナビに隠れないように安全域を確保 */
+  .whisper{
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    max-width: 30ch;
+    font-size: clamp(11px, 3.4vw, 14px);
+    line-height: 1.8;
+    opacity: .9;
+  }
+
+  /* フッター：指で押しやすく */
+  footer.mini{ padding: 10px 0 calc(12px + env(safe-area-inset-bottom)); }
+  .ghost{ padding: .55rem .9rem; border-radius: 10px; font-size: 14px; }
+
+  /* 背景のビネットを少し弱めて“真っ白化”を回避 */
+  .vignette{ inset: -10vmax; background: radial-gradient(ellipse at 50% 40%, transparent 52%, rgba(0,0,0,.6) 82%); }
+  .floor-glow{ height: 20vh; filter: blur(8px); }
+}
+/* ============= モバイル調整ここまで ============= */
