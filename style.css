@@ -357,59 +357,50 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   .floor-glow{ height: 20vh; filter: blur(8px); }
 }
 /* ============= モバイル調整ここまで ============= */
-/* ---- 鏡の間：外枠を完全OFFにして鏡面だけ見せる ---- */
+/* 鏡の間：ズーム量を変数で調整できる */
 .door--1{
-  background-image: url('assets/doors/door_mirror.png');
-  background-repeat: no-repeat;
-  background-size: 200%;        /* ← さらに拡大（180〜240%で調整可） */
-  background-position: 50% 48%; /* ← 中央合わせはここで微調整 */
+  /* ← ここが「つまみ」：大きすぎるなら 200% → 170% / 160% へ下げる */
+  --mirror-zoom: 200%;
+  --mirror-x: 50%;
+  --mirror-y: 48%;
 
-  /* 共通の金枠を無効化（この行が“白い枠”対策の核心） */
-  box-shadow: inset 0 0 0 0 transparent,
-              inset 0 0 0 0 transparent,
-              inset 0 0 24px rgba(0,0,0,.55),
-              0 10px 24px rgba(0,0,0,.45);
+  background: none !important;
+  background-image: url('assets/doors/door_mirror.png') !important;
+  background-repeat: no-repeat !important;
+  background-size: var(--mirror-zoom) !important;
+  background-position: var(--mirror-x) var(--mirror-y) !important;
 
+  /* 共通の枠や木目を無効化 */
+  box-shadow: inset 0 0 24px rgba(0,0,0,.55), 0 10px 24px rgba(0,0,0,.45);
+  border: none !important;
   background-color: rgba(0,0,0,.25);
   filter: grayscale(100%) contrast(110%) brightness(98%);
   position: relative;
-   
-  background-blend-mode: normal;
-  background-color: transparent;
-  background: url('assets/doors/door_mirror.png') no-repeat center/200% !important;
 }
 
-/* 共通フレームが ::before/::after に付いていた場合をリセット */
+/* 縦線テクスチャ・枠を完全OFF */
 .door--1::before,
 .door--1::after{
   border: none !important;
   box-shadow: none !important;
 }
 
-/* ここから“鏡のキラッ”だけを再定義して上書き */
+/* “鏡のキラッ”だけ再定義（必要に応じて残す） */
 .door--1::before{
   content:""; position:absolute; inset:0; pointer-events:none;
   background:
     linear-gradient(180deg, rgba(255,255,255,.10) 0%, transparent 35%),
     repeating-linear-gradient(90deg,
-      rgba(255,255,255,.06) 0 1px,
-      rgba(255,255,255,0)   1px 4px);
-  mix-blend-mode: screen;
-  opacity: .45;                 /* 0.35〜0.65で好み調整 */
-  transition: opacity .4s ease;
+      rgba(255,255,255,.06) 0 1px, rgba(255,255,255,0) 1px 4px);
+  mix-blend-mode: screen; opacity:.45; transition:opacity .4s ease;
 }
 .door--1::after{
   content:""; position:absolute; inset:0; pointer-events:none;
   background: radial-gradient(40% 60% at 78% 52%, rgba(255,200,120,.18), transparent 70%);
-  mix-blend-mode: screen;
-  opacity:.35;
-  transition: opacity .4s ease, transform .6s ease;
+  mix-blend-mode: screen; opacity:.35; transition:opacity .4s ease, transform .6s ease;
 }
-
-/* PCホバー時に“少しだけ”強く */
 @media (hover:hover){
   .door--1:hover{ filter: grayscale(100%) contrast(115%) brightness(103%); }
   .door--1:hover::before{ opacity:.6; }
   .door--1:hover::after{ opacity:.5; transform: translateX(-1px); }
 }
-
