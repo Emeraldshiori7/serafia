@@ -351,3 +351,38 @@ body.hall{
 .hall-stage .doors--orbit .door{
   width: clamp(150px, 20vmin, 230px) !important;
 }
+/* === 楕円ステージを大きく、画面中央に固定（強制） === */
+.hall-stage{
+  position: fixed !important;
+  left: 50% !important;
+  top: 52vh !important;                 /* セラフィアの top と同じ */
+  transform: translate(-50%, -50%) !important;
+  width: min(1200px, 96vw) !important;  /* ← ステージを拡大 */
+  height: min(86vh, 760px) !important;  /* ← 高さも拡大 */
+  margin: 0 !important;
+  z-index: 2;
+}
+.hall-stage .doors--orbit{
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 扉は少しだけ小さめにして、リングに余白を作る */
+.hall-stage .doors--orbit .door{
+  position: absolute !important;
+  width: clamp(140px, 18vmin, 220px) !important;  /* ← 余白を確保 */
+  aspect-ratio: 3 / 4 !important;
+  transform: translate(-50%, -50%);
+  opacity: 1; visibility: visible;
+}
+
+/* セラフィアは必ず中央（保険） */
+.seraphia-silhouette{
+  right: auto !important;
+  left: 50% !important;
+  top: 52vh !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 3 !important;
+}

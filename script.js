@@ -80,21 +80,23 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   let cx = 0, cy = 0, rx = 0, ry = 0;
 
 function resize(){
-  // 画面中央固定のステージの実サイズ
+  // 画面中央に固定されたステージの実サイズを取得
   const r = wrap.getBoundingClientRect();
 
-  const w = Math.max(600, r.width);   // 最低幅を大きめに
-  const h = Math.max(520, r.height);  // 最低高も少し上げる
+  // ステージを大きく使う（最低サイズも大きめに）
+  const w = Math.max(800, r.width);
+  const h = Math.max(600, r.height);
 
-  // 楕円の中心（ステージの中央）
+  // 中心はステージの中央
   cx = w / 2;
   cy = h / 2;
 
-  // ★ 扉サイズに依存させず、常に広めの半径を確保
-  //    （必要なら下の係数を少し上げ下げして調整）
-  rx = Math.max(220, w * 42);   // 横方向の半径（大きくしたい→0.45 等）
-  ry = Math.max(180, h * 46);   // 縦方向の半径（大きくしたい→0.50 等）
+  // ★ 半径は“比率”でしっかり広めに確保（扉サイズに依存しない）
+  //    大きくしたければ係数を上げてOK（例：0.50, 0.48）
+  rx = Math.max(260, w * 0.46);  // 横半径
+  ry = Math.max(220, h * 0.44);  // 縦半径
 }
+
 
 
 
