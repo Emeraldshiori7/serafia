@@ -393,3 +393,4 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 .door--1 .glare{
   transition: opacity .5s ease, transform 1.3s ease; /* 既存より少し長め */
 }
+.door{ aspect-ratio: 3/4; } /* もしくは height: 220px; */
