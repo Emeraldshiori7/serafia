@@ -386,3 +386,34 @@ body.hall{
   transform: translate(-50%, -50%) !important;
   z-index: 3 !important;
 }
+/* 測定の安定化：ステージとリング枠を明示 */
+.hall-stage{
+  position: fixed !important;
+  left: 50% !important;
+  top: 52vh !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(1200px, 96vw) !important;
+  height: min(86vh, 760px) !important;
+  margin: 0 !important;
+  z-index: 2;
+}
+.hall-stage .doors--orbit{
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;          /* 念のため grid を無効化 */
+}
+.hall-stage .doors--orbit .door{
+  position: absolute !important;
+  width: clamp(140px, 18vmin, 220px) !important;
+  aspect-ratio: 3 / 4 !important;
+  transform: translate(-50%, -50%);
+  opacity: 1; visibility: visible;
+}
+
+/* セラフィアは中央固定（保険） */
+.seraphia-silhouette{
+  right: auto !important; left: 50% !important; top: 52vh !important;
+  transform: translate(-50%, -50%) !important; z-index: 3 !important;
+}

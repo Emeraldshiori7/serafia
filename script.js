@@ -80,22 +80,33 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   let cx = 0, cy = 0, rx = 0, ry = 0;
 
 function resize(){
-  // 画面中央に固定されたステージの実サイズを取得
+  // 1) ラッパの実寸を取る（失敗したら 0 が返ることがある）
   const r = wrap.getBoundingClientRect();
 
-  // ステージを大きく使う（最低サイズも大きめに）
-  const w = Math.max(800, r.width);
-  const h = Math.max(600, r.height);
+  // 2) 取れない時の堅牢なフォールバック
+  //    - 親要素の内寸
+  //    - それも無理ならビューポートの 90% を使う
+  const parent = wrap.parentElement;
+  const pw = parent ? parent.clientWidth  : 0;
+  const ph = parent ? parent.clientHeight : 0;
 
-  // 中心はステージの中央
+  let w = Math.max(r.width  || 0, pw || 0, innerWidth  * 0.90);
+  let h = Math.max(r.height || 0, ph || 0, innerHeight * 0.70);
+
+  // 最低サイズ（小さく潰れるのを防止）
+  w = Math.max(w, 800);
+  h = Math.max(h, 600);
+
+  // 3) 中心＝ステージ中央
   cx = w / 2;
   cy = h / 2;
 
-  // ★ 半径は“比率”でしっかり広めに確保（扉サイズに依存しない）
-  //    大きくしたければ係数を上げてOK（例：0.50, 0.48）
-  rx = Math.max(260, w * 0.46);  // 横半径
-  ry = Math.max(220, h * 0.44);  // 縦半径
+  // 4) ★ 半径は比率＋大きめの下限で“必ず”広い楕円に
+  //     もっと大きくしたければ 0.50 / 0.48 に上げてOK
+  rx = Math.max(320, w * 0.46);
+  ry = Math.max(260, h * 0.44);
 }
+
 
 
 
