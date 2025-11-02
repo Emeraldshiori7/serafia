@@ -40,7 +40,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   width:min(24vw, 340px); aspect-ratio:3/5;
   background:url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
   opacity:.10;                          /* うっすら */
-  filter: grayscale(100%) contrast(110%) brightness(108%);
+  filter: grayscale(100%) contrast(120%) brightness(120%);
   mix-blend-mode:screen;                /* 冷たい神々しさ */
   pointer-events:none; user-select:none;
   animation: seraphiaSway 14s ease-in-out infinite;
