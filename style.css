@@ -430,9 +430,9 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   .door--1::before { opacity: .45 !important; }
   .door--1::after  { opacity: .35 !important; transform: none !important; }
 }
-/* 書斎の間：深い焦げ茶の木製扉＋蝋燭の暖光 */
+/* ===== 書斎の間：金枠・装飾を完全OFF ===== */
 .door--2{
-  --study-zoom: 100%;   /* ← 大きさの調整。大きければ数字を下げてね */
+  --study-zoom: 180%;
   --study-x: 50%;
   --study-y: 50%;
 
@@ -442,47 +442,59 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   background-size: var(--study-zoom) !important;
   background-position: var(--study-x) var(--study-y) !important;
 
-  /* 木の質感を生かすために、少し暖かめのトーンを追加 */
-  filter: contrast(110%) brightness(104%) saturate(115%);
-
-  /* 枠や木目テクスチャを消す */
-  box-shadow: inset 0 0 24px rgba(0,0,0,.55),
-              0 10px 24px rgba(0,0,0,.45) !important;
+  /* 共通の金枠を無効化 */
   border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+
+  /* 金の縁や装飾を上書きで消す */
+  background-color: rgba(0,0,0,.25);
+  background-blend-mode: normal;
+  filter: contrast(110%) brightness(104%) saturate(115%);
   position: relative;
   transition: transform .45s ease, filter .45s ease;
 }
 
-/* 書斎の間：蝋燭の光をふんわり */
+/* 共通フレームの疑似要素を上書きで打ち消す */
+.door--2::before,
+.door--2::after{
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 書斎の間専用：蝋燭の光だけを重ねる */
 .door--2::before{
-  content:""; position:absolute; inset:0;
+  content:"";
+  position:absolute;
+  inset:0;
   pointer-events:none;
   background:
-    radial-gradient(40% 60% at 70% 55%, rgba(255,200,130,.2), transparent 80%),
-    linear-gradient(180deg, rgba(255,230,180,.1), transparent 70%);
+    radial-gradient(40% 60% at 70% 55%, rgba(255,200,130,.25), transparent 80%),
+    linear-gradient(180deg, rgba(255,230,180,.12), transparent 70%);
   mix-blend-mode: screen;
-  opacity: .4;
+  opacity: .45;
   transition: opacity .5s ease;
 }
 
-/* 書斎の間：ホバー時の演出 */
+/* 反射光（蝋燭の“ゆらぎ”） */
+.door--2::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(35% 60% at 75% 60%, rgba(255,180,100,.12), transparent 75%);
+  mix-blend-mode: screen;
+  opacity:.3;
+  transition: opacity .5s ease;
+}
+
+/* ホバー時（PC） */
 @media (hover:hover){
   .door--2:hover{
     transform: scale(1.05);
     filter: contrast(120%) brightness(110%) saturate(125%);
   }
-  .door--2:hover::before{
-    opacity: .65;
-  }
+  .door--2:hover::before{ opacity: .65; }
+  .door--2:hover::after{ opacity: .45; }
 }
 
-/* 光の反射を滑らかにして蝋燭らしさを演出 */
-.door--2::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: radial-gradient(35% 60% at 75% 60%, rgba(255,180,100,.12), transparent 75%);
-  mix-blend-mode: screen;
-  opacity:.3;
-  transition: opacity .5s ease;
-}
