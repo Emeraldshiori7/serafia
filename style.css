@@ -45,10 +45,53 @@ body.hall{ font-family:"Cormorant Garamond","Yu Mincho",serif; color:var(--ink);
   --seraphia-offset-x: 0px;
   --seraphia-offset-y: 0px;
   transform: translate(-50%, -50%) translate(var(--seraphia-offset-x), var(--seraphia-offset-y));
-  width:min(28vmin,320px); aspect-ratio:3/5;
+  width:min(38vmin,420px); aspect-ratio:3/5;
   background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
-  opacity:.14; filter:grayscale(100%) contrast(128%) brightness(128%); mix-blend-mode:screen;
+  opacity:.20; filter:grayscale(100%) contrast(128%) brightness(128%); mix-blend-mode:screen;
   pointer-events:none; z-index:2;
+}
+/* 背面の柔らかい後光（光の輪＋淡い放射） */
+.seraphia-silhouette::before{
+  content:"";
+  position:absolute;
+  inset:-16%;
+  z-index:-2;                 /* 本体の“背面”に置く */
+  pointer-events:none;
+  mix-blend-mode:screen;
+  opacity:.95;
+
+  /* 中心の光輪 + 放射のスジ（控えめ） */
+  background:
+    /* 薄い放射（conic） */
+    conic-gradient(from -90deg at 50% 40%,
+      rgba(255,240,210,.10), transparent 15%,
+      rgba(255,240,210,.10) 30%, transparent 45%,
+      rgba(255,240,210,.10) 60%, transparent 75%,
+      rgba(255,240,210,.10) 90%, transparent 100%),
+    /* 中間の光輪 */
+    radial-gradient(60% 60% at 50% 55%, rgba(255,230,190,.30), transparent 80%),
+    /* 内側の強い光 */
+    radial-gradient(38% 38% at 50% 55%, rgba(255,255,255,.40), transparent 78%);
+  filter: blur(14px);
+  animation: haloPulse 7s ease-in-out infinite;
+}
+@keyframes haloPulse{
+  0%,100%{ filter: blur(14px) brightness(1); opacity:.95 }
+  50%    { filter: blur(18px) brightness(1.12); opacity:1 }
+}
+
+/* ほんのり周囲を洗う面光（さらに奥：とても薄い） */
+.seraphia-silhouette::after{
+  content:"";
+  position:absolute;
+  inset:-22%;
+  z-index:-3;                 /* ::before よりもさらに背面 */
+  pointer-events:none;
+  mix-blend-mode:screen;
+  opacity:.55;
+  background:
+    radial-gradient(80% 70% at 50% 52%, rgba(255,235,200,.16), transparent 80%);
+  filter: blur(26px);
 }
 
 /* 囁き：画面中央下（ステージとは独立） */
