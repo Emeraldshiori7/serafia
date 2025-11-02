@@ -92,6 +92,7 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   // ★ 初期化＋リサイズ追従（これが重要）
   addEventListener('resize', resize, { passive:true });
   resize();
+let ORBIT_BIAS_Y = -36;   // 楕円の中心を上下へ（px）。セラフィアの offset-y と同じ値に
 
   let t = 0, rot = 0;
   function loop(){
@@ -104,7 +105,7 @@ document.getElementById('reintro')?.addEventListener('click', () => {
       const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y;
 
       const x = cx + rx * Math.cos(a) + sx;
-      const y = cy + ry * Math.sin(a) + sy;
+      const y = cy + ORBIT_BIAS_Y + ry * Math.sin(a) + sy;
 
       const depth = (y - (cy - ry)) / (ry * 2); // 0〜1
       el.style.zIndex = String(100 + Math.round(depth * 100));

@@ -142,22 +142,30 @@ body.hall{
 }
 
 /* ───────── セラフィア（中央固定） ───────── */
-.seraphia-silhouette {
-  position: absolute; /* ← fixedをやめてステージ内で固定 */
+/* セラフィア：ステージ中心 + オフセットノブ */
+.seraphia-silhouette{
+  position: absolute;             /* ← hall-stage の中で相対配置 */
   left: 50%;
-  top: 50%; /* ← ステージのど真ん中 */
-  transform: translate(-50%, -50%);
+  top: 50%;
+  /* ▼ 見た目で合わせる微調整（px / % どちらでも） */
+  --seraphia-offset-x: 0px;
+  --seraphia-offset-y: -36px;     /* 少し上へ（合わなければ値を±で調整） */
+
+  transform:
+    translate(-50%, -50%)
+    translate(var(--seraphia-offset-x), var(--seraphia-offset-y));
+
   width: min(28vmin, 320px);
   aspect-ratio: 3/5;
   background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
   opacity: .12;
   filter: grayscale(100%) contrast(128%) brightness(128%);
   mix-blend-mode: screen;
-  pointer-events: none;
-  user-select: none;
+  pointer-events: none; user-select: none;
   z-index: 3;
   animation: seraphiaSway 14s ease-in-out infinite;
 }
+
 
 .seraphia-silhouette::after{
   content:""; position:absolute; inset:-12%;
