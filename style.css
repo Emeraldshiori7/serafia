@@ -319,3 +319,31 @@ body.hall{
   transform: translate(-50%, -50%); /* JSが上書きする初期値 */
   z-index: 1;
 }
+/* === 祭壇ステージを画面の真ん中に固定（セラフィアと同じ基準） === */
+.hall-stage{
+  position: fixed !important;
+  left: 50% !important;
+  top: 52vh !important;              /* セラフィアの top と合わせる */
+  transform: translate(-50%, -50%) !important;
+  width: min(1100px, 92vw) !important;
+  height: min(68vh, 640px) !important;
+  margin: 0 !important;              /* 中央固定なので margin は不要 */
+  z-index: 2;                         /* セラフィア(z=3)の一段下 */
+}
+
+/* ステージ内のリング枠はステージ一杯に広げる */
+.hall-stage .doors--orbit{
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* 扉サイズを明示（環境差で縮まないよう固定） */
+.hall-stage .doors--orbit .door{
+  position: absolute !important;
+  width: clamp(160px, 22vmin, 240px) !important;
+  aspect-ratio: 3 / 4 !important;
+  transform: translate(-50%, -50%);
+  opacity: 1; visibility: visible;
+}

@@ -79,29 +79,24 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   // 中心と半径
   let cx = 0, cy = 0, rx = 0, ry = 0;
 
-  function resize(){
-    const r = wrap.getBoundingClientRect();
-    const style = getComputedStyle(wrap);
-    const padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
-    const padY = parseFloat(style.paddingTop)  + parseFloat(style.paddingBottom);
+ function resize(){
+  // 画面中央固定になったステージの「実サイズ」を取得
+  const r = wrap.getBoundingClientRect();
 
-    // 内寸（最低値で潰れを防止）
-    const w = Math.max(480, r.width  - padX);
-    const h = Math.max(420, r.height - padY);
+  const w = Math.max(480, r.width);
+  const h = Math.max(420, r.height);
 
-    cx = w / 2;
-    cy = h / 2;
+  cx = w / 2;
+  cy = h / 2;
 
-    // 扉幅から安全マージンを算出
-    const dw = doors[0]?.getBoundingClientRect().width || 200;
-    const margin = dw * 0.75; // リング内側の余白
+  // 扉幅から安全マージンを算出して、リングが必ず内側に収まるように
+  const dw = doors[0]?.getBoundingClientRect().width || 200;
+  const margin = dw * 0.75;
 
-    // 半径（最低値を持たせて同一点化を防止）
-    rx = Math.max(160, (w / 2) - margin);
-    ry = Math.max(130, (h / 2) - margin * 0.85);
-  }
-  addEventListener('resize', resize, {passive:true});
-  resize();
+  rx = Math.max(160, (w / 2) - margin);
+  ry = Math.max(130, (h / 2) - margin * 0.85);
+}
+
 
   let t = 0, rot = 0;
   function loop(){
