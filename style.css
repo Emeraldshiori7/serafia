@@ -47,7 +47,7 @@ body.hall{ font-family:"Cormorant Garamond","Yu Mincho",serif; color:var(--ink);
   transform: translate(-50%, -50%) translate(var(--seraphia-offset-x), var(--seraphia-offset-y));
   width:min(38vmin,420px); aspect-ratio:3/5;
   background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
-  opacity:.20; filter:grayscale(100%) contrast(128%) brightness(128%); mix-blend-mode:screen;
+  opacity:.16; filter:grayscale(100%) contrast(128%) brightness(128%); mix-blend-mode:screen;
   pointer-events:none; z-index:2;
 }
 /* 背面の柔らかい後光（光の輪＋淡い放射） */
