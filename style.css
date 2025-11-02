@@ -169,7 +169,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   right: calc((100vw - min(1100px, 92vw)) / 2 - 140px);
   bottom: 8vh;
 
-  width: min(26vw, 300px);
+  width: min(34vw, 300px);
   aspect-ratio: 3/5;
   background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
   opacity: .10;
