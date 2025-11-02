@@ -1,314 +1,106 @@
 :root{
-  --ink:#e9dfd6;
-  --soft:#0c0d10;
-  --gold:#d5bd86;
-  --frame:#2a2320;
-  --panel:rgba(255,240,230,0.05);
-  --glow:rgba(255,236,200,.35);
+  --ink:#e9dfd6; --bg:#000; --gold:#d5bd86;
+  --panel:rgba(255,240,230,0.05); --glow:rgba(255,236,200,.35);
 }
-
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);background:#000}
+*{box-sizing:border-box} html,body{height:100%;margin:0}
+body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);background:var(--bg);letter-spacing:.03em;overflow-x:hidden}
 
 /* 背景 */
-.bg{position:fixed;inset:0;z-index:-1}
+.bg{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(1200px 800px at 50% 55%, #0b0b0f 0%, #000 65%)}
 #dust{position:absolute;inset:0;display:block;filter:brightness(.9) contrast(1.05)}
-.vignette{
-  position:absolute;inset:-8vmax;
-  background: radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0,0,0,.65) 80%);
-  pointer-events:none;
+.vignette{position:absolute;inset:-8vmax;background:radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0,0,0,.65) 80%)}
+.floor-glow{position:absolute;left:50%;bottom:-8vh;transform:translateX(-50%);width:min(90vw,1100px);height:26vh;background:radial-gradient(60% 100% at 50% 0%, rgba(170,160,140,.18), transparent 70%);filter:blur(10px)}
+
+/* 奥のレリーフ（CSSパターン） */
+.relief{
+  position:absolute; inset:0; opacity:.22; filter:blur(.2px);
+  animation:reliefFloat 18s ease-in-out infinite alternate;
+  background:
+    repeating-conic-gradient(from 45deg, rgba(255,240,220,.045) 0 25%, transparent 0 50%) 0 0/38px 38px,
+    radial-gradient(closest-side, rgba(255,240,220,.06) 0%, rgba(255,240,220,.015) 55%, transparent 62%) 24px 20px/120px 120px repeat,
+    linear-gradient(#070709, #000);
 }
-.floor-glow{
-  position:absolute;left:50%;bottom:-8vh;transform:translateX(-50%);
-  width:min(90vw,1100px);height:26vh;
-  background: radial-gradient(60% 100% at 50% 0%, rgba(170,160,140,.18), transparent 70%);
-  filter: blur(10px);
-  pointer-events:none;
-}
+@keyframes reliefFloat{from{transform:translateY(-4px);opacity:.20}to{transform:translateY(4px);opacity:.25}}
+@media (prefers-reduced-motion:reduce){.relief{animation:none}}
 
 /* タイトル */
 .hero{ text-align:center; padding:8vh 2rem 2rem }
 .hero h1{
-  margin:0; font-family:"Cinzel",serif;
-  letter-spacing:.18em; font-weight:600;
-  font-size:clamp(28px,6vw,60px);
-  text-shadow:0 0 18px var(--glow);
-  transform:translateY(6px); opacity:0;
-  animation:fadeUp .9s ease .2s forwards;
+  margin:0; font-family:"Cinzel",serif; letter-spacing:.18em; font-weight:600;
+  font-size:clamp(28px,6vw,60px); text-shadow:0 0 18px var(--glow);
+  transform:translateY(6px); opacity:0; animation:fadeUp .9s ease .2s forwards;
 }
-.hero .subtitle{
-  margin:.6rem 0 0; font-style:italic; color:#b8aca4;
-  opacity:0; transform:translateY(8px);
-  animation:fadeUp .8s ease .6s forwards;
-}
+.subtitle{ margin:.6rem 0 0; color:#b8aca4; opacity:0; transform:translateY(8px); animation:fadeUp .8s ease .6s forwards }
+@keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
 
-/* セラフィアの影（球体関節っぽい関節円） */
+/* セラフィアの“気配”（薄いシルエット画像を推奨 /img/seraphia.png） */
 .seraphia-silhouette{
-  position:fixed; left:6vw; bottom:6vh; width:22vmin; height:46vmin; min-width:140px;
-  background:
-    radial-gradient(circle at 50% 18%, rgba(255,255,255,.12) 0 10%, transparent 11%),
-    radial-gradient(circle at 50% 48%, rgba(255,255,255,.10) 0 10%, transparent 11%),
-    radial-gradient(circle at 50% 78%, rgba(255,255,255,.10) 0 10%, transparent 11%),
-    linear-gradient(180deg, rgba(255,255,255,.08), transparent 50%);
-  -webkit-mask:
-    radial-gradient(60% 12% at 50% 8%, #000 98%, transparent),
-    linear-gradient(#000,#000);
-  mask-composite: exclude;
-  filter: blur(1px) drop-shadow(0 0 18px rgba(255,248,220,.08));
-  opacity:.65;
+  position:fixed; right:6vw; bottom:8vh; width:min(24vw,320px); aspect-ratio:3/5;
+  background:url('/img/seraphia.png') center/contain no-repeat;
+  opacity:.08; filter:grayscale(100%) contrast(110%) brightness(110%); mix-blend-mode:screen;
 }
 
 /* 扉グリッド */
-.doors{
-  width:min(840px,92vw);
-  margin:2rem auto 6vh;
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:16px;
-}
+.doors{ width:min(900px,88vw); margin:32px auto 6vh; display:grid; grid-template-columns:repeat(3,minmax(200px,1fr)); gap:18px }
 .door{
-  display:grid; place-items:center; text-decoration:none; color:var(--ink);
-  aspect-ratio: 4/3; border:1px solid var(--frame);
-  background: linear-gradient(180deg, var(--panel), rgba(255,255,255,.02));
-  border-radius:14px; position:relative; overflow:hidden;
-  letter-spacing:.12em;
-  transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
-}
-.door::before{
-  content:attr(data-sub);
-  position:absolute; bottom:10px; left:12px; right:12px;
-  color:#b7aca3; font-size:.82rem; letter-spacing:.06em; opacity:.7;
-}
-.door::after{
-  content:""; position:absolute; inset:0;
-  background: radial-gradient(90% 60% at 50% -20%, rgba(255,255,255,.10), transparent 45%);
-  mix-blend-mode:screen; opacity:.0; transition:opacity .25s ease;
-}
-.door:hover{
-  transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.06);
-  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-}
-.door:hover::after{opacity:.9}
-
-/* ささやき */
-.whisper{
-  text-align:center; color:#9e8f85;
-  font-style:italic; margin:10px 0 0; min-height:2lh;
-}
-.whisper .line{opacity:.0; animation:fadeUp .8s ease .4s forwards}
-
-/* フッター */
-.mini{ display:flex; justify-content:center; padding:14px 0 24px }
-.ghost{
-  background:transparent; border:1px solid rgba(255,255,255,.22);
-  color:#e9e1d9; padding:.5rem .8rem; border-radius:8px; letter-spacing:.06em;
-  cursor:pointer; transition: background .2s ease, transform .2s ease;
-}
-.ghost:hover{ background:rgba(255,255,255,.08); transform:translateY(-1px) }
-
-/* アニメ */
-@keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
-
-/* レスポンシブ */
-@media (max-width:720px){
-  .doors{ grid-template-columns: 1fr 1fr; gap:12px }
-  .door{ aspect-ratio: 5/4; font-size:1.02rem }
-}
-/* ================================
-   背景レイヤー（大広間のレリーフ）
-   ================================ */
-
-:root{
-  /* お好みで微調整できるトーン */
-  --hall-bg: #000;
-  --hall-ink: #e4dcd4;
-  --relief-ink: 255,240,220;   /* レリーフの“金石”色ベース（RGB） */
-}
-
-/* 全体が前面になるよう、背景は最背面に固定 */
-.bg{
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(1200px 800px at 50% 55%, #0b0b0f 0%, #000 65%);
-}
-
-/* レリーフ模様本体
-   CSSだけで“ダマスク風＋幾何学”の薄い模様を重ねています。
-   2枚のパターンを重ね、ほんの少しだけ上下に呼吸するように動かす。 */
-.relief{
-  position: absolute;
-  inset: 0;
-  opacity: .22;            /* 模様の濃さ（0.18〜0.30がおすすめ） */
-  filter: blur(.2px);      /* ほんの少し柔らかく */
-  animation: reliefFloat 18s ease-in-out infinite alternate;
-
-  /* ①ダマスク風（repeating-conic の織り柄） */
-  background:
-    repeating-conic-gradient(
-      from 45deg,
-      rgba(var(--relief-ink), .045) 0 25%,
-      transparent 0 50%
-    ) 0 0/ 38px 38px,
-
-    /* ②格子＋唐草のにじみ（重ねると金唐紙っぽい） */
-    radial-gradient(closest-side,
-      rgba(var(--relief-ink), .06) 0%,
-      rgba(var(--relief-ink), .015) 55%,
-      transparent 62%
-    ) 24px 20px/ 120px 120px repeat,
-
-    /* ベースの暗色（万一パターンが出ない環境の保険） */
-    linear-gradient(#070709, #000);
-}
-
-/* 周辺減光（中央に視線を集める） */
-.vignette{
-  position: absolute;
-  inset: -6vmax;
-  background:
-    radial-gradient(ellipse at center,
-      rgba(0,0,0,0) 40%,
-      rgba(0,0,0,.55) 78%,
-      rgba(0,0,0,.75) 100%);
-}
-
-/* レリーフに“呼吸感”を与える微小アニメーション */
-@keyframes reliefFloat{
-  from { transform: translateY(-4px); opacity: .20; }
-  to   { transform: translateY(4px);  opacity: .25; }
-}
-
-/* 動きを控えめにする設定に合わせる */
-@media (prefers-reduced-motion: reduce){
-  .relief{ animation: none; }
-}
-/* --- 扉（黒檀×金装飾） --- */
-.doors{
-  display:grid;
-  grid-template-columns: repeat(3, minmax(200px, 1fr));
-  gap:18px;
-  width:min(900px, 88vw);
-  margin:32px auto 0;
-}
-
-.door{
-  position:relative;
-  aspect-ratio: 3/4;              /* 扉の比率 */
-  border-radius:10px;
-  overflow:hidden;
-  text-decoration:none;
-  display:flex; align-items:end; justify-content:center;
-  padding:14px 10px;
-  color:#f1e9df;
-  letter-spacing:.12em;
-  backdrop-filter: blur(1px);
-  transform: translateZ(0);       /* アニメのジャギ軽減 */
-
-  /* 画像が無い時のフォールバック（黒檀風） */
-  background:
-    radial-gradient(180% 100% at 50% 0%,
-      rgba(255,220,160,.06), transparent 60%),
-    repeating-linear-gradient(90deg,
-      #0b0b0d 0 6px, #0f0f12 6px 12px),
-    linear-gradient(180deg, #0a0a0c, #141419);
-
-  /* 金の装飾ライン（枠） */
-  box-shadow:
-    inset 0 0 0 1px rgba(235,205,120,.25),
-    inset 0 0 0 6px rgba(235,205,120,.06),
-    inset 0 0 24px rgba(0,0,0,.65),
-    0 0 25px rgba(255,220,140,.06);
+  position:relative; aspect-ratio:3/4; border-radius:10px; overflow:hidden; text-decoration:none;
+  display:flex; align-items:end; justify-content:center; padding:14px 10px; color:#f1e9df; letter-spacing:.12em;
+  background: radial-gradient(180% 100% at 50% 0%, rgba(255,220,160,.06), transparent 60%),
+             repeating-linear-gradient(90deg,#0b0b0d 0 6px,#0f0f12 6px 12px),
+             linear-gradient(180deg,#0a0a0c,#141419);
+  box-shadow: inset 0 0 0 1px rgba(235,205,120,.25), inset 0 0 0 6px rgba(235,205,120,.06),
+              inset 0 0 24px rgba(0,0,0,.65), 0 0 25px rgba(255,220,140,.06);
   transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
+  filter: grayscale(20%) contrast(104%) brightness(92%);
 }
+.door::before{content:""; position:absolute; inset:8px; border-radius:8px;
+  border:1px solid rgba(235,205,120,.45); box-shadow: inset 0 0 12px rgba(235,205,120,.15); mix-blend-mode:screen; opacity:.9}
+.door::after{content:""; position:absolute; inset:16px; border-radius:6px; border:1px solid rgba(235,205,120,.25); box-shadow: inset 0 0 18px rgba(235,205,120,.08); opacity:.85}
 
-/* 背景画像の割り当て（用意できたら差し替え） */
-.door--1 { background-image: url("assets/doors/ebony1.jpg"); background-size:cover; background-position:center; }
-.door--2 { background-image: url("assets/doors/ebony2.jpg"); background-size:cover; background-position:center; }
-.door--3 { background-image: url("assets/doors/ebony3.jpg"); background-size:cover; background-position:center; }
-.door--4 { background-image: url("assets/doors/ebony4.jpg"); background-size:cover; background-position:center; }
-.door--5 { background-image: url("assets/doors/ebony5.jpg"); background-size:cover; background-position:center; }
-.door--6 { background-image: url("assets/doors/ebony6.jpg"); background-size:cover; background-position:center; }
-.door--7 { background-image: url("assets/doors/ebony7.jpg"); background-size:cover; background-position:center; }
-.door--8 { background-image: url("assets/doors/ebony8.jpg"); background-size:cover; background-position:center; }
-.door--9 { background-image: url("assets/doors/ebony9.jpg"); background-size:cover; background-position:center; }
-
-/* 内側の金装飾（縁取り2重） */
-.door::before,
-.door::after{
-  content:"";
-  position:absolute; inset:8px;
-  border-radius:8px;
-  pointer-events:none;
-}
-.door::before{
-  border:1px solid rgba(235,205,120,.45);
-  box-shadow: inset 0 0 12px rgba(235,205,120,.15);
-  mix-blend-mode:screen;
-  opacity:.9;
-}
-.door::after{
-  inset:16px;
-  border:1px solid rgba(235,205,120,.25);
-  box-shadow: inset 0 0 18px rgba(235,205,120,.08);
-  opacity:.85;
-}
-
-/* グレア（斜めの光が走る） */
-.door .glare{
-  position:absolute; inset:0;
-  background:
-    linear-gradient(65deg, transparent 40%,
-      rgba(255,245,210,.28) 50%, transparent 60%);
-  transform: translateX(-120%) rotate(0.001deg);
-  filter: blur(1px);
-  opacity:0;
-  transition: opacity .4s ease, transform .9s ease;
-}
-
-/* ホバー演出 */
-.door:hover{
-  transform: translateY(-4px) scale(1.02);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,230,160,.5),
-    inset 0 0 0 6px rgba(255,230,160,.08),
-    inset 0 0 34px rgba(0,0,0,.6),
-    0 10px 35px rgba(255,210,120,.18);
-  filter: saturate(1.08) contrast(1.05);
-}
-.door:hover .glare{
-  opacity:.9; transform: translateX(120%);
-}
+/* 扉の個別画像（差し替えOK） */
+.door--1{background-image:url('assets/doors/ebony1.jpg'); background-size:cover; background-position:center}
+.door--2{background-image:url('assets/doors/ebony2.jpg'); background-size:cover; background-position:center}
+.door--3{background-image:url('assets/doors/ebony3.jpg'); background-size:cover; background-position:center}
+.door--4{background-image:url('assets/doors/ebony4.jpg'); background-size:cover; background-position:center}
+.door--5{background-image:url('assets/doors/ebony5.jpg'); background-size:cover; background-position:center}
+.door--6{background-image:url('assets/doors/ebony6.jpg'); background-size:cover; background-position:center}
+.door--7{background-image:url('assets/doors/ebony7.jpg'); background-size:cover; background-position:center}
+.door--8{background-image:url('assets/doors/ebony8.jpg'); background-size:cover; background-position:center}
+.door--9{background-image:url('assets/doors/ebony9.jpg'); background-size:cover; background-position:center}
 
 /* ラベル（銘板） */
 .door__label{
-  position:relative;
-  z-index:2;
-  font-family: "Cormorant Garamond","Yu Mincho",serif;
-  font-size: clamp(14px, 1.5vw, 18px);
-  padding:.35rem .7rem;
-  background: rgba(0,0,0,.45);
-  border: 1px solid rgba(235,205,120,.35);
-  border-radius: 6px;
-  text-shadow: 0 1px 0 rgba(0,0,0,.8);
-  box-shadow: 0 0 12px rgba(255,220,150,.08);
+  position:relative; z-index:2; font-size:clamp(14px,1.5vw,18px);
+  padding:.35rem .7rem; background:rgba(0,0,0,.45);
+  border:1px solid rgba(235,205,120,.35); border-radius:6px; text-shadow:0 1px 0 rgba(0,0,0,.8);
+  box-shadow:0 0 12px rgba(255,220,150,.08);
 }
 
-/* 小さな星粉（さり気なく） */
-.door .sparks{
-  position:absolute; inset:0;
-  background:
-    radial-gradient(2px 2px at 20% 30%, rgba(255,240,200,.7), transparent 60%),
-    radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,240,200,.5), transparent 60%),
-    radial-gradient(1.5px 1.5px at 40% 75%, rgba(255,240,200,.35), transparent 60%);
-  opacity:.0; transition: opacity .6s ease;
+/* グリントと星粉 */
+.glare{position:absolute; inset:0; background:linear-gradient(65deg,transparent 40%,rgba(255,245,210,.28) 50%,transparent 60%); transform:translateX(-120%); filter:blur(1px); opacity:0; transition:opacity .4s ease, transform .9s ease}
+.sparks{position:absolute; inset:0; background:
+  radial-gradient(2px 2px at 20% 30%, rgba(255,240,200,.7), transparent 60%),
+  radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,240,200,.5), transparent 60%),
+  radial-gradient(1.5px 1.5px at 40% 75%, rgba(255,240,200,.35), transparent 60%); opacity:0; transition:opacity .6s ease}
+
+/* ホバー＆フォーカス */
+@media (hover:hover){
+  .door:hover{ transform:translateY(-4px) scale(1.02); box-shadow: inset 0 0 0 1px rgba(255,230,160,.5), inset 0 0 0 6px rgba(255,230,160,.08), inset 0 0 34px rgba(0,0,0,.6), 0 10px 35px rgba(255,210,120,.18); filter:saturate(1.08) contrast(1.05) }
+  .door:hover .glare{ opacity:.9; transform:translateX(120%) }
+  .door:hover .sparks{ opacity:.7 }
 }
-.door:hover .sparks{ opacity:.7; }
+.door:focus-visible{ outline:2px solid rgba(255,230,160,.8); outline-offset:3px }
+
+/* 囁き（薄れても消えない） */
+.whisper{ position:fixed; right:max(20px,4vw); bottom:max(18px,4vh); max-width:38ch; font-size:clamp(12px,1.2vw,16px); line-height:1.9; letter-spacing:.06em; color:#cbbfb6; pointer-events:none; user-select:none }
+.whisper .line{ display:inline-block; opacity:0; filter:blur(.3px); animation:appear 1800ms ease forwards, breathe 6s ease-in-out infinite }
+@keyframes appear{0%{opacity:0; transform:translateY(6px)}100%{opacity:.85; transform:translateY(0)}}
+@keyframes breathe{0%,100%{opacity:.85; transform:translateY(0)}50%{opacity:.45; transform:translateY(-3px)}}
+
+/* フッター */
+.mini{ display:flex; justify-content:center; padding:14px 0 24px }
+.ghost{ background:transparent; border:1px solid rgba(255,255,255,.22); color:#e9e1d9; padding:.5rem .8rem; border-radius:8px; letter-spacing:.06em; cursor:pointer; transition:background .2s ease, transform .2s ease }
+.ghost:hover{ background:rgba(255,255,255,.08); transform:translateY(-1px) }
 
 /* レスポンシブ */
-@media (max-width: 768px){
-  .doors{ grid-template-columns: 1fr 1fr; gap:14px; }
-}
+@media (max-width:768px){ .doors{ grid-template-columns:1fr 1fr; gap:14px } .door{ aspect-ratio:5/4 } }
