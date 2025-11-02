@@ -90,21 +90,30 @@ body.hall{
 /* ───────── 楕円リング用：絶対配置＋サイズ明示 ───────── */
 .hall-stage .doors--orbit .door{
   position: absolute;
-  top: 50%; left: 50%;
+  /* ★中央50%は使わない。起点はラッパの左上 */
+  top: 0; 
+  left: 0;
+
   width: clamp(140px, 18vmin, 220px);
   aspect-ratio: 3/4;
-  transform: translate(-50%, -50%); /* JSで上書き */
+
+  /* JS から受け取る座標（デフォルトは0） */
+  --tx: 0px;
+  --ty: 0px;
+
+  /* 位置 = translate(x,y) + 自身の中心合わせ */
+  transform: translate(var(--tx), var(--ty)) translate(-50%, -50%);
   will-change: transform, filter;
   z-index: 1;
 }
-.hall-stage .doors--orbit .door[data-front="1"]{
-  filter: saturate(110%) brightness(104%);
-}
+
 @media (hover:hover){
+  /* ★位置は保ったまま拡大だけ足す */
   .hall-stage .doors--orbit .door:hover{
-    transform: translate(-50%,-50%) scale(1.06) !important;
+    transform: translate(var(--tx), var(--ty)) translate(-50%, -50%) scale(1.06);
   }
 }
+
 
 /* ───────── 個別扉の画像（必要に応じて差し替え） ───────── */
 .door--1{

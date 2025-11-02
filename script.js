@@ -110,7 +110,8 @@ document.getElementById('reintro')?.addEventListener('click', () => {
       el.style.zIndex = String(100 + Math.round(depth * 100));
       el.dataset.front = depth > 0.62 ? '1' : '';
 
-      el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+      el.style.setProperty('--tx', `${x}px`);
+　　　 el.style.setProperty('--ty', `${y}px`);
       el.style.opacity = '1';
       el.style.visibility = 'visible';
     });
