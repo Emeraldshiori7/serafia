@@ -434,3 +434,29 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   outline: 2px solid rgba(255,230,160,.7);
   outline-offset: 3px;
 }
+/* ===== 鏡の間：白い光を消して、拡大だけ残す ===== */
+@media (hover:hover){
+  .door--1 {
+    transition: transform .45s ease, filter .45s ease;
+  }
+
+  .door--1:hover {
+    transform: scale(1.05); /* ← これで少しだけふわっと拡大 */
+    filter: grayscale(100%) contrast(115%) brightness(102%);
+    box-shadow:
+      inset 0 0 24px rgba(0,0,0,.55),
+      0 10px 24px rgba(0,0,0,.45) !important; /* 白い縁は出さない */
+  }
+
+  /* 白いグレア線・星粉は非表示のまま */
+  .door--1 .glare,
+  .door--1 .sparks {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* 自前ハイライトは固定（光が強まらないように） */
+  .door--1::before { opacity: .45 !important; }
+  .door--1::after  { opacity: .35 !important; transform: none !important; }
+}
