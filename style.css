@@ -46,9 +46,9 @@ body.hall{
 /* ───────── 祭壇ステージ（画面中央に固定） ───────── */
 .hall-stage{
   position: fixed;
-  left: 50%;
-  top: 52vh;                          /* セラフィアと揃える */
-  transform: translate(-50%, -50%);
+   left: 50vw;               /* 画面中央を絶対基準で */
+   top: 52vh;                /* 同じく画面の高さ基準 */
+   transform: translate(-50%, -50%);
   width: min(1200px, 96vw);
   height: min(86vh, 760px);
   margin: 0;
@@ -135,8 +135,8 @@ body.hall{
 /* ───────── セラフィア（中央固定） ───────── */
 .seraphia-silhouette{
   position: fixed;
-  left: 50%;
-  top: 52vh;
+   left: 50vw;
+   top: 52vh;
   transform: translate(-50%, -50%);
   width: min(28vmin, 320px);
   aspect-ratio: 3/5;
@@ -165,9 +165,9 @@ body.hall{
 /* ───────── 囁き（中央下） ───────── */
 .whisper{
   position: fixed;
-  left: 50%;
-  bottom: 7vh;
-  transform: translateX(-50%);
+  left: 50vw;
+   bottom: 7vh;
+   transform: translateX(-50%);
   max-width: 42ch;
   text-align: center;
   color: #cbbfb6;

@@ -76,10 +76,10 @@ document.getElementById('reintro')?.addEventListener('click', () => {
 
   function resize(){
     // ステージの実寸、取れないときはビューポートで代用
-    const r = wrap.getBoundingClientRect();
-    let w = Math.max(800, r.width  || innerWidth  * 0.92);
-    let h = Math.max(600, r.height || innerHeight * 0.80);
-
+     const r = wrap.getBoundingClientRect();
+   // wrapが0になる環境向けの強い保険：ビューポート基準
+  let w = Math.max(800, (r.width  || 0), innerWidth  * 0.92);
+   let h = Math.max(600, (r.height || 0), innerHeight * 0.80);
     // 中心はステージ中央
     cx = w / 2;
     cy = h / 2;
