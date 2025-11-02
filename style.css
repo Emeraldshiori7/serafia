@@ -228,7 +228,7 @@ body.hall{ font-family:"Cormorant Garamond","Yu Mincho",serif; color:var(--ink);
 /* ===== タイトルを扉より前面・縦並びで中央に配置 ===== */
 .hero {
   position: fixed;
-  top: 18vh;             /* ← タイトルの縦位置。お好みで18〜24vhくらい */
+  top: 12vh;             /* ← タイトルの縦位置。お好みで18〜24vhくらい */
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
