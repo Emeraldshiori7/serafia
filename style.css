@@ -268,3 +268,13 @@ body.hall{
   .door--2:hover::before{ opacity:.65; transform: scale(1.1); filter: blur(6px) }
   .door--2:hover::after{ opacity:.45 }
 }
+/* === 楕円リングの安定化：扉サイズを明示 === */
+.hall-stage .doors--orbit .door{
+  width: clamp(150px, 22vmin, 240px); /* ← 扉の大きさを固定（環境差で縮まず中央に収まる） */
+  aspect-ratio: 3 / 4;
+}
+
+/* ステージの高さを少しだけ増やして余裕を持たせる */
+.hall-stage{
+  height: min(72vh, 680px);
+}

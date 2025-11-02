@@ -71,38 +71,50 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   const base  = doors.map((_, i) => (i / doors.length) * Math.PI * 2);
   const phase = doors.map(() => Math.random() * Math.PI * 2);
 
-  function resize(){
-    const r = wrap.getBoundingClientRect();
-    cx = r.width  / 2;
-    cy = r.height / 2;
-    rx = Math.min(r.width  * 0.38, 360);
-    ry = Math.min(r.height * 0.42, 260);
-  }
-  addEventListener('resize', resize, {passive:true});
-  resize();
+ function resize(){
+  const r = wrap.getBoundingClientRect();
+  const style = getComputedStyle(wrap);
+  const padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+  const padY = parseFloat(style.paddingTop)  + parseFloat(style.paddingBottom);
 
-  let t = 0, rot = 0;
-  function loop(){
-    t += 16/1000;
-    rot += ROT_SPEED;
+  const w = Math.max(300, r.width  - padX);
+  const h = Math.max(300, r.height - padY);
 
-    doors.forEach((el, i) => {
-      const a  = base[i] + rot;
-      const sx = Math.sin(t*0.8 + phase[i]) * SWAY_X;
-      const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y;
-      const x = cx + rx * Math.cos(a) + sx;
-      const y = cy + ry * Math.sin(a) + sy;
+  cx = w / 2;
+  cy = h / 2;
 
-      const depth = (y - (cy - ry)) / (ry*2); // 0〜1
-      const z = 100 + Math.round(depth * 100);
-      el.style.zIndex = z;
-      el.dataset.front = depth > 0.62 ? '1' : '';
+  // 扉の幅を参照して、楕円半径に余白を持たせる
+  const sampleDoor = doors[0];
+  const dw = sampleDoor ? sampleDoor.getBoundingClientRect().width : 200;
+  const margin = dw * 0.65;
 
-      el.style.transform = `translate(${x}px, ${y}px) translate(-50%,-50%)`;
-    });
+  rx = Math.max(120, (w / 2) - margin);
+  ry = Math.max(90,  (h / 2) - margin * 0.8);
+}
+  
+function loop(){
+  t += 16/1000;
+  rot += ROT_SPEED;
 
-    requestAnimationFrame(loop);
-  }
+  doors.forEach((el, i) => {
+    const a  = base[i] + rot;
+    const sx = Math.sin(t*0.8 + phase[i]) * SWAY_X;
+    const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y;
+
+    // ステージ左上を(0,0)として配置 → CSSで中央へ移動
+    const x = cx + rx * Math.cos(a) + sx;
+    const y = cy + ry * Math.sin(a) + sy;
+
+    const depth = (y - (cy - ry)) / (ry * 2); // 0〜1
+    el.style.zIndex = String(100 + Math.round(depth * 100));
+    el.dataset.front = depth > 0.62 ? '1' : '';
+
+    // 中央へ寄せるため、translate(-50%, -50%) を最後に必ず付ける
+    el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+  });
+
+  requestAnimationFrame(loop);
+}
   requestAnimationFrame(loop);
 })();
 
