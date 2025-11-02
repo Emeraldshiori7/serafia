@@ -237,27 +237,34 @@ body.hall{
 /* ===== 儀式ボタン（左下） ===== */
 .mini{
   position: fixed;
-  left: max(12px, env(safe-area-inset-left));
-  bottom: max(12px, env(safe-area-inset-bottom));
-  z-index: 7;             /* 囁き(6)より前、白フェード(9)より後 */
-  pointer-events: none;   /* ボタン以外は透過 */
+  left: 50%;
+  bottom: 6vh;
+  transform: translateX(-50%);
+  z-index: 999;              /* ← 一番前に持ってくる */
+  pointer-events: none;
 }
+
 .mini .ghost{
   pointer-events: auto;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.18);
-  color: #e9e1d9;
-  padding: .5rem .9rem;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+  font-family: "Cinzel", serif;
+  font-size: clamp(14px, 2vw, 16px);
+  padding: .6rem 1.4rem;
   border-radius: 10px;
   letter-spacing: .06em;
-  backdrop-filter: blur(6px);
-  transition: transform .2s ease, background .2s ease, border-color .2s ease;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 12px rgba(255,255,255,0.25);
+  transition: all .25s ease;
 }
 .mini .ghost:hover{
-  transform: translateY(-1px);
-  background: rgba(255,255,255,.10);
-  border-color: rgba(255,255,255,.28);
+  transform: scale(1.05);
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.6);
+  box-shadow: 0 0 18px rgba(255,255,255,0.35);
 }
+
 
 /* ===== 白フェード（遷移演出） ===== */
 .whiteout{
