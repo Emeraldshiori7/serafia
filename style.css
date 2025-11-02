@@ -34,11 +34,39 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
 
 /* セラフィアの“気配”（薄いシルエット画像を推奨 /img/seraphia.png） */
+/* セラフィアの“佇み”＋中心からの淡い光 */
 .seraphia-silhouette{
-  position:fixed; right:6vw; bottom:8vh; width:min(24vw,320px); aspect-ratio:3/5;
-  background:url('/img/seraphia.png') center/contain no-repeat;
-  opacity:.08; filter:grayscale(100%) contrast(110%) brightness(110%); mix-blend-mode:screen;
+  position:fixed; right:6vw; bottom:8vh;
+  width:min(24vw, 340px); aspect-ratio:3/5;
+  background:url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
+  opacity:.10;                          /* うっすら */
+  filter: grayscale(100%) contrast(110%) brightness(108%);
+  mix-blend-mode:screen;                /* 冷たい神々しさ */
+  pointer-events:none; user-select:none;
+  animation: seraphiaSway 14s ease-in-out infinite;
 }
+
+/* 中心からの柔らかい光（後光） */
+.seraphia-silhouette::after{
+  content:""; position:absolute; inset:-12%;
+  background:
+    radial-gradient(40% 40% at 50% 55%, rgba(255,240,210,.18), transparent 70%),
+    radial-gradient(18% 18% at 50% 55%, rgba(255,255,255,.22), transparent 80%);
+  filter: blur(10px);
+  opacity:.9; pointer-events:none;
+}
+
+/* ごく僅かな呼吸（揺らぎ） */
+@keyframes seraphiaSway{
+  0%,100%{ transform: translateY(0) }
+  50%    { transform: translateY(-3px) }
+}
+
+/* 動作を控えたい環境へ配慮 */
+@media (prefers-reduced-motion: reduce){
+  .seraphia-silhouette{ animation:none }
+}
+
 
 /* 扉グリッド */
 .doors{ width:min(900px,88vw); margin:32px auto 6vh; display:grid; grid-template-columns:repeat(3,minmax(200px,1fr)); gap:18px }
