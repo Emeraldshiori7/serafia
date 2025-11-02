@@ -1,14 +1,14 @@
-// ───────── 星の微粒子（点滅＋漂い） ─────────
+// ☆ 星の微粒子（簡略版）
 (() => {
-  const cvs = document.getElementById('dust');
-  if (!cvs) return;
+  const cvs = document.getElementById('dust'); if (!cvs) return;
   const ctx = cvs.getContext('2d');
-  function resize(){ cvs.width = innerWidth; cvs.height = innerHeight }
-  addEventListener('resize', resize, {passive:true}); resize();
+  const fit = () => { cvs.width = innerWidth; cvs.height = innerHeight; };
+  addEventListener('resize', fit, {passive:true}); fit();
+
   const N = Math.min(140, Math.floor((innerWidth*innerHeight)/18000));
   const stars = Array.from({length:N}, () => ({
     x: Math.random()*cvs.width,
-    y: Math.random()*cvs.height*0.95,
+    y: Math.random()*cvs.height,
     r: Math.random()*1.6 + 0.3,
     a: Math.random()*Math.PI*2,
     s: 0.2 + Math.random()*0.7,
@@ -16,14 +16,13 @@
   }));
   let t = 0;
   (function loop(){
-    requestAnimationFrame(loop);
-    t += 0.016;
+    requestAnimationFrame(loop); t += 0.016;
     ctx.clearRect(0,0,cvs.width,cvs.height);
     for (const p of stars){
       p.x += Math.sin((t+p.a)*0.2)*0.06;
-      p.y -= p.s*0.02; if (p.y < -10) p.y = cvs.height+10;
-      const flicker = 0.5 + 0.5*Math.sin(t*p.tw + p.a);
-      ctx.globalAlpha = 0.35 + 0.65*flicker;
+      p.y += Math.cos((t+p.a)*0.18)*0.04;
+      const flick = 0.5 + 0.5*Math.sin(t*p.tw + p.a);
+      ctx.globalAlpha = 0.35 + 0.65*flick;
       ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
       ctx.fillStyle = 'rgba(240,235,220,0.9)'; ctx.fill();
     }
@@ -31,73 +30,41 @@
   })();
 })();
 
-// ───────── 囁きのローテーション ─────────
+// ☆ 楕円リング（ステージ中心に完全同期）
 (() => {
-  const el = document.querySelector('.whisper .line');
-  if (!el) return;
-  const lines = [
-    "「……ここにいるわ。」",
-    "「静けさの奥で、あなたを見ている。」",
-    "「どの扉から、始めるの？」"
-  ];
-  let i = 0;
-  function show(){
-    el.textContent = lines[i % lines.length];
-    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
-    i++;
-  }
-  show();
-  setInterval(show, 9000);
-})();
-
-// ───────── 儀式をもう一度 ─────────
-document.getElementById('reintro')?.addEventListener('click', () => {
-  location.href = './intro.html?ritual';
-});
-
-// ───────── 楕円リング配置（祭壇＋浮遊） ─────────
-(() => {
-  const wrap  = document.querySelector('.hall-stage .doors--orbit');
-  if (!wrap) return;
+  const stage = document.getElementById('hall-stage');
+  const wrap  = document.getElementById('orbit-doors');
+  if (!stage || !wrap) return;
   const doors = [...wrap.querySelectorAll('.door')];
-  if (doors.length <= 1) { console.warn('扉が1枚以下です'); return; }
+  if (doors.length < 2) return;
 
-  // 呼吸・回転のパラメータ
-  let ROT_SPEED = 0.0007;  // ゆっくり厳かに
-  let SWAY_X    = 4;
-  let SWAY_Y    = 3;
+  // 回転・揺らぎ
+  const ROT_SPEED = 0.0007;
+  const SWAY_X = 4, SWAY_Y = 3;
 
-  // 均等角度
-  const base  = doors.map((_, i) => (i / doors.length) * Math.PI * 2);
-  const phase = doors.map(() => Math.random() * Math.PI * 2);
+  // 均等角度 & 揺らぎ位相
+  const base  = doors.map((_, i) => (i/doors.length)*Math.PI*2);
+  const phase = doors.map(() => Math.random()*Math.PI*2);
 
-  // 中心と半径
-  let cx = 0, cy = 0, rx = 0, ry = 0;
+  // ステージ基準の中心＆半径
+  let cx=0, cy=0, rx=0, ry=0;
 
-  function resize(){
-    // ステージの実寸、取れないときはビューポートで代用
-     const r = wrap.getBoundingClientRect();
-   // wrapが0になる環境向けの強い保険：ビューポート基準
-  let w = Math.max(800, (r.width  || 0), innerWidth  * 0.92);
-   let h = Math.max(600, (r.height || 0), innerHeight * 0.80);
-    // 中心はステージ中央
-    cx = w / 2;
-    cy = h / 2;
-
-    // 扉サイズに依存せず、常に広い半径を確保
-    rx = Math.max(320, w * 0.48);   // 横半径（増やすなら 0.50〜0.52）
-    ry = Math.max(260, h * 0.46);   // 縦半径（増やすなら 0.48〜0.50）
-  }
-
-  // ★ 初期化＋リサイズ追従（これが重要）
-  addEventListener('resize', resize, { passive:true });
-  resize();
-let ORBIT_BIAS_x = -36 // 楕円の中心を上下へ（px）。セラフィアの offset-y と同じ値に
+  const resize = () => {
+    const r = stage.getBoundingClientRect();
+    // 失敗保険
+    const w = Math.max(800, r.width  || innerWidth*0.9);
+    const h = Math.max(600, r.height || innerHeight*0.7);
+    cx = w/2;  cy = h/2;
+    // 半径（広めに）
+    rx = Math.max(320, w*0.48);
+    ry = Math.max(260, h*0.46);
+  };
+  addEventListener('resize', resize, {passive:true}); resize(); // ← 初回に必ず呼ぶ
 
   let t = 0, rot = 0;
-  function loop(){
-    t += 16/1000;
-    rot += ROT_SPEED;
+  (function loop(){
+    requestAnimationFrame(loop);
+    t += 16/1000; rot += ROT_SPEED;
 
     doors.forEach((el, i) => {
       const a  = base[i] + rot;
@@ -105,19 +72,15 @@ let ORBIT_BIAS_x = -36 // 楕円の中心を上下へ（px）。セラフィア�
       const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y;
 
       const x = cx + rx * Math.cos(a) + sx;
-      const y = cy + ORBIT_BIAS_Y + ry * Math.sin(a) + sy;
+      const y = cy + ry * Math.sin(a) + sy;
 
-      const depth = (y - (cy - ry)) / (ry * 2); // 0〜1
-      el.style.zIndex = String(100 + Math.round(depth * 100));
-      el.dataset.front = depth > 0.62 ? '1' : '';
-
+      // 位置は transform を直接書かず、CSS変数に流す
       el.style.setProperty('--tx', `${x}px`);
-　　　 el.style.setProperty('--ty', `${y}px`);
-      el.style.opacity = '1';
-      el.style.visibility = 'visible';
-    });
+      el.style.setProperty('--ty', `${y}px`);
 
-    requestAnimationFrame(loop);
-  }
-  requestAnimationFrame(loop);
+      // 手前に来たものを少し明るくしたい時の z（任意）
+      const depth = (y - (cy - ry)) / (ry*2);
+      el.style.zIndex = String(100 + Math.round(depth*100));
+    });
+  })();
 })();

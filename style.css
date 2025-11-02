@@ -1,216 +1,55 @@
-:root{
-  --ink:#e9dfd6; --bg:#000; --gold:#d5bd86;
-  --panel:rgba(255,240,230,0.05); --glow:rgba(255,236,200,.35);
-}
+:root{ --ink:#e9dfd6; --bg:#000; }
+*{ box-sizing:border-box } html,body{ height:100%; margin:0 }
+body.hall{ font-family:"Cormorant Garamond","Yu Mincho",serif; color:var(--ink); background:#000; overflow-x:hidden }
 
-/* 基本 */
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body.hall{
-  font-family:"Cormorant Garamond","Yu Mincho",serif;
-  color:var(--ink); background:var(--bg); letter-spacing:.03em;
-  overflow-x:hidden;
-}
-
-/* 背景 */
-.bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:radial-gradient(1200px 800px at 50% 55%, #0b0b0f 0%, #000 65%)}
-#dust{position:absolute;inset:0;display:block;filter:brightness(.9) contrast(1.05)}
-.vignette{position:absolute;inset:-8vmax;
-  background:radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0,0,0,.65) 80%)}
-.floor-glow{position:absolute;left:50%;bottom:-8vh;transform:translateX(-50%);
-  width:min(90vw,1100px);height:26vh;
-  background:radial-gradient(60% 100% at 50% 0%, rgba(170,160,140,.18), transparent 70%);
-  filter:blur(10px)}
-.relief{
-  position:absolute; inset:0; opacity:.22; filter:blur(.2px);
-  animation:reliefFloat 18s ease-in-out infinite alternate;
-  background:
-    repeating-conic-gradient(from 45deg, rgba(255,240,220,.045) 0 25%, transparent 0 50%) 0 0/38px 38px,
-    radial-gradient(closest-side, rgba(255,240,220,.06) 0%, rgba(255,240,220,.015) 55%, transparent 62%) 24px 20px/120px 120px repeat,
-    linear-gradient(#070709, #000);
-}
-@keyframes reliefFloat{from{transform:translateY(-4px);opacity:.20}to{transform:translateY(4px);opacity:.25}}
-@media (prefers-reduced-motion:reduce){.relief{animation:none}}
+/* 背景の星だけ（最小） */
+#dust{ position:fixed; inset:0; display:block; }
 
 /* タイトル */
-.hero{ text-align:center; padding:8vh 2rem 2rem }
-.hero h1{
-  margin:0; font-family:"Cinzel",serif; letter-spacing:.18em; font-weight:600;
-  font-size:clamp(28px,6vw,60px); text-shadow:0 0 18px var(--glow);
-  transform:translateY(6px); opacity:0; animation:fadeUp .9s ease .2s forwards;
-}
-.subtitle{ margin:.6rem 0 0; color:#b8aca4; opacity:0; transform:translateY(8px); animation:fadeUp .8s ease .6s forwards }
-@keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
+.hero{ text-align:center; padding:6vh 2rem 0 }
+.hero h1{ margin:0; font-family:"Cinzel",serif; letter-spacing:.18em; font-size:clamp(28px,6vw,60px) }
+.subtitle{ margin:.4rem 0 0; opacity:.8 }
 
-/* ───────── 祭壇ステージ（画面中央に固定） ───────── */
+/* ── 祭壇ステージ：画面中央に固定し、内側を基準にする ── */
 .hall-stage{
-  position: fixed;
-   left: 50vw;               /* 画面中央を絶対基準で */
-   top: 52vh;                /* 同じく画面の高さ基準 */
-   transform: translate(-50%, -50%);
-  width: min(1200px, 96vw);
-  height: min(86vh, 760px);
-  margin: 0;
-  z-index: 2;
-  isolation: isolate;
-}
-.hall-stage .doors--orbit{
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  display: block;
+  position:fixed; left:50%; top:52vh; transform:translate(-50%,-50%);
+  width:min(1200px,96vw); height:min(80vh,720px);
+  isolation:isolate; z-index:1;
+  /* 調整が分かりやすいよう薄い背景（本番で消してOK） */
+  background: radial-gradient(80% 60% at 50% 50%, rgba(255,255,255,.015), transparent 70%);
 }
 
-/* ───────── 扉（共通） ───────── */
-.door{
-  position:relative; aspect-ratio:3/4; border-radius:10px; overflow:hidden; text-decoration:none;
-  display:flex; align-items:end; justify-content:center; padding:14px 10px; color:#f1e9df; letter-spacing:.12em;
-  background:
-    radial-gradient(180% 100% at 50% 0%, rgba(255,220,160,.06), transparent 60%),
-    repeating-linear-gradient(90deg,#0b0b0d 0 6px,#0f0f12 6px 12px),
-    linear-gradient(180deg,#0a0a0c,#141419);
-  box-shadow:
-    inset 0 0 0 1px rgba(235,205,120,.25),
-    inset 0 0 0 6px rgba(235,205,120,.06),
-    inset 0 0 24px rgba(0,0,0,.65),
-    0 0 25px rgba(255,220,140,.06);
-  transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
-  filter: grayscale(20%) contrast(104%) brightness(92%);
-}
-.door::before{content:""; position:absolute; inset:8px; border-radius:8px;
-  border:1px solid rgba(235,205,120,.45); box-shadow: inset 0 0 12px rgba(235,205,120,.15); mix-blend-mode:screen; opacity:.9}
-.door::after{content:""; position:absolute; inset:16px; border-radius:6px; border:1px solid rgba(235,205,120,.25); box-shadow: inset 0 0 18px rgba(235,205,120,.08); opacity:.85}
-.door__label{
-  position:relative; z-index:2; font-size:clamp(14px,1.5vw,18px);
-  padding:.35rem .7rem; background:rgba(0,0,0,.45);
-  border:1px solid rgba(235,205,120,.35); border-radius:6px; text-shadow:0 1px 0 rgba(0,0,0,.8);
-  box-shadow:0 0 12px rgba(255,220,150,.08);
-}
-
-/* ───────── 楕円リング用：絶対配置＋サイズ明示 ───────── */
-.hall-stage .doors--orbit .door{
-  position: absolute;
-  /* ★中央50%は使わない。起点はラッパの左上 */
-  top: 0; 
-  left: 0;
-
+/* ── 扉：座標は CSS 変数 --tx/--ty を JS が更新 ── */
+.doors--orbit{ position:absolute; inset:0 }
+.doors--orbit .door{
+  position:absolute; top:0; left:0;
   width: clamp(140px, 18vmin, 220px);
   aspect-ratio: 3/4;
-
-  /* JS から受け取る座標（デフォルトは0） */
-  --tx: 0px;
-  --ty: 0px;
-
-  /* 位置 = translate(x,y) + 自身の中心合わせ */
-  transform: translate(var(--tx), var(--ty)) translate(-50%, -50%);
-  will-change: transform, filter;
-  z-index: 1;
+  --tx: 0px; --ty: 0px;
+  transform: translate(var(--tx), var(--ty)) translate(-50%,-50%);
+  display:flex; align-items:end; justify-content:center;
+  color:#e9e1d9; text-decoration:none;
+  background: rgba(255,255,255,.03);
+  border-radius:12px;
+  box-shadow: inset 0 0 0 1px rgba(220,190,120,.35), inset 0 0 0 6px rgba(220,190,120,.06);
 }
-
-@media (hover:hover){
-  /* ★位置は保ったまま拡大だけ足す */
-  .hall-stage .doors--orbit .door:hover{
-    transform: translate(var(--tx), var(--ty)) translate(-50%, -50%) scale(1.06);
-  }
+.doors--orbit .door:hover{
+  transform: translate(var(--tx), var(--ty)) translate(-50%,-50%) scale(1.06);
 }
+.door__label{ background:rgba(0,0,0,.5); padding:.35rem .6rem; border-radius:8px; margin:10px }
 
-
-/* ───────── 個別扉の画像（必要に応じて差し替え） ───────── */
-.door--1{
-  --mirror-zoom: 180%; --mirror-x: 50%; --mirror-y: 48%;
-  background: none !important;
-  background-image: url('assets/doors/door_mirror.png') !important;
-  background-repeat: no-repeat !important;
-  background-size: var(--mirror-zoom) !important;
-  background-position: var(--mirror-x) var(--mirror-y) !important;
-  border: none !important; box-shadow: none !important; outline: none !important;
-  background-color: rgba(0,0,0,.25);
-  filter: grayscale(100%) contrast(110%) brightness(98%);
-}
-.door--1::before, .door--1::after{ border:none !important; box-shadow:none !important; }
-
-.door--2{
-  --study-zoom: 180%; --study-x: 50%; --study-y: 50%;
-  background: none !important;
-  background-image: url('assets/doors/door_study.png') !important;
-  background-repeat: no-repeat !important;
-  background-size: var(--study-zoom) !important;
-  background-position: var(--study-x) var(--study-y) !important;
-  border: none !important; box-shadow: none !important; outline: none !important;
-  background-color: rgba(0,0,0,.25);
-  filter: contrast(110%) brightness(104%) saturate(115%);
-}
-
-/* ───────── セラフィア（中央固定） ───────── */
-/* セラフィア：ステージ中心 + オフセットノブ */
+/* ── セラフィア：ステージの幾何学中心に絶対配置 ── */
 .seraphia-silhouette{
-  position: absolute;             /* ← hall-stage の中で相対配置 */
-  left: 50%;
-  top: 50%;
-  /* ▼ 見た目で合わせる微調整（px / % どちらでも） */
+  position:absolute; left:50%; top:50%;
+  /* 見た目の合わせ用：必要なら微調整（px/%) */
   --seraphia-offset-x: 0px;
-  --seraphia-offset-y: -36px;     /* 少し上へ（合わなければ値を±で調整） */
-
-  transform:
-    translate(-50%, -50%)
-    translate(var(--seraphia-offset-x), var(--seraphia-offset-y));
-
-  width: min(28vmin, 320px);
-  aspect-ratio: 3/5;
+  --seraphia-offset-y: 0px;
+  transform: translate(-50%, -50%) translate(var(--seraphia-offset-x), var(--seraphia-offset-y));
+  width:min(28vmin,320px); aspect-ratio:3/5;
   background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
-  opacity: .12;
-  filter: grayscale(100%) contrast(128%) brightness(128%);
-  mix-blend-mode: screen;
-  pointer-events: none; user-select: none;
-  z-index: 3;
-  animation: seraphiaSway 14s ease-in-out infinite;
+  opacity:.14; filter:grayscale(100%) contrast(128%) brightness(128%); mix-blend-mode:screen;
+  pointer-events:none; z-index:2;
 }
 
-
-.seraphia-silhouette::after{
-  content:""; position:absolute; inset:-12%;
-  background:
-    radial-gradient(60% 60% at 50% 55%, rgba(255,220,160,.18), transparent 80%),
-    radial-gradient(40% 40% at 50% 55%, rgba(255,240,210,.32), transparent 70%),
-    radial-gradient(18% 18% at 50% 55%, rgba(255,255,255,.35), transparent 80%);
-  filter: blur(14px);
-  opacity: .9;
-  animation: glowPulse 6s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes seraphiaSway{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
-@keyframes glowPulse{ 0%,100%{ opacity:.8; filter:blur(12px) } 50%{ opacity:1; filter:blur(16px) } }
-
-/* ───────── 囁き（中央下） ───────── */
-.whisper{
-  position: fixed;
-  left: 50vw;
-   bottom: 7vh;
-   transform: translateX(-50%);
-  max-width: 42ch;
-  text-align: center;
-  color: #cbbfb6;
-  font-style: italic;
-  letter-spacing: .06em;
-  z-index: 4;
-  pointer-events: none; user-select: none;
-}
-.whisper .line{
-  display:inline-block; opacity:0; filter: blur(.3px);
-  animation: appear 1400ms ease forwards, breathe 6s ease-in-out infinite;
-}
-@keyframes appear{ to{ opacity:.85; transform:none } }
-@keyframes breathe{ 0%,100%{ opacity:.85; transform:translateY(0) } 50%{ opacity:.45; transform:translateY(-3px) } }
-
-/* フッター */
-.mini{ display:flex; justify-content:center; padding:14px 0 24px }
-.ghost{ background:transparent; border:1px solid rgba(255,255,255,.22); color:#e9e1d9; padding:.5rem .8rem; border-radius:8px; letter-spacing:.06em; cursor:pointer; transition:background .2s ease, transform .2s ease }
-.ghost:hover{ background:rgba(255,255,255,.08); transform:translateY(-1px) }
-
-/* モバイル 軽めに */
-@media (max-width:768px){
-  .hero{ padding: 5vh 16px 8px; }
-  .hero h1{ letter-spacing:.12em; font-size: clamp(22px, 6vw, 32px); text-shadow: none; }
-  .subtitle{ font-size: clamp(11px, 3.8vw, 14px); opacity:.75; }
-  .whisper{ bottom: calc(12px + env(safe-area-inset-bottom)); max-width: 30ch; font-size: clamp(11px, 3.4vw, 14px) }
-}
+/* 囁き：画面中央下（ステージとは独立） */
+.whisper{ position:fixed; left:50%; bottom:7vh; transform:translateX(-50%); opacity:.9; text-align:center }
