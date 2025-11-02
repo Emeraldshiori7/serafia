@@ -225,16 +225,24 @@ body.hall{ font-family:"Cormorant Garamond","Yu Mincho",serif; color:var(--ink);
 /* 囁き：画面中央下（ステージとは独立） */
 .whisper{ position:fixed; left:50%; bottom:7vh; transform:translateX(-50%); opacity:.9; text-align:center }
 /* ===== タイトル層を扉より手前に配置 ===== */
+/* ===== タイトルを扉より前面・縦並びで中央に配置 ===== */
 .hero {
-  position: relative;
-  z-index: 5; /* ← 扉(z=2)やセラフィア(z=3)より前に出す */
+  position: fixed;
+  top: 18vh;             /* ← タイトルの縦位置。お好みで18〜24vhくらい */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
   text-align: center;
-  pointer-events: none; /* ← 背景の扉をクリックできるように */
+  display: flex;
+  flex-direction: column; /* ← ← ここが重要！縦並びにする */
+  align-items: center;
+  gap: 0.6rem;            /* ← タイトルとサブタイトルの間隔 */
+  z-index: 5;             /* 扉やセラフィアより前 */
+  pointer-events: none;   /* タイトルが前にあっても扉クリックを妨げない */
 }
 
+/* メインタイトル */
 .hero h1 {
-  position: relative;
-  display: inline-block;
   font-family: "Cinzel", serif;
   font-weight: 600;
   letter-spacing: 0.18em;
@@ -242,16 +250,19 @@ body.hall{ font-family:"Cormorant Garamond","Yu Mincho",serif; color:var(--ink);
   color: #f3eadf;
   text-shadow: 0 0 22px rgba(255, 240, 200, 0.6),
                0 0 48px rgba(255, 220, 150, 0.3);
+  margin: 0;
   z-index: 5;
 }
 
+/* サブタイトル */
 .hero .subtitle {
-  position: relative;
-  display: inline-block;
-  margin-top: 0.6rem;
+  font-family: "Cormorant Garamond", "Yu Mincho", serif;
+  font-style: italic;
   color: #d0c4b6;
-  font-size: clamp(13px, 2.6vw, 18px);
+  font-size: clamp(13px, 2.4vw, 18px);
   letter-spacing: 0.08em;
   text-shadow: 0 0 18px rgba(255, 220, 150, 0.4);
+  margin: 0;
   z-index: 5;
 }
+
