@@ -50,6 +50,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 .seraphia-silhouette::after{
   content:""; position:absolute; inset:-12%;
   background:
+    conic-gradient(from -90deg at 50% 8%, rgba(255,250,230,.12), transparent 40%)
     radial-gradient(40% 40% at 50% 55%, rgba(255,240,210,.18), transparent 70%),
     radial-gradient(18% 18% at 50% 55%, rgba(255,255,255,.22), transparent 80%);
   filter: blur(10px);
@@ -132,3 +133,8 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 
 /* レスポンシブ */
 @media (max-width:768px){ .doors{ grid-template-columns:1fr 1fr; gap:14px } .door{ aspect-ratio:5/4 } }
+.seraphia-silhouette{ opacity:0; animation: seraphiaIn 1.6s ease .6s forwards }
+@keyframes seraphiaIn{
+  from{ opacity:0; transform:translateY(6px) }
+  to  { opacity:.10; transform:translateY(0) }
+}
