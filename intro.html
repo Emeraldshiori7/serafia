@@ -1,47 +1,41 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <script>
-  const qs = new URLSearchParams(location.search);
-  const force = qs.has('ritual'); // ?ritual 付きは強制再生
-  if (localStorage.getItem('introSeen') === '1' && !force) {
-    window.location.replace('./index.html');
-  }
-</script>
-
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>セラフィアの館 ─ 入場</title>
+
+  <!-- イントロをスキップする判定（?ritual で強制再生） -->
+  <script>
+    (function(){
+      const qs = new URLSearchParams(location.search);
+      const force = qs.has('ritual');
+      if (localStorage.getItem('introSeen') === '1' && !force) {
+        location.replace('./index.html');
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="intro.css" />
 </head>
-
 <body class="intro">
-  <!-- 星屑レイヤー -->
+  <!-- 星屑 -->
   <canvas id="stars" aria-hidden="true"></canvas>
 
-  <!-- 画面内容（透明の上に乗せる） -->
+  <!-- 画面内容 -->
   <div class="stage" role="presentation">
-    <div class="title">
+    <div class="title" aria-live="polite">
       <h1>セラフィアの館</h1>
       <div class="subtitle">── 静寂の中、あなたを待つ光がある。</div>
     </div>
-
-    <!-- 画像はあとで入れる。無くてもOK
-    <img class="ring"   src="assets/intro/ring.svg"   alt="" />
-    <img class="shafts" src="assets/intro/beams.png"  alt="" />
-    <img class="crown"  src="assets/intro/halo.png"   alt="" />
-    -->
-
-  <button id="skipBtn" class="skip">儀式を省略</button>
-<div class="whiteout" aria-hidden="true"></div>
-
+    <button id="skipBtn" class="skip" type="button" aria-label="儀式を省略">儀式を省略</button>
   </div>
 
+  <!-- 白フェード（1つに統一） -->
   <div class="whiteout" aria-hidden="true"></div>
 
-  <!-- bodyのいちばん最後に置く or head内でもOK -->
-<script defer src="intro.js"></script>
-
+  <script defer src="intro.js"></script>
 </body>
 </html>
+
 
