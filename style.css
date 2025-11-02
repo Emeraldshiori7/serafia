@@ -404,36 +404,6 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   .door--1:hover::before{ opacity:.6; }
   .door--1:hover::after{ opacity:.5; transform: translateX(-1px); }
 }
-/* ===== 鏡の間だけ：ホバー演出を無効化 ===== */
-@media (hover:hover){
-  /* 持ち上がり・明るさアップを止める */
-  .door--1,
-  .door--1:hover{
-    transform: none !important;
-    filter: grayscale(100%) contrast(110%) brightness(98%) !important;
-    box-shadow:
-      inset 0 0 24px rgba(0,0,0,.55),
-      0 10px 24px rgba(0,0,0,.45) !important; /* 共通の白い縁を出さない */
-  }
-
-  /* 斜めのグレア線と星粉を殺す */
-  .door--1 .glare,
-  .door--1 .sparks{
-    display: none !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
-
-  /* 自前の“鏡ハイライト”の強度も固定（増えないように） */
-  .door--1:hover::before{ opacity: .45 !important; }
-  .door--1:hover::after { opacity: .35 !important; transform: none !important; }
-}
-
-/* キーボード操作のフォーカスは残す（アクセシビリティ） */
-.door--1:focus-visible{
-  outline: 2px solid rgba(255,230,160,.7);
-  outline-offset: 3px;
-}
 /* ===== 鏡の間：白い光を消して、拡大だけ残す ===== */
 @media (hover:hover){
   .door--1 {
