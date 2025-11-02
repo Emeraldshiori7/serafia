@@ -72,26 +72,26 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   const phase = doors.map(() => Math.random() * Math.PI * 2);
 
  function resize(){
+  // ステージの内寸を厳密に計算
   const r = wrap.getBoundingClientRect();
   const style = getComputedStyle(wrap);
   const padX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
   const padY = parseFloat(style.paddingTop)  + parseFloat(style.paddingBottom);
 
-  const w = Math.max(300, r.width  - padX);
-  const h = Math.max(300, r.height - padY);
+  const w = Math.max(360, r.width  - padX);
+  const h = Math.max(360, r.height - padY);
 
   cx = w / 2;
   cy = h / 2;
 
-  // 扉の幅を参照して、楕円半径に余白を持たせる
-  const sampleDoor = doors[0];
-  const dw = sampleDoor ? sampleDoor.getBoundingClientRect().width : 200;
-  const margin = dw * 0.65;
+  // 扉幅を参照して、半径に余白を確保
+  const dw = doors[0]?.getBoundingClientRect().width || 200;
+  const margin = dw * 0.7;
 
-  rx = Math.max(120, (w / 2) - margin);
-  ry = Math.max(90,  (h / 2) - margin * 0.8);
+  rx = Math.max(140, (w / 2) - margin);
+  ry = Math.max(110, (h / 2) - margin * 0.85);
 }
-  
+
 function loop(){
   t += 16/1000;
   rot += ROT_SPEED;
@@ -101,20 +101,23 @@ function loop(){
     const sx = Math.sin(t*0.8 + phase[i]) * SWAY_X;
     const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y;
 
-    // ステージ左上を(0,0)として配置 → CSSで中央へ移動
     const x = cx + rx * Math.cos(a) + sx;
     const y = cy + ry * Math.sin(a) + sy;
 
+    // 深度による前後（数値は文字列で安全に）
     const depth = (y - (cy - ry)) / (ry * 2); // 0〜1
     el.style.zIndex = String(100 + Math.round(depth * 100));
     el.dataset.front = depth > 0.62 ? '1' : '';
 
-    // 中央へ寄せるため、translate(-50%, -50%) を最後に必ず付ける
+    // 画面中央へ寄せるための平行移動
     el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+    el.style.opacity = '1';
+    el.style.visibility = 'visible';
   });
 
   requestAnimationFrame(loop);
 }
+
   requestAnimationFrame(loop);
 })();
 

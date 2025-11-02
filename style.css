@@ -278,3 +278,22 @@ body.hall{
 .hall-stage{
   height: min(72vh, 680px);
 }
+/* === 楕円リングの安定化：扉サイズと表示を強制 === */
+.hall-stage .doors--orbit{ position: relative !important; }
+
+.hall-stage .doors--orbit .door{
+  position: absolute !important;
+  display: block !important;
+  width: clamp(160px, 22vmin, 240px) !important;  /* 扉の基本サイズ */
+  aspect-ratio: 3 / 4 !important;
+  transform: translate(-50%, -50%);               /* JSで上書きされる前の初期値 */
+  z-index: 1;
+}
+/* === セラフィア中央固定の強制リセット === */
+.seraphia-silhouette{
+  right: auto !important;       /* 旧：right: calc(...) を無効化 */
+  left: 50% !important;
+  top: 52vh !important;         /* 50〜56vhで好みに */
+  transform: translate(-50%, -50%) !important;
+  z-index: 3 !important;
+}
