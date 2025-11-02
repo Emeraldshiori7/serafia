@@ -432,7 +432,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 }
 /* ===== 書斎の間：金枠・装飾を完全OFF ===== */
 .door--2{
-  --study-zoom: 180%;
+  --study-zoom: 100%;
   --study-x: 50%;
   --study-y: 50%;
 
