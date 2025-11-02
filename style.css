@@ -205,4 +205,36 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 .seraphia-silhouette::after {
   animation: glowPulse 6s ease-in-out infinite;
 }
+/* ✨ 基本のセラフィア（通常時） */
+.seraphia-silhouette {
+  opacity: .12;
+  filter: grayscale(100%) contrast(120%) brightness(128%);
+  transition: filter 1.2s ease, opacity 1.2s ease;
+}
+
+/* 後光（通常時） */
+.seraphia-silhouette::after {
+  content:"";
+  position:absolute; inset:-12%;
+  background:
+    radial-gradient(60% 60% at 50% 55%, rgba(255,220,160,.18), transparent 80%),
+    radial-gradient(40% 40% at 50% 55%, rgba(255,240,210,.32), transparent 70%),
+    radial-gradient(18% 18% at 50% 55%, rgba(255,255,255,.35), transparent 80%);
+  filter: blur(14px);
+  opacity:.9;
+  transition: filter 1.2s ease, opacity 1.2s ease;
+  animation: glowPulse 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 💫 マウスが触れた瞬間、輝きが強くなる */
+.seraphia-silhouette:hover {
+  opacity: .16;
+  filter: grayscale(100%) contrast(135%) brightness(150%);
+}
+
+.seraphia-silhouette:hover::after {
+  opacity: 1;
+  filter: blur(24px) brightness(150%);
+}
 
