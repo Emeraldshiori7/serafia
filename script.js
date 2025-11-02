@@ -87,3 +87,61 @@ const freq  = doors.map(() => 0.12 + Math.random()*0.22);   // 0.12〜0.34Hz →
     });
   })();
 })();
+// === セラフィアの囁き：クロスフェードで順番に表示 ===
+(() => {
+  const a = document.querySelector('.whisper .line--a');
+  const b = document.querySelector('.whisper .line--b');
+  if (!a || !b) return;
+
+  const lines = [
+    "「……ここにいるわ。」",
+    "「静けさの奥で、あなたを見ている。」",
+    "「どの扉から、始めるの？」",
+    "「目を閉じれば、光はそばに。」",
+    "「あなたと、私。違うけれど同じ。」"
+  ];
+
+  // タイミング（好みで調整）
+  const FADE_IN  = 1200;   // 出る時間
+  const HOLD     = 4200;   // 浮かんで留まる
+  const FADE_OUT = 1000;   // 消える時間
+  const GAP      = 200;    // 次の文へ切替の間
+
+  let i = 0, useA = true;
+
+  function setText(el, text){
+    el.textContent = text;
+    el.classList.remove('hide','show'); // 状態リセット
+    // レイアウトをリセットしてからアニメ付与（強制reflow）
+    void el.offsetWidth;
+    el.classList.add('show');
+  }
+
+  function fadeOut(el){
+    el.classList.remove('show');
+    el.classList.add('hide');
+  }
+
+  function cycle(){
+    const showEl = useA ? a : b;
+    const hideEl = useA ? b : a;
+
+    // 次に出すテキストをセット → 浮かせる
+    setText(showEl, lines[i % lines.length]);
+
+    // 現在表示中の反対側があれば、少し遅れて消す（クロスフェード）
+    if (hideEl.textContent) {
+      setTimeout(() => fadeOut(hideEl), 200); // 200ms重ねて滑らかに
+    }
+
+    // 表示時間が終わったら、このレイヤーも消して次へ
+    setTimeout(() => {
+      fadeOut(showEl);
+      useA = !useA;
+      i++;
+      setTimeout(cycle, GAP);
+    }, HOLD + FADE_IN);
+  }
+
+  cycle();
+})();

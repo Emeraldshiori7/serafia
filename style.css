@@ -224,50 +224,66 @@ body.hall{ font-family:"Cormorant Garamond","Yu Mincho",serif; color:var(--ink);
 
 /* 囁き：画面中央下（ステージとは独立） */
 /* ===== 囁きを扉より前に浮かせる ===== */
-.whisper {
+/* 囁きを扉より前に浮かせる（中央下） */
+.whisper{
   position: fixed;
   left: 50%;
-  bottom: 8vh; /* ← 下からの距離。もう少し上げたいときは10vh〜12vhくらいでもOK */
+  bottom: 8vh;
   transform: translateX(-50%);
+  width: min(92vw, 680px);
   max-width: 42ch;
   text-align: center;
-  color: #cbbfb6;
-  font-style: italic;
-  letter-spacing: .06em;
-  line-height: 1.8;
-  z-index: 6; /* ★ 扉(z=2)＆セラフィア(z=3)より前に出す */
-  pointer-events: none; /* ← 扉のクリック操作を邪魔しない */
+  z-index: 6;             /* 扉やセラフィアより前 */
+  pointer-events: none;   /* クリックを邪魔しない */
   user-select: none;
 }
 
-/* セリフのアニメーションと光の効果 */
-.whisper .line {
+/* 2レイヤーを重ねてクロスフェード */
+.whisper .line{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-block;
-  opacity: 0;
-  filter: blur(.4px);
-  animation: appear 1400ms ease forwards, breathe 6s ease-in-out infinite;
+  color: #cbbfb6;
+  font-style: italic;
+  letter-spacing: .06em;
+  line-height: 1.9;
   text-shadow:
     0 0 8px rgba(255, 240, 210, 0.25),
     0 0 22px rgba(255, 230, 180, 0.15);
+  opacity: 0;
+  filter: blur(.4px);
+  will-change: opacity, transform, filter;
 }
 
-@keyframes appear {
-  to {
-    opacity: .85;
-    transform: none;
-  }
+/* 出現（ふわっと浮く）→ ゆらぎ → 退場（薄く消える） */
+.whisper .line.show{
+  animation: whisperIn 1200ms ease forwards,
+             whisperBreathe 8s ease-in-out infinite;
+}
+.whisper .line.hide{
+  animation: whisperOut 1000ms ease forwards;
 }
 
-@keyframes breathe {
-  0%, 100% {
-    opacity: .85;
-    transform: translateY(0);
-  }
-  50% {
-    opacity: .45;
-    transform: translateY(-3px);
-  }
+/* アニメーション */
+@keyframes whisperIn{
+  0%   { opacity: 0; transform: translate(-50%, 6px); filter: blur(2px); }
+  100% { opacity: .9; transform: translate(-50%, 0);  filter: blur(.4px); }
 }
+@keyframes whisperOut{
+  0%   { opacity: .9; transform: translate(-50%, 0);  filter: blur(.4px); }
+  100% { opacity: 0;  transform: translate(-50%,-4px); filter: blur(3px); }
+}
+@keyframes whisperBreathe{
+  0%,100% { opacity: .9;  transform: translate(-50%, 0) }
+  50%     { opacity: .55; transform: translate(-50%,-3px) }
+}
+
+/* モバイル：少し小さめに */
+@media (max-width: 768px){
+  .whisper{ bottom: max(10px, env(safe-area-inset-bottom)); max-width: 34ch; }
+}
+v
 
 /* ===== タイトル層を扉より手前に配置 ===== */
 /* ===== タイトルを扉より前面・縦並びで中央に配置 ===== */
