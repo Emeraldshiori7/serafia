@@ -373,6 +373,10 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   background-color: rgba(0,0,0,.25);
   filter: grayscale(100%) contrast(110%) brightness(98%);
   position: relative;
+   
+  background-blend-mode: normal;
+  background-color: transparent;
+  background: url('assets/doors/door_mirror.png') no-repeat center/200% !important;
 }
 
 /* 共通フレームが ::before/::after に付いていた場合をリセット */
