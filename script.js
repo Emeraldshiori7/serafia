@@ -79,23 +79,23 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   // 中心と半径
   let cx = 0, cy = 0, rx = 0, ry = 0;
 
- function resize(){
-  // 画面中央固定になったステージの「実サイズ」を取得
+function resize(){
+  // 画面中央固定のステージの実サイズ
   const r = wrap.getBoundingClientRect();
 
-  const w = Math.max(480, r.width);
-  const h = Math.max(420, r.height);
+  const w = Math.max(600, r.width);   // 最低幅を大きめに
+  const h = Math.max(520, r.height);  // 最低高も少し上げる
 
+  // 楕円の中心（ステージの中央）
   cx = w / 2;
   cy = h / 2;
 
-  // 扉幅から安全マージンを算出して、リングが必ず内側に収まるように
-  const dw = doors[0]?.getBoundingClientRect().width || 200;
-  const margin = dw * 0.75;
-
-  rx = Math.max(160, (w / 2) - margin);
-  ry = Math.max(130, (h / 2) - margin * 0.85);
+  // ★ 扉サイズに依存させず、常に広めの半径を確保
+  //    （必要なら下の係数を少し上げ下げして調整）
+  rx = Math.max(220, w * 0.42);   // 横方向の半径（大きくしたい→0.45 等）
+  ry = Math.max(180, h * 0.46);   // 縦方向の半径（大きくしたい→0.50 等）
 }
+
 
 
   let t = 0, rot = 0;

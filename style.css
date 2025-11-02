@@ -347,3 +347,7 @@ body.hall{
   transform: translate(-50%, -50%);
   opacity: 1; visibility: visible;
 }
+/* 扉をほんの少し小さめに（ぶつかり防止・任意） */
+.hall-stage .doors--orbit .door{
+  width: clamp(150px, 20vmin, 230px) !important;
+}
