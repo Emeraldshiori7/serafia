@@ -144,7 +144,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
   margin: 4vh auto 8vh;
   padding: 0 22px;
   display: grid;
-  grid-template-columns: 1fr min(28vw, 320px); /* 右に専用スペース */
+  grid-template-columns: 1fr min(26vw, 300px); /* 右に専用スペース */
   gap: 28px;
   align-items: end;
 }
