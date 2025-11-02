@@ -166,7 +166,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 .seraphia-silhouette{
   position: fixed;
   /* 右マージン = (画面幅 - コンテナ幅)/2 + コンテナの左右padding */
-  right: calc((100vw - min(1100px, 92vw)) / 2 - 40px);
+  right: calc((100vw - min(1100px, 92vw)) / 2 - 100px);
   bottom: 8vh;
 
   width: min(26vw, 300px);
