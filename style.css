@@ -360,7 +360,7 @@ body.hall{font-family:"Cormorant Garamond","Yu Mincho",serif;color:var(--ink);ba
 /* 鏡の間：ズーム量を変数で調整できる */
 .door--1{
   /* ← ここが「つまみ」：大きすぎるなら 200% → 170% / 160% へ下げる */
-  --mirror-zoom: 200%;
+  --mirror-zoom: 100%;
   --mirror-x: 50%;
   --mirror-y: 48%;
 
