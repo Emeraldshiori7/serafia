@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <script>
+  const qs = new URLSearchParams(location.search);
+  const force = qs.has('ritual'); // ?ritual 付きは強制再生
+  if (localStorage.getItem('introSeen') === '1' && !force) {
+    window.location.replace('./index.html');
+  }
+</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>セラフィアの館 ─ 入場</title>

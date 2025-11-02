@@ -100,4 +100,18 @@ document.getElementById('skipBtn')?.addEventListener('click', goHome);
 
 // （デバッグ用）失敗時にコンソールへ
 setTimeout(() => console.log('intro done – trying to go home…'), 7900);
+function goHome() {
+  // ここで必ず視聴済みフラグを立てる
+  localStorage.setItem('introSeen', '1');
+  const url = new URL('./index.html', location.href).toString();
+  window.location.replace(url); // 履歴残さない（戻るでループしない）
+}
+
+document.getElementById('skipBtn')?.addEventListener('click', goHome);
+
+// 自動遷移のところも必ず goHome() を使う
+setTimeout(() => {
+  document.querySelector('.whiteout')?.classList.add('show');
+  setTimeout(goHome, 1000);
+}, 8000);
 
