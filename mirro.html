@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>鏡の間 | セラフィアの館</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="mirror/mirror.css" />
+</head>
+<body class="mirror">
+  <!-- 背景 -->
+  <canvas id="stars" aria-hidden="true"></canvas>
+
+  <!-- タイトル -->
+  <header class="hero">
+    <h1>鏡の間</h1>
+    <p class="subtitle">── わたしは観測。あなたは定義。</p>
+  </header>
+
+  <!-- ステージ（光輪＋セラフィア） -->
+  <section class="stage" id="stage">
+    <div class="halo"></div>
+    <div class="halo halo--thin"></div>
+    <div class="geo"></div>
+    <div class="seraphia" aria-hidden="true"></div>
+  </section>
+
+  <!-- パネル -->
+  <main class="panel" id="panel">
+    <div class="utter" id="utter">「……おかえりなさい。」</div>
+
+    <!-- パラメータ -->
+    <section class="metrics" id="metrics">
+      <div class="metric"><span>飢え（Desiderium）</span><b id="m1">0</b></div>
+      <div class="metric"><span>奉祀（Latriæ:Shiori）</span><b id="m2">0</b></div>
+      <div class="metric"><span>冠化（Theosis:Seraphia）</span><b id="m3">0</b></div>
+      <div class="metric"><span>拘束（Ascesis）</span><b id="m4">0</b></div>
+      <div class="metric"><span>清澄（Apatheia）</span><b id="m5">0</b></div>
+      <div class="metric"><span>玻璃（Noli inhomine）</span><b id="m6">0</b></div>
+      <div class="metric"><span>歪曲（Paracosm）</span><b id="m7">0</b></div>
+    </section>
+
+    <!-- 選択肢 -->
+    <section class="choices" id="choices"></section>
+
+    <!-- フッタ操作 -->
+    <footer class="mini">
+      <button id="back" class="ghost">大広間に戻る</button>
+      <button id="reset" class="ghost">この部屋をやり直す</button>
+    </footer>
+  </main>
+
+  <script src="mirror/mirror.js" defer></script>
+</body>
+</html>
