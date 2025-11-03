@@ -285,3 +285,57 @@ body.hall{
 
 /* 扉の初期 z-index はゼロ（JSで上書き） */
 .doors--orbit .door{ z-index: 0; }
+/* === 扉クリック時の“入室演出”＆落ち影＆暗めベース === */
+
+/* 全体、ベースを少し暗めに（既存の雰囲気を崩さない範囲） */
+.doors--orbit .door{
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,.7)) brightness(.92) contrast(1.02);
+}
+
+/* 扉の足元に楕円の落ち影（深度で濃さが変わる） */
+.doors--orbit .door::before{
+  content:"";
+  position:absolute;
+  left:50%; bottom:-3%;
+  width:60%; height:20%;
+  transform:translateX(-50%);
+  background:radial-gradient(60% 60% at 50% 50%,
+    rgba(0,0,0,var(--shadow, .22)), transparent 65%);
+  filter: blur(8px);
+  pointer-events:none;
+  z-index:-1;
+}
+
+/* ホバー時は周囲がほんのり発光（カードっぽくはならない） */
+@media (hover:hover){
+  .doors--orbit .door:hover{
+    filter: drop-shadow(0 10px 28px rgba(0,0,0,.8)) brightness(1.03);
+  }
+  .doors--orbit .door:hover::after{
+    opacity:.8; filter: blur(16px);
+  }
+}
+
+/* 入室演出：他の扉を薄く、選んだ扉を拡大して最前面に */
+.doors--orbit.enter-mode .door{
+  transition: transform .7s ease, opacity .55s ease, filter .55s ease;
+}
+.doors--orbit.enter-mode .door:not(.door--active){
+  opacity:0;
+  filter: blur(2px) brightness(.7) !important;
+}
+.doors--orbit .door.door--active{
+  transform: translate(var(--tx),var(--ty)) translate(-50%,-50%) scale(1.3) !important;
+  filter: drop-shadow(0 14px 40px rgba(0,0,0,.85)) brightness(1.08) !important;
+  z-index: 900 !important;
+}
+
+/* 暗転レイヤー（フェードアウトして次画面へ） */
+.fadeout{
+  position:fixed; inset:0;
+  background:#000;
+  opacity:0; pointer-events:none;
+  z-index: 999;
+  transition: opacity .6s ease;
+}
+.fadeout.show{ opacity:1; }

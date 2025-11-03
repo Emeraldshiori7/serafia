@@ -1,9 +1,23 @@
-/* ============================
-   1) 背景の星（DPR最適化）
-   ============================ */
+/* =====================================================
+   1) 背景の星（DPR最適化・軽量）
+===================================================== */
 (() => {
   const cvs = document.getElementById('dust'); if (!cvs) return;
   const ctx = cvs.getContext('2d', { alpha: true });
+
+  let stars = [];
+  function makeStars(){
+    const area = innerWidth * innerHeight;
+    const N = Math.min(120, Math.max(40, Math.floor(area / 22000)));
+    stars = Array.from({length:N}, () => ({
+      x: Math.random()*innerWidth,
+      y: Math.random()*innerHeight,
+      r: Math.random()*1.5 + 0.35,
+      a: Math.random()*Math.PI*2,
+      s: 0.12 + Math.random()*0.45,   // 漂い速度
+      tw: 0.4 + Math.random()*1.0     // 点滅速度
+    }));
+  }
 
   function fit() {
     const dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
@@ -14,24 +28,9 @@
       cvs.style.width  = innerWidth + 'px';
       cvs.style.height = innerHeight + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      makeStars(); // サイズ変わったら再生成
+      makeStars();
     }
   }
-
-  let stars = [];
-  function makeStars(){
-    const area = innerWidth * innerHeight;
-    const N = Math.min(120, Math.max(40, Math.floor(area / 22000))); // 画面に応じて軽量化
-    stars = Array.from({length:N}, () => ({
-      x: Math.random()*innerWidth,
-      y: Math.random()*innerHeight,
-      r: Math.random()*1.5 + 0.35,
-      a: Math.random()*Math.PI*2,
-      s: 0.12 + Math.random()*0.45,     // 漂い速度
-      tw: 0.4 + Math.random()*1.0       // 点滅速度
-    }));
-  }
-
   addEventListener('resize', fit, { passive:true });
   fit();
 
@@ -54,10 +53,12 @@
   })();
 })();
 
-/* ==========================================
-   2) 扉オービット（回転＋ゆらぎ／軽量・安定版）
-      transform のみ更新。scale脈動は無し。
-   ========================================== */
+/* =====================================================
+   2) 扉オービット（回転＋ゆらぎ＋深度Z／安定版）
+      - 上半分=奥（セラフィアの“後ろ”）
+      - 下半分=手前（セラフィアの“前”）
+      - 影の濃さと明るさに depth を渡す（CSS変数）
+===================================================== */
 (() => {
   const stage = document.getElementById('hall-stage');
   const wrap  = document.getElementById('orbit-doors');
@@ -70,38 +71,26 @@
 
   const base  = doors.map((_, i) => (i/doors.length)*Math.PI*2);
   const phase = doors.map(() => Math.random()*Math.PI*2);
+
+  // 微小な脈動（にじむ追従）
   const amp   = doors.map(() => 0.015 + Math.random()*0.02);
   const freq  = doors.map(() => 0.04  + Math.random()*0.06);
   const phi   = doors.map(() => Math.random()*Math.PI*2);
   const smooth = doors.map(() => 1);
 
-  let cx=0, cy=0, rx=0, ry=0, safeX=0, safeY=0;
-
-  // ★ 画面サイズで半径を再計算（四辺に安全域を確保）
-  const resize = () => {
-    const w = innerWidth;
-    const h = innerHeight;
-    cx = w / 2;
-    cy = h / 2;
-
-    // セーフマージン（px）：扉が切れないための余白
-    safeX = Math.max(48, w * 0.06);
-    safeY = Math.max(60, h * 0.08);
-
-    // 半径：楕円の外形は「画面サイズ − 余白 − 扉サイズの半分」を基準に
-    // 扉幅の上限はCSSの clamp とだいたい揃える
-    const approxDoorW = Math.min(Math.max(w * 0.18, 140), 220); // ざっくり推定
-    const halfDoorW = approxDoorW / 2;
-    const approxDoorH = halfDoorW * (4/3); // aspect-ratio 3/4 → 逆で計算
-
-    rx = (w - safeX*2 - halfDoorW) * 0.48;  // 0.48で少し内側に
-    ry = (h - safeY*2 - approxDoorH/2) * 0.46;
-
-    // 念のため下限
-    rx = Math.max(rx, 260);
-    ry = Math.max(ry, 220);
-  };
-  addEventListener('resize', resize, {passive:true});
+  let cx=0, cy=0, rx=0, ry=0;
+  function resize(){
+    const w = innerWidth, h = innerHeight;
+    cx = w/2; cy = h/2;
+    const safeX = Math.max(48, w*0.06);
+    const safeY = Math.max(60, h*0.08);
+    const approxDoorW = Math.min(Math.max(w*0.18, 140), 220);
+    const halfDoorW = approxDoorW/2;
+    const approxDoorH = halfDoorW*(4/3);
+    rx = Math.max(260, (w - safeX*2 - halfDoorW) * 0.48);
+    ry = Math.max(220, (h - safeY*2 - approxDoorH/2) * 0.46);
+  }
+  addEventListener('resize', resize, { passive:true });
   resize();
 
   let t = 0, rot = 0;
@@ -118,31 +107,29 @@
       const x  = cx + rx * Math.cos(a) + sx;
       const y  = cy + ry * Math.sin(a) + sy;
 
+      // 位置
       el.style.setProperty('--tx', `${x}px`);
       el.style.setProperty('--ty', `${y}px`);
 
-      // depth: 0(奥) → 1(手前)
+      // 深度 0(奥)〜1(手前) を算出
       let depth = (y - (cy - ry)) / (ry * 2);
       depth = Math.max(0, Math.min(1, depth));
-      el.style.setProperty('--depth', depth.toFixed(3));
+      el.style.setProperty('--depth', depth.toFixed(3));   // CSS側で明るさ等に利用
+      el.style.setProperty('--shadow', (0.12 + depth*0.28).toFixed(3)); // 影の濃さ
 
-      // ★ 奥行き：下側（y > cy）は“手前”＝セラフィアより前、上側は“奥”
-        // 深度と前後関係
-    const isFront = y >= cy; // 下半分=手前、上半分=奥
-    // セラフィアを 500 に固定して、その上下に帯域を作る
-    // 400台 = 奥（セラフィアの後ろ） / 600台 = 手前（セラフィアの前）
-    let z;
-    if (isFront) {
-      const k = (y - cy) / ry;                 // 0〜1
-      z = 600 + Math.round(k * 200);           // 600〜800
-    } else {
-      const k = (cy - y) / ry;                 // 0〜1
-      z = 400 - Math.round(k * 200);           // 400〜200
-    }
-    el.style.zIndex = String(z);
+      // 前後関係：セラフィア(固定z=500想定)より
+      // 上半分=奥(200〜400)、下半分=手前(600〜800)
+      let z;
+      if (y >= cy){
+        const k = (y - cy) / ry;        // 0〜1
+        z = 600 + Math.round(k * 200);  // 600〜800
+      }else{
+        const k = (cy - y) / ry;        // 0〜1
+        z = 400 - Math.round(k * 200);  // 400〜200
+      }
+      el.style.zIndex = String(z);
 
-
-      // ゆっくり脈動（にじむ追従）
+      // 微小なスケールの“にじみ”
       const target = 1 + amp[i] * Math.sin(2*Math.PI*freq[i]*t + phi[i]);
       smooth[i] = smooth[i] + (target - smooth[i]) * 0.06;
       el.style.setProperty('--pulse', smooth[i].toFixed(4));
@@ -150,10 +137,9 @@
   })();
 })();
 
-
-/* ==========================================
+/* =====================================================
    3) 囁き：クロスフェード／ホバー一時上書き
-   ========================================== */
+===================================================== */
 const roomDescriptions = {
   kagami:     "「鏡は映す。あなたの姿と、まだ見ぬ影。」",
   shosai:     "「静けさのページに、言葉の灯が滲む。」",
@@ -185,30 +171,26 @@ const whisper = (() => {
     const showEl = useA ? a : b;
     const hideEl = useA ? b : a;
     showEl.textContent = text;
-    showEl.classList.remove('hide','show'); void showEl.offsetWidth; // reflowでアニメ再適用
+    showEl.classList.remove('hide','show'); void showEl.offsetWidth;
     showEl.classList.add('show');
     if (hideEl.textContent) { hideEl.classList.remove('show'); hideEl.classList.add('hide'); }
     useA = !useA;
   }
-
   function cycle(){
-    if (tempText) return;                      // 一時表示中はベース回さない
+    if (tempText) return;                   // 一時表示中はベース回さない
     show(baseLines[i++ % baseLines.length]);
-    timer = setTimeout(cycle, 5200);           // ゆっくり切替
+    timer = setTimeout(cycle, 5200);
   }
-
   function setTemp(text){
     tempText = text;
     if (timer) clearTimeout(timer);
     show(text);
   }
-
   function clearTemp(){
     tempText = null;
     if (timer) clearTimeout(timer);
-    timer = setTimeout(cycle, 600);            // 少し置いて再開
+    timer = setTimeout(cycle, 600);
   }
-
   cycle();
   return { setTemp, clearTemp };
 })();
@@ -231,12 +213,51 @@ const whisper = (() => {
   });
 })();
 
-/* ==========================================
-   4) 儀式をもう一度
-   ========================================== */
+/* =====================================================
+   4) 扉クリック → 拡大ズーム → 暗転 → 遷移
+      ※ fadeout要素が無ければ自動生成
+===================================================== */
+(() => {
+  const wrap = document.getElementById('orbit-doors');
+  if (!wrap) return;
+  let fade = document.getElementById('fadeout');
+  if (!fade){
+    fade = document.createElement('div');
+    fade.id = 'fadeout';
+    fade.className = 'fadeout';
+    document.body.appendChild(fade);
+  }
+  const doors = [...wrap.querySelectorAll('.door')];
+
+  doors.forEach(el => {
+    el.addEventListener('click', (e) => {
+      const href = el.getAttribute('href') || '';
+      const shouldNavigate = href && href !== '#';
+      e.preventDefault();
+
+      wrap.classList.add('enter-mode');
+      doors.forEach(d => d.classList.remove('door--active'));
+      el.classList.add('door--active');
+
+      setTimeout(() => fade.classList.add('show'), 320);
+
+      if (shouldNavigate){
+        setTimeout(() => { window.location.href = href; }, 700);
+      }else{
+        // 遷移先が無い場合は演出だけ
+        setTimeout(() => {
+          fade.classList.remove('show');
+          el.classList.remove('door--active');
+          wrap.classList.remove('enter-mode');
+        }, 1200);
+      }
+    });
+  });
+})();
+
+/* =====================================================
+   5) 儀式をもう一度
+===================================================== */
 document.getElementById('reintro')?.addEventListener('click', () => {
   location.href = './intro.html?ritual';
 });
-
-
-
