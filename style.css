@@ -281,7 +281,7 @@ body.hall{
   .mini .ghost:hover{
     color: #fff8ef;
     text-shadow:
-      0 0 10px rgba(255,240,210,.26),
+      0 0 10px rgba(255,240,210,.35),
       0 0 26px rgba(255,230,180,.18);
     transform: translateY(-1px);
   }
@@ -302,7 +302,7 @@ body.hall{
 @keyframes ritualRipple{
   0%   { opacity: .55; transform: translate(-50%,-50%) scale(0.001); filter: blur(0px); }
   60%  { opacity: .35; transform: translate(-50%,-50%) scale(16);    filter: blur(1px); }
-  100% { opacity: 0;   transform: translate(-50%,-50%) scale(22);    filter: blur(2px); }
+  100% { opacity: 0;   transform: translate(-50%,-50%) scale(32);    filter: blur(2px); }
 }
 
 
