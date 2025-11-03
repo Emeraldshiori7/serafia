@@ -100,8 +100,17 @@
       el.style.setProperty('--ty', `${y}px`);
 
       // 手前に来たものほど前面に
-      const depth = (y - (cy - ry)) / (ry*2);   // 0〜1
-      el.style.zIndex = String(100 + Math.round(depth*100));
+   // 扉オービットループ内 ↓ この部分だけ書き換え
+const depth = (y - (cy - ry)) / (ry*2);  // 0〜1の奥行き値
+// セラフィアちゃんを基準に前後へ
+if (depth > 0.5) {
+  // 下（手前）にあるとき：セラフィアより前
+  el.style.zIndex = '3';
+} else {
+  // 上（奥）にあるとき：セラフィアより後
+  el.style.zIndex = '1';
+}
+
     }
   })();
 
