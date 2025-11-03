@@ -34,26 +34,7 @@ body.mirror{
 }
 
 /* 光輪 */
-.halo{
-  position:absolute; inset:6%;
-  border-radius:50%;
-  background:
-    radial-gradient(60% 60% at 50% 50%, rgba(255,235,210,.18), transparent 70%),
-    conic-gradient(from -90deg, rgba(255,235,210,.12), transparent 30% 60%, rgba(255,235,210,.12));
-  mix-blend-mode:screen; filter:blur(16px); opacity:.75;
-  animation:haloBreath 10s ease-in-out infinite;
-}
-.halo--thin{
-  inset:0; opacity:.45; filter:blur(22px);
-  background:
-    radial-gradient(70% 70% at 50% 50%, rgba(255,240,220,.10), transparent 75%),
-    conic-gradient(from -90deg, rgba(255,240,220,.10), transparent 25% 75%, rgba(255,240,220,.10));
-  animation-duration:14s;
-}
-@keyframes haloBreath{
-  0%,100%{opacity:.7; filter:blur(16px)}
-  50%    {opacity:.95; filter:blur(22px)}
-}
+
 
 /* 幾何（薄い網目） */
 .geo{
