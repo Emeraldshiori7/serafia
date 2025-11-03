@@ -214,22 +214,71 @@ body.hall{
 }
 
 /* ============== 囁き（前面・中央下） ============== */
+/* 囁き（前面・中央下） */
 .whisper{
-  position:fixed; left:50%; bottom:9vh; transform:translateX(-50%);
-  width:min(92vw,680px); max-width:42ch; text-align:center;
-  z-index:6; pointer-events:none; user-select:none;
+  position: fixed;
+  left: 50%;
+  bottom: clamp(6vh, 10vh, 14vh);     /* ちょっと高めに */
+  transform: translateX(-50%);
+  width: min(96vw, 960px);            /* 横幅を広く */
+  padding: 0 12px;                    /* 端で折り返しやすく */
+  text-align: center;
+  z-index: 6;
+  pointer-events: none;
+  user-select: none;
+
+  /* 下端でフェードする“見切れ防止”マスク（長文の安心枠） */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 88%, rgba(0,0,0,0) 100%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 88%, rgba(0,0,0,0) 100%);
 }
+
+/* 2レイヤー（クロスフェード） */
 .whisper .line{
-  position:absolute; left:50%; transform:translateX(-50%);
-  color:#cbbfb6; font-style:italic; letter-spacing:.06em; line-height:1.9;
-  text-shadow: 0 0 10px rgba(255,240,210,.22);
-  opacity:0; filter:blur(.3px);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-block;
+
+  /* ⬇ フォントサイズはJSが --whisper-fs をセットして自動調整 */
+  font-size: var(--whisper-fs, clamp(14px, 2.2vw, 19px));
+  line-height: 1.8;
+
+  /* 日本語の改行と長文耐性 */
+  white-space: pre-line;     /* \n を改行として扱う */
+  word-break: keep-all;      /* 日本語の自然な折り返し */
+  overflow: hidden;          /* 枠外は隠す */
+  max-width: 96%;            /* 端での不意なはみ出しを防ぐ */
+  max-height: 34vh;          /* 高さの上限（JSがここに収める） */
+
+  color:#cbbfb6;
+  font-style: italic;
+  letter-spacing:.06em;
+  text-shadow:
+    0 0 8px rgba(255,240,210,.25),
+    0 0 22px rgba(255,230,180,.15);
+  opacity:0; filter: blur(.4px);
 }
-.whisper .show{ animation: fadeIn 1200ms ease forwards, breathe 8s ease-in-out infinite }
-.whisper .hide{ animation: fadeOut 1000ms ease forwards }
-@keyframes fadeIn{ 0%{opacity:0; transform:translate(-50%,6px)} 100%{opacity:.9; transform:translate(-50%,0)} }
-@keyframes fadeOut{ 0%{opacity:.9; transform:translate(-50%,0)} 100%{opacity:0; transform:translate(-50%,-4px)} }
+
+.whisper .show{ animation: in 1200ms ease forwards, breathe 8s ease-in-out infinite }
+.whisper .hide{ animation: out 1000ms ease forwards }
+
+@keyframes in{ 0%{opacity:0; transform:translate(-50%,6px)} 100%{opacity:.9; transform:translate(-50%,0)} }
+@keyframes out{ 0%{opacity:.9; transform:translate(-50%,0)} 100%{opacity:0; transform:translate(-50%,-4px)} }
 @keyframes breathe{ 0%,100%{opacity:.9} 50%{opacity:.55} }
+
+/* モバイルは少しタイトに */
+@media (max-width: 768px){
+  .whisper{
+    bottom: max(10px, env(safe-area-inset-bottom));
+    width: min(98vw, 720px);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%);
+  }
+  .whisper .line{
+    line-height: 1.75;
+    max-height: 40vh;
+  }
+}
 
 /* ============== 儀式ボタン（右下・薄く・波紋） ============== */
 .ritual-btn{

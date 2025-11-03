@@ -336,3 +336,45 @@ document.getElementById('reintro')?.addEventListener('click', () => {
     if (['Enter',' '].includes(e.key)){ doors[idx].click(); }
   });
 })();
+/* ===== 囁きの自動フィット（長文でもはみ出さない） ===== */
+(() => {
+  const root = document.documentElement;
+  const wrap = document.querySelector('.whisper');
+  if (!wrap) return;
+
+  // 調整できる範囲
+  const FS_MIN = 12;  // px 下限
+  const FS_MAX = 22;  // px 上限（環境で少し大きめに見せたいときは上げてOK）
+
+  function fit() {
+    // 今見えているレイヤー（.show 優先）
+    const active = wrap.querySelector('.line.show') || wrap.querySelector('.line');
+    if (!active) return;
+
+    // いったん最大に戻してから測る
+    root.style.setProperty('--whisper-fs', FS_MAX + 'px');
+
+    // 目標上限（CSS側の max-height と揃える）
+    const maxH = parseFloat(getComputedStyle(active).maxHeight);
+
+    // 実測して、はみ出す間は1pxずつ下げる（数行で収まるので軽い）
+    let current = FS_MAX;
+    // ループ安全弁
+    for (let i = 0; i < 20; i++) {
+      const h = active.scrollHeight;
+      if (h <= maxH || current <= FS_MIN) break;
+      current -= 1;
+      root.style.setProperty('--whisper-fs', current + 'px');
+    }
+  }
+
+  // テキスト変化・クラス切り替えを監視
+  const mo = new MutationObserver(fit);
+  mo.observe(wrap, { subtree: true, characterData: true, childList: true, attributes: true });
+
+  // リサイズ時も再調整
+  addEventListener('resize', () => { requestAnimationFrame(fit); }, { passive: true });
+
+  // 初回
+  requestAnimationFrame(fit);
+})();
