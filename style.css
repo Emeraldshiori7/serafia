@@ -339,3 +339,30 @@ body.hall{
   transition: opacity .6s ease;
 }
 .fadeout.show{ opacity:1; }
+#orbit-doors .door:focus-visible{
+  outline:none;
+  filter:drop-shadow(0 0 24px rgba(255,240,210,.25)) brightness(1.05);
+}
+@media (prefers-reduced-motion: reduce){
+  .doors--orbit .door{ transition:none !important; }
+  .seraphia-silhouette::before{ animation:none !important; }
+}
+.doors--orbit .door{
+  filter:
+    drop-shadow(0 4px 14px rgba(0,0,0,.6))
+    brightness(calc(.55 + var(--depth, .5)*.55))
+    contrast(1.02)
+    saturate(calc(.9 + var(--depth, .5)*.2))
+    blur(calc((1 - var(--depth, .5)) * 0.6px));
+}
+.door--active::before{
+  content:""; position:absolute; inset:-6%;
+  background:
+    radial-gradient(60% 60% at 50% 50%, rgba(255,240,210,.22), transparent 70%),
+    conic-gradient(from 90deg, rgba(255,240,210,.25), transparent 30% 70%, rgba(255,240,210,.25));
+  filter: blur(10px);
+  mix-blend-mode: screen;
+  opacity: .9;
+  animation: doorFlash .24s ease;
+}
+@keyframes doorFlash{ from{opacity:0} to{opacity:.9} }

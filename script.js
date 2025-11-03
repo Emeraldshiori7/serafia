@@ -180,6 +180,9 @@ const whisper = (() => {
     if (tempText) return;                   // 一時表示中はベース回さない
     show(baseLines[i++ % baseLines.length]);
     timer = setTimeout(cycle, 5200);
+    const wobble = (Math.random()*2-1)*2;
+[a,b].forEach(el => el && (el.style.transform = `translateX(-50%) translateY(${wobble}px)`));
+
   }
   function setTemp(text){
     tempText = text;
@@ -261,3 +264,15 @@ const whisper = (() => {
 document.getElementById('reintro')?.addEventListener('click', () => {
   location.href = './intro.html?ritual';
 });
+(() => {
+  const doors = [...document.querySelectorAll('#orbit-doors .door')];
+  if (!doors.length) return;
+  doors.forEach(d => d.setAttribute('tabindex','0'));
+  let idx = 0;
+  function focusDoor(i){ idx = (i+doors.length)%doors.length; doors[idx].focus(); }
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight','ArrowDown'].includes(e.key)){ e.preventDefault(); focusDoor(idx+1); }
+    if (['ArrowLeft','ArrowUp'].includes(e.key))   { e.preventDefault(); focusDoor(idx-1); }
+    if (['Enter',' '].includes(e.key)){ doors[idx].click(); }
+  });
+})();
