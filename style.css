@@ -45,13 +45,16 @@ body.hall{
 }
 
 /* ============== 祭壇ステージ（中央固定） ============== */
+/* 置き換え：ステージを画面いっぱい＆中央基準 */
 .hall-stage{
-  position:fixed; left:50%; top:52vh; transform:translate(-50%,-50%);
-  width:min(1200px,96vw); height:min(80vh,720px);
-  z-index:1; isolation:isolate;
-  contain: layout paint;              /* 子の合成を閉じて安定描画 */
+  position: fixed;
+  inset: 0;                 /* ← left/top/width/height を一括で全画面 */
+  transform: none;          /* 中央化トランスフォーム不要 */
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  isolation: isolate;
 }
-
 /* ============== 扉（枠なし・画像のみ） ============== */
 .doors--orbit{ position:absolute; inset:0 }
 
@@ -114,7 +117,7 @@ body.hall{
 
 /* ============== セラフィア（中央＋後光・軽量版） ============== */
 .seraphia-silhouette{
-  position:absolute; left:50%; top:50%;
+  position:absolute; left:50%; top:48%;
   transform: translate(-50%, -50%);
   width: min(40vmin, 440px); aspect-ratio: 3/5;
   background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;

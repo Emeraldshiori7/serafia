@@ -65,22 +65,44 @@
   const doors = [...wrap.querySelectorAll('.door')];
   if (doors.length < 2) return;
 
-  const ROT_SPEED = 0.0006;          // ゆっくり回る
-  const SWAY_X = 3, SWAY_Y = 2.2;    // 個別ゆらぎ
+  const ROT_SPEED = 0.0006;
+  const SWAY_X = 3, SWAY_Y = 2.2;
 
   const base  = doors.map((_, i) => (i/doors.length)*Math.PI*2);
   const phase = doors.map(() => Math.random()*Math.PI*2);
+  const amp   = doors.map(() => 0.015 + Math.random()*0.02);
+  const freq  = doors.map(() => 0.04  + Math.random()*0.06);
+  const phi   = doors.map(() => Math.random()*Math.PI*2);
+  const smooth = doors.map(() => 1);
 
-  let cx=0, cy=0, rx=0, ry=0;
-  function resize() {
-    const r = stage.getBoundingClientRect();
-    const w = Math.max(800, r.width  || innerWidth*0.9);
-    const h = Math.max(600, r.height || innerHeight*0.7);
-    cx = w/2; cy = h/2;
-    rx = Math.max(360, w*0.50);
-    ry = Math.max(300, h*0.48);
-  }
-  addEventListener('resize', resize, { passive:true }); resize();
+  let cx=0, cy=0, rx=0, ry=0, safeX=0, safeY=0;
+
+  // ★ 画面サイズで半径を再計算（四辺に安全域を確保）
+  const resize = () => {
+    const w = innerWidth;
+    const h = innerHeight;
+    cx = w / 2;
+    cy = h / 2;
+
+    // セーフマージン（px）：扉が切れないための余白
+    safeX = Math.max(48, w * 0.06);
+    safeY = Math.max(60, h * 0.08);
+
+    // 半径：楕円の外形は「画面サイズ − 余白 − 扉サイズの半分」を基準に
+    // 扉幅の上限はCSSの clamp とだいたい揃える
+    const approxDoorW = Math.min(Math.max(w * 0.18, 140), 220); // ざっくり推定
+    const halfDoorW = approxDoorW / 2;
+    const approxDoorH = halfDoorW * (4/3); // aspect-ratio 3/4 → 逆で計算
+
+    rx = (w - safeX*2 - halfDoorW) * 0.48;  // 0.48で少し内側に
+    ry = (h - safeY*2 - approxDoorH/2) * 0.46;
+
+    // 念のため下限
+    rx = Math.max(rx, 260);
+    ry = Math.max(ry, 220);
+  };
+  addEventListener('resize', resize, {passive:true});
+  resize();
 
   let t = 0, rot = 0;
   (function loop(){
@@ -88,63 +110,30 @@
     t += 16/1000;
     rot += ROT_SPEED;
 
-    for (let i=0;i<doors.length;i++){
-      const el = doors[i];
+    doors.forEach((el, i) => {
       const a  = base[i] + rot;
-      const sx = Math.sin(t*0.70 + phase[i]) * SWAY_X;
+      const sx = Math.sin(t*0.7 + phase[i]) * SWAY_X;
       const sy = Math.cos(t*0.55 + phase[i]) * SWAY_Y;
+
       const x  = cx + rx * Math.cos(a) + sx;
       const y  = cy + ry * Math.sin(a) + sy;
 
       el.style.setProperty('--tx', `${x}px`);
       el.style.setProperty('--ty', `${y}px`);
 
-      // 手前に来たものほど前面に
-   // 扉オービットループ内 ↓ この部分だけ書き換え
-const depth = (y - (cy - ry)) / (ry*2);  // 0〜1の奥行き値
-// セラフィアちゃんを基準に前後へ
-if (depth > 0.5) {
-  // 下（手前）にあるとき：セラフィアより前
-  el.style.zIndex = '3';
-} else {
-  // 上（奥）にあるとき：セラフィアより後
-  el.style.zIndex = '1';
-}
+      // ★ 奥行き：下側（y > cy）は“手前”＝セラフィアより前、上側は“奥”
+      const front = y > cy;
+      el.style.zIndex = front ? 6 : 1;
+      el.dataset.depth = front ? 'front' : 'back';
 
-    }
-  })();
-
-  /* ── たまに“ふっと暗くなる”演出（hoverで停止） ── */
-  (function dimScheduler(){
-    const timers = new WeakMap();
-
-    function schedule(el){
-      // 次の暗転まで 3〜10秒
-      const delay = 3000 + Math.random()*7000;
-      const id = setTimeout(() => {
-        el.classList.add('door--dim');
-        // 暗転の長さ 220〜600ms
-        const hold = 220 + Math.random()*380;
-        const id2 = setTimeout(() => {
-          el.classList.remove('door--dim');
-          schedule(el);
-        }, hold);
-        timers.set(el, id2);
-      }, delay);
-      timers.set(el, id);
-    }
-    function clear(el){
-      const id = timers.get(el);
-      if (id) clearTimeout(id);
-      el.classList.remove('door--dim');
-    }
-    doors.forEach(el => {
-      schedule(el);
-      el.addEventListener('mouseenter', () => clear(el));
-      el.addEventListener('mouseleave', () => schedule(el));
+      // ゆっくり脈動（にじむ追従）
+      const target = 1 + amp[i] * Math.sin(2*Math.PI*freq[i]*t + phi[i]);
+      smooth[i] = smooth[i] + (target - smooth[i]) * 0.06;
+      el.style.setProperty('--pulse', smooth[i].toFixed(4));
     });
   })();
 })();
+
 
 /* ==========================================
    3) 囁き：クロスフェード／ホバー一時上書き
