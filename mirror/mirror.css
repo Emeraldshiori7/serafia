@@ -179,4 +179,12 @@ body.mirror{
   position:fixed; inset:0; z-index:-2;
   display:block; pointer-events:none;
 }
+/* 位置関係をいったん最前面にして確認 */
+.mirror-bg{
+  position:fixed; inset:0;
+  z-index:9999;                  /* ← とりあえず最前面に */
+  outline:2px solid magenta;     /* 枠が見えたら要素はOK */
+  background: center/cover no-repeat
+              url('../assets/rooms/mirror/bg_mirror.png'); /* ← パス要調整 */
+}
 
