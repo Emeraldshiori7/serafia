@@ -1,26 +1,50 @@
-// 星の微粒子（変わらず）
+/* ============================
+   1) 背景の星（DPR最適化）
+   ============================ */
 (() => {
   const cvs = document.getElementById('dust'); if (!cvs) return;
-  const ctx = cvs.getContext('2d');
-  const fit = () => { cvs.width = innerWidth; cvs.height = innerHeight; };
-  addEventListener('resize', fit, {passive:true}); fit();
+  const ctx = cvs.getContext('2d', { alpha: true });
 
-  const N = Math.min(140, Math.floor((innerWidth*innerHeight)/18000));
-  const stars = Array.from({length:N}, () => ({
-    x: Math.random()*cvs.width,
-    y: Math.random()*cvs.height,
-    r: Math.random()*1.6 + 0.3,
-    a: Math.random()*Math.PI*2,
-    s: 0.2 + Math.random()*0.7,
-    tw: 0.5 + Math.random()*1.2
-  }));
+  function fit() {
+    const dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+    const w = Math.floor(innerWidth  * dpr);
+    const h = Math.floor(innerHeight * dpr);
+    if (cvs.width !== w || cvs.height !== h) {
+      cvs.width = w; cvs.height = h;
+      cvs.style.width  = innerWidth + 'px';
+      cvs.style.height = innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      makeStars(); // サイズ変わったら再生成
+    }
+  }
+
+  let stars = [];
+  function makeStars(){
+    const area = innerWidth * innerHeight;
+    const N = Math.min(120, Math.max(40, Math.floor(area / 22000))); // 画面に応じて軽量化
+    stars = Array.from({length:N}, () => ({
+      x: Math.random()*innerWidth,
+      y: Math.random()*innerHeight,
+      r: Math.random()*1.5 + 0.35,
+      a: Math.random()*Math.PI*2,
+      s: 0.12 + Math.random()*0.45,     // 漂い速度
+      tw: 0.4 + Math.random()*1.0       // 点滅速度
+    }));
+  }
+
+  addEventListener('resize', fit, { passive:true });
+  fit();
+
   let t = 0;
   (function loop(){
-    requestAnimationFrame(loop); t += 0.016;
-    ctx.clearRect(0,0,cvs.width,cvs.height);
+    requestAnimationFrame(loop);
+    t += 0.016;
+    ctx.clearRect(0,0,innerWidth,innerHeight);
     for(const p of stars){
-      p.x += Math.sin((t+p.a)*0.2)*0.06;
+      p.x += Math.sin((t+p.a)*0.22)*0.06;
       p.y += Math.cos((t+p.a)*0.18)*0.04;
+      if (p.x < -10) p.x += innerWidth+20; else if (p.x > innerWidth+10) p.x -= innerWidth+20;
+      if (p.y < -10) p.y += innerHeight+20; else if (p.y > innerHeight+10) p.y -= innerHeight+20;
       const flick = 0.5 + 0.5*Math.sin(t*p.tw + p.a);
       ctx.globalAlpha = 0.35 + 0.65*flick;
       ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -30,9 +54,10 @@
   })();
 })();
 
-// 扉オービット（脈動ゆるやか）
-
-// ☆ 楕円リング（ゆっくり回転＋やわらか脈動）
+/* ==========================================
+   2) 扉オービット（回転＋ゆらぎ／軽量・安定版）
+      transform のみ更新。scale脈動は無し。
+   ========================================== */
 (() => {
   const stage = document.getElementById('hall-stage');
   const wrap  = document.getElementById('orbit-doors');
@@ -40,31 +65,22 @@
   const doors = [...wrap.querySelectorAll('.door')];
   if (doors.length < 2) return;
 
-  // 回転はゆっくり
-  const ROT_SPEED = 0.0006;
-  const SWAY_X = 3, SWAY_Y = 2.2;
+  const ROT_SPEED = 0.0006;          // ゆっくり回る
+  const SWAY_X = 3, SWAY_Y = 2.2;    // 個別ゆらぎ
 
   const base  = doors.map((_, i) => (i/doors.length)*Math.PI*2);
   const phase = doors.map(() => Math.random()*Math.PI*2);
 
-  // ★ 脈動を落ち着かせる（小さめの振幅・低周波）
-  const amp   = doors.map(() => 0.015 + Math.random()*0.02); // 1.5%〜3.5%
-  const freq  = doors.map(() => 0.04  + Math.random()*0.06); // 0.04〜0.10Hz（=10〜25秒周期）
-  const phi   = doors.map(() => Math.random()*Math.PI*2);
-
-  // ★ “にじむように”追従するためのスムージング用バッファ
-  const smooth = doors.map(() => 1);
-
   let cx=0, cy=0, rx=0, ry=0;
-  const resize = () => {
+  function resize() {
     const r = stage.getBoundingClientRect();
     const w = Math.max(800, r.width  || innerWidth*0.9);
     const h = Math.max(600, r.height || innerHeight*0.7);
     cx = w/2; cy = h/2;
     rx = Math.max(360, w*0.50);
     ry = Math.max(300, h*0.48);
-  };
-  addEventListener('resize', resize, {passive:true}); resize();
+  }
+  addEventListener('resize', resize, { passive:true }); resize();
 
   let t = 0, rot = 0;
   (function loop(){
@@ -72,9 +88,10 @@
     t += 16/1000;
     rot += ROT_SPEED;
 
-    doors.forEach((el, i) => {
+    for (let i=0;i<doors.length;i++){
+      const el = doors[i];
       const a  = base[i] + rot;
-      const sx = Math.sin(t*0.7 + phase[i]) * SWAY_X;
+      const sx = Math.sin(t*0.70 + phase[i]) * SWAY_X;
       const sy = Math.cos(t*0.55 + phase[i]) * SWAY_Y;
       const x  = cx + rx * Math.cos(a) + sx;
       const y  = cy + ry * Math.sin(a) + sy;
@@ -82,23 +99,47 @@
       el.style.setProperty('--tx', `${x}px`);
       el.style.setProperty('--ty', `${y}px`);
 
-      const depth = (y - (cy - ry)) / (ry*2);
+      // 手前に来たものほど前面に
+      const depth = (y - (cy - ry)) / (ry*2);   // 0〜1
       el.style.zIndex = String(100 + Math.round(depth*100));
+    }
+  })();
 
-      // 目標スケール（遅いサイン波）→ 緩やかに追従（LERP）
-      const target = 1 + amp[i] * Math.sin(2*Math.PI*freq[i]*t + phi[i]);
-      smooth[i] = smooth[i] + (target - smooth[i]) * 0.06; // 0.03〜0.1で好み
-      el.style.setProperty('--pulse', smooth[i].toFixed(4));
+  /* ── たまに“ふっと暗くなる”演出（hoverで停止） ── */
+  (function dimScheduler(){
+    const timers = new WeakMap();
+
+    function schedule(el){
+      // 次の暗転まで 3〜10秒
+      const delay = 3000 + Math.random()*7000;
+      const id = setTimeout(() => {
+        el.classList.add('door--dim');
+        // 暗転の長さ 220〜600ms
+        const hold = 220 + Math.random()*380;
+        const id2 = setTimeout(() => {
+          el.classList.remove('door--dim');
+          schedule(el);
+        }, hold);
+        timers.set(el, id2);
+      }, delay);
+      timers.set(el, id);
+    }
+    function clear(el){
+      const id = timers.get(el);
+      if (id) clearTimeout(id);
+      el.classList.remove('door--dim');
+    }
+    doors.forEach(el => {
+      schedule(el);
+      el.addEventListener('mouseenter', () => clear(el));
+      el.addEventListener('mouseleave', () => schedule(el));
     });
   })();
 })();
 
-
-
-// 囁き：初期テキスト＋切替
-
-// === 囁きコントローラ（クロスフェード＋ホバー一時停止） ===
-/* === 部屋ごとの説明テキスト === */
+/* ==========================================
+   3) 囁き：クロスフェード／ホバー一時上書き
+   ========================================== */
 const roomDescriptions = {
   kagami:     "「鏡は映す。あなたの姿と、まだ見ぬ影。」",
   shosai:     "「静けさのページに、言葉の灯が滲む。」",
@@ -111,7 +152,6 @@ const roomDescriptions = {
   gishiki:    "「扉は重く、言葉は鍵。儀式はまだ終わらない。」"
 };
 
-/* === 囁き（ホバーで一時的に上書き／離れたら自動で再開） === */
 const whisper = (() => {
   const a = document.querySelector('.whisper .line--a');
   const b = document.querySelector('.whisper .line--b');
@@ -131,18 +171,16 @@ const whisper = (() => {
     const showEl = useA ? a : b;
     const hideEl = useA ? b : a;
     showEl.textContent = text;
-    showEl.classList.remove('hide','show'); void showEl.offsetWidth;
+    showEl.classList.remove('hide','show'); void showEl.offsetWidth; // reflowでアニメ再適用
     showEl.classList.add('show');
-    if (hideEl.textContent) {
-      hideEl.classList.remove('show'); hideEl.classList.add('hide');
-    }
+    if (hideEl.textContent) { hideEl.classList.remove('show'); hideEl.classList.add('hide'); }
     useA = !useA;
   }
 
   function cycle(){
-    if (tempText) return;                     // 一時表示中は回さない
+    if (tempText) return;                      // 一時表示中はベース回さない
     show(baseLines[i++ % baseLines.length]);
-    timer = setTimeout(cycle, 5200);          // ← 点滅/切替の間隔（ゆっくり）
+    timer = setTimeout(cycle, 5200);           // ゆっくり切替
   }
 
   function setTemp(text){
@@ -150,33 +188,28 @@ const whisper = (() => {
     if (timer) clearTimeout(timer);
     show(text);
   }
+
   function clearTemp(){
     tempText = null;
     if (timer) clearTimeout(timer);
-    timer = setTimeout(cycle, 600);           // 少し間を置いて再開
+    timer = setTimeout(cycle, 600);            // 少し置いて再開
   }
 
-  // 初回起動
   cycle();
   return { setTemp, clearTemp };
 })();
 
-/* === 扉要素に “data-room” を自動で割り当て（HTMLを触らない版） === */
+/* 扉 hover で囁きを上書き（HTMLの data-room を優先） */
 (() => {
   const keysInOrder = [
     "kagami","shosai","reihaido","atorie","renkin","teien","shishitsu","kyakushitsu","gishiki"
   ];
   const doors = [...document.querySelectorAll('#orbit-doors .door')];
-
   doors.forEach((el, idx) => {
-    // 既に data-room があれば尊重、無ければ順番で割当
     if (!el.dataset.room) el.dataset.room = keysInOrder[idx] || '';
     const key = el.dataset.room;
-
-    // ホバーで囁きを一時上書き
     el.addEventListener('mouseenter', () => {
-      const text = roomDescriptions[key] || "「……ここを、開ける？」";
-      whisper.setTemp(text);
+      whisper.setTemp(roomDescriptions[key] || "「……ここを、開ける？」");
     });
     el.addEventListener('mouseleave', () => {
       whisper.clearTemp();
@@ -184,12 +217,12 @@ const whisper = (() => {
   });
 })();
 
-
-
-
-// 儀式をもう一度
+/* ==========================================
+   4) 儀式をもう一度
+   ========================================== */
 document.getElementById('reintro')?.addEventListener('click', () => {
   location.href = './intro.html?ritual';
 });
+
 
 

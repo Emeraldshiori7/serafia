@@ -1,18 +1,30 @@
+/* ============== 基本トークン ============== */
 :root{
   --ink:#e9dfd6;
   --bg:#000;
 }
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
+
+/* ============== リセット/土台 ============== */
+*{ box-sizing: border-box }
+html,body{ height:100%; margin:0 }
 body.hall{
   font-family:"Cormorant Garamond","Yu Mincho",serif;
-  color:var(--ink); background:#000; overflow:hidden;
+  color:var(--ink);
+  background:#000;
+  overflow:hidden;                    /* ステージ中央固定のため横スクロール回避 */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* 背景の星 */
-#dust{position:fixed; inset:0; display:block; z-index:0}
+/* 背景の星（キャンバス） */
+#dust{
+  position:fixed; inset:0;
+  display:block;
+  z-index:0;
+  contain: strict;                    /* レイヤ分離で再描画コストを下げる */
+}
 
-/* タイトル（扉より前） */
+/* ============== タイトル（前面） ============== */
 .hero{
   position:fixed; left:50%; top:12vh; transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; gap:.6rem;
@@ -22,75 +34,119 @@ body.hall{
   margin:0; font-family:"Cinzel",serif; font-weight:600;
   letter-spacing:.18em; font-size:clamp(28px,6vw,60px);
   color:#f3eadf;
-  text-shadow:0 0 22px rgba(255,240,200,.55), 0 0 48px rgba(255,220,150,.28);
+  text-shadow:
+    0 0 22px rgba(255,240,200,.45),
+    0 0 36px rgba(255,220,150,.22);
 }
 .hero .subtitle{
   margin:0; font-style:italic; color:#d0c4b6;
   font-size:clamp(13px,2.4vw,18px);
-  text-shadow:0 0 18px rgba(255,220,150,.35);
+  text-shadow: 0 0 16px rgba(255,220,150,.28);
 }
 
-/* 祭壇ステージ（中央固定） */
+/* ============== 祭壇ステージ（中央固定） ============== */
 .hall-stage{
   position:fixed; left:50%; top:52vh; transform:translate(-50%,-50%);
   width:min(1200px,96vw); height:min(80vh,720px);
   z-index:1; isolation:isolate;
+  contain: layout paint;              /* 子の合成を閉じて安定描画 */
 }
 
-/* 扉（枠なし版） */
-.doors--orbit{position:absolute; inset:0}
+/* ============== 扉（枠なし・画像のみ） ============== */
+.doors--orbit{ position:absolute; inset:0 }
+
 .doors--orbit .door{
   position:absolute; top:0; left:0;
-  width:clamp(180px, 22vmin, 260px);
-  aspect-ratio:3/4;
-  --tx:0px; --ty:0px; --pulse:1;
-  transform:translate(var(--tx),var(--ty)) translate(-50%,-50%) scale(var(--pulse));
-  transition:filter .45s ease, transform .45s ease;
+  width: clamp(180px, 22vmin, 260px);
+  aspect-ratio: 3/4;
+  --tx: 0px; --ty: 0px;
+  transform: translate3d(var(--tx), var(--ty), 0) translate(-50%,-50%);
+  will-change: transform;             /* ← transform のみに限定 */
+  transition: transform .45s ease;    /* filter/opacity のトランジションは外す */
   display:flex; align-items:flex-end; justify-content:center;
   text-decoration:none; color:var(--ink);
-  /* 画像のみ表示。背景透過PNGをそのまま乗せる */
   background-position:center;
   background-repeat:no-repeat;
   background-size:contain;
-  filter:drop-shadow(0 4px 14px rgba(0,0,0,.6));
-}
-@media (hover:hover){
-  .doors--orbit .door:hover{
-    transform:translate(var(--tx),var(--ty)) translate(-50%,-50%) scale(1.08);
-    filter:drop-shadow(0 8px 22px rgba(0,0,0,.75)) brightness(1.03);
-  }
-}
-/* ラベル（小さな銘板。邪魔なら消してOK） */
-.door__label { display:none !important; }
-/* セラフィア（中央＋後光） */
-.seraphia-silhouette{
-  position:absolute; left:50%; top:50%;
-  transform:translate(-50%,-50%);
-  width:min(40vmin,440px); aspect-ratio:3/5;
-  background:url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
-  mix-blend-mode:screen; opacity:.14;
-  filter:grayscale(100%) contrast(128%) brightness(130%);
-  pointer-events:none; z-index:2;
-}
-.seraphia-silhouette::before{
-  content:""; position:absolute; inset:-14%;
-  mix-blend-mode:lighten; opacity:.8; filter:blur(18px) brightness(1.1);
-  background:
-    conic-gradient(from -90deg at 50% 42%,
-      rgba(255,240,210,.12), transparent 16%,
-      rgba(255,240,210,.12) 32%, transparent 48%,
-      rgba(255,240,210,.12) 64%, transparent 80%,
-      rgba(255,240,210,.12) 96%, transparent 100%),
-    radial-gradient(62% 62% at 50% 56%, rgba(255,230,190,.30), transparent 80%),
-    radial-gradient(38% 38% at 50% 56%, rgba(255,255,255,.36), transparent 78%);
-  animation:halo 7s ease-in-out infinite;
-}
-@keyframes halo{
-  0%,100%{filter:blur(18px) brightness(1.08); opacity:.78}
-  50%{filter:blur(22px) brightness(1.15); opacity:.95}
+  /* 影は軽め一段のみ（drop-shadowは合成負荷が低め） */
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.55));
+  backface-visibility: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* 囁き（前面・中央下） */
+@media (hover:hover){
+  .doors--orbit .door:hover{
+    transform: translate3d(var(--tx), var(--ty), 0) translate(-50%,-50%) scale(1.06);
+  }
+}
+
+/* ラベル（銘板）今回は非表示 */
+.door__label{ display:none !important }
+
+/* 各扉の画像と雰囲気トーン */
+.door--kagami{      --glow:#c8d6ff; background-image:url('assets/doors/kagami.png') }
+.door--shosai{      --glow:#ffb36b; background-image:url('assets/doors/shosai.png') }
+.door--reihaido{    --glow:#9ad1ff; background-image:url('assets/doors/reihaido.png') }
+.door--atorie{      --glow:#ff99cf; background-image:url('assets/doors/atorie.png') }
+.door--renkin{      --glow:#7bffb0; background-image:url('assets/doors/renkin.png') }
+.door--teien{       --glow:#a7ff9a; background-image:url('assets/doors/teien.png') }
+.door--shishitsu{   --glow:#d3b8ff; background-image:url('assets/doors/shishitsu.png') }
+.door--kyakushitsu{ --glow:#ff9a9a; background-image:url('assets/doors/kyakushitsu.png') }
+.door--gishiki{     --glow:#ffd37a; background-image:url('assets/doors/gishiki.png') }
+
+/* 扉の淡い内光（合成コストの軽い screen を1枚だけ） */
+.doors--orbit .door::after{
+  content:""; position:absolute; inset:-8%;
+  pointer-events:none;
+  background: radial-gradient(40% 48% at 50% 60%, rgba(255,255,255,.0) 0,
+    color-mix(in oklab, var(--glow) 26%, transparent) 40%,
+    transparent 75%);
+  mix-blend-mode: screen;
+  opacity: .5;
+}
+
+/* ランダム暗転演出用（JSが付け外し） */
+.door--dim{
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.55)) brightness(.95);
+  /* 疑似要素の光もすこし弱める（存在しない場合は無視され安全） */
+}
+.door--dim::after{ opacity:.25 }
+
+/* ============== セラフィア（中央＋後光・軽量版） ============== */
+.seraphia-silhouette{
+  position:absolute; left:50%; top:50%;
+  transform: translate(-50%, -50%);
+  width: min(40vmin, 440px); aspect-ratio: 3/5;
+  background: url('assets/seraphia/seraphia_manifest.png') center/contain no-repeat;
+  mix-blend-mode: screen;
+  opacity: .14;
+  filter: grayscale(100%) contrast(120%) brightness(118%);
+  pointer-events: none;
+  z-index: 2;
+  backface-visibility: hidden;
+}
+
+/* 後光：1枚の radial + ごく薄い conic（重すぎる多層は避ける） */
+.seraphia-silhouette::before{
+  content:""; position:absolute; inset:-14%;
+  pointer-events:none; z-index:-1;
+  mix-blend-mode: lighten;
+  opacity:.78;
+  filter: blur(16px) brightness(1.06);
+  background:
+    conic-gradient(from -90deg at 50% 42%, rgba(255,240,210,.10), transparent 18%,
+                   rgba(255,240,210,.10) 36%, transparent 54%,
+                   rgba(255,240,210,.10) 72%, transparent 90%,
+                   rgba(255,240,210,.10) 100%),
+    radial-gradient(62% 62% at 50% 56%, rgba(255,230,190,.28), transparent 80%);
+  animation: halo 7s ease-in-out infinite;
+}
+@keyframes halo{
+  0%,100%{ filter: blur(16px) brightness(1.04); opacity:.74 }
+  50%    { filter: blur(20px) brightness(1.10); opacity:.92 }
+}
+
+/* ============== 囁き（前面・中央下） ============== */
 .whisper{
   position:fixed; left:50%; bottom:9vh; transform:translateX(-50%);
   width:min(92vw,680px); max-width:42ch; text-align:center;
@@ -99,57 +155,50 @@ body.hall{
 .whisper .line{
   position:absolute; left:50%; transform:translateX(-50%);
   color:#cbbfb6; font-style:italic; letter-spacing:.06em; line-height:1.9;
-  text-shadow:0 0 8px rgba(255,240,210,.25), 0 0 22px rgba(255,230,180,.15);
-  opacity:0; filter:blur(.4px);
+  text-shadow: 0 0 10px rgba(255,240,210,.22);
+  opacity:0; filter:blur(.3px);
 }
-.whisper .show{animation:in 1200ms ease forwards, breathe 8s ease-in-out infinite}
-.whisper .hide{animation:out 1000ms ease forwards}
-@keyframes in{0%{opacity:0;transform:translate(-50%,6px)}100%{opacity:.9;transform:translate(-50%,0)}}
-@keyframes out{0%{opacity:.9;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-4px)}}
-@keyframes breathe{0%,100%{opacity:.9}50%{opacity:.55}}
+.whisper .show{ animation: fadeIn 1200ms ease forwards, breathe 8s ease-in-out infinite }
+.whisper .hide{ animation: fadeOut 1000ms ease forwards }
+@keyframes fadeIn{ 0%{opacity:0; transform:translate(-50%,6px)} 100%{opacity:.9; transform:translate(-50%,0)} }
+@keyframes fadeOut{ 0%{opacity:.9; transform:translate(-50%,0)} 100%{opacity:0; transform:translate(-50%,-4px)} }
+@keyframes breathe{ 0%,100%{opacity:.9} 50%{opacity:.55} }
 
-/* 儀式ボタン（右下・薄く・リップル） */
+/* ============== 儀式ボタン（右下・薄く・波紋） ============== */
 .ritual-btn{
   position:fixed; right:24px; bottom:22px;
   padding:.55rem .9rem; font-size:14px; letter-spacing:.08em;
   color:#e9e1d9; background:rgba(255,255,255,.06);
   border:none; border-radius:999px; cursor:pointer; z-index:7;
   backdrop-filter: blur(6px);
-  box-shadow:0 0 0 1px rgba(255,255,255,.12) inset, 0 8px 24px rgba(0,0,0,.4);
-  transition:filter .3s ease, transform .2s ease, background .3s ease;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.10) inset, 0 8px 22px rgba(0,0,0,.38);
+  transition: transform .2s ease, background .3s ease;
+  -webkit-tap-highlight-color: transparent;
 }
-.ritual-btn:hover{ background:rgba(255,255,255,.1); transform:translateY(-1px) }
-.ritual-btn i{ /* ripple carrier */
-  position:absolute; inset:0; border-radius:inherit; pointer-events:none; overflow:hidden;
-}
+.ritual-btn:hover{ background:rgba(255,255,255,.10); transform:translateY(-1px) }
+.ritual-btn i{ position:absolute; inset:0; border-radius:inherit; pointer-events:none; overflow:hidden }
 .ritual-btn::after{
   content:""; position:absolute; left:50%; top:50%; width:10px; height:10px;
-  border-radius:50%; background:radial-gradient(circle, rgba(255,240,210,.35), transparent 60%);
-  transform:translate(-50%,-50%) scale(0); opacity:0; transition:transform .6s ease, opacity .6s ease;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,240,210,.35), transparent 60%);
+  transform:translate(-50%,-50%) scale(0); opacity:0;
+  transition: transform .6s ease, opacity .6s ease;
 }
 .ritual-btn:hover::after{ transform:translate(-50%,-50%) scale(10); opacity:1 }
 
-/* ーー 各扉：画像と雰囲気カラー ーー */
-.door--kagami{      --glow:#c8d6ff; background-image:url('assets/doors/kagami.png'); }
-.door--shosai{      --glow:#ffb36b; background-image:url('assets/doors/shosai.png'); }
-.door--reihaido{    --glow:#9ad1ff; background-image:url('assets/doors/reihaido.png'); }
-.door--atorie{      --glow:#ff99cf; background-image:url('assets/doors/atorie.png'); }
-.door--renkin{      --glow:#7bffb0; background-image:url('assets/doors/renkin.png'); }
-.door--teien{       --glow:#a7ff9a; background-image:url('assets/doors/teien.png'); }
-.door--shishitsu{   --glow:#d3b8ff; background-image:url('assets/doors/shishitsu.png'); }
-.door--kyakushitsu{ --glow:#ff9a9a; background-image:url('assets/doors/kyakushitsu.png'); }
-.door--gishiki{     --glow:#ffd37a; background-image:url('assets/doors/gishiki.png'); }
-
-/* 扉の雰囲気（淡い内光） */
-.doors--orbit .door::after{
-  content:""; position:absolute; inset:-8%;
-  background: radial-gradient(40% 48% at 50% 60%, color-mix(in oklab, var(--glow) 28%, transparent), transparent 70%);
-  filter:blur(10px); opacity:.45; mix-blend-mode:screen; pointer-events:none;
-  transition:opacity .45s ease, filter .45s ease;
+/* ============== アクセシビリティ/モーション配慮 ============== */
+@media (prefers-reduced-motion: reduce){
+  .doors--orbit .door,
+  .seraphia-silhouette::before,
+  .whisper .show,
+  .whisper .hide,
+  .ritual-btn::after{
+    animation: none !important;
+    transition: none !important;
+  }
 }
-@media (hover:hover){ .doors--orbit .door:hover::after{ opacity:.75; filter:blur(14px) } }
 
-/* モバイル微調整 */
+/* ============== モバイル微調整 ============== */
 @media (max-width:768px){
   .hero{ top:8vh }
   .seraphia-silhouette{ width:min(46vmin,360px); opacity:.12 }
