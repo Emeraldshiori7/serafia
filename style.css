@@ -215,7 +215,7 @@ body.hall{
 
 /* ============== 囁き（前面・中央下） ============== */
 .whisper{
-  position:fixed; left:50%; bottom:48vh; transform:translateX(-50%);
+  position:fixed; left:50%; bottom:56vh; transform:translateX(-50%);
   width:min(92vw,680px); max-width:42ch; text-align:center;
   z-index:6; pointer-events:none; user-select:none;
 }
