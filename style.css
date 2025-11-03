@@ -26,7 +26,7 @@ body.hall{
 
 /* ============== タイトル（前面） ============== */
 .hero{
-  position:fixed; left:50%; top:-6vh; transform:translateX(-50%);
+  position:fixed; left:50%; top:0vh; transform:translateX(-50%);
   display:flex; flex-direction:column; align-items:center; gap:.6rem;
   z-index:5; pointer-events:none; text-align:center;
 }
