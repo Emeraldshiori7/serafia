@@ -98,13 +98,26 @@
 // 囁き：初期テキスト＋切替
 
 // === 囁きコントローラ（クロスフェード＋ホバー一時停止） ===
-(() => {
+/* === 部屋ごとの説明テキスト === */
+const roomDescriptions = {
+  kagami:     "「鏡は映す。あなたの姿と、まだ見ぬ影。」",
+  shosai:     "「静けさのページに、言葉の灯が滲む。」",
+  reihaido:   "「祈りは音もなく、天井に溶けて消える。」",
+  atorie:     "「絵の具は乾かず、未完の夢が息をする。」",
+  renkin:     "「瓶の中、緑の光が秘密を混ぜる。」",
+  teien:      "「蔦の間を、風が忘れ物のように通り抜ける。」",
+  shishitsu:  "「糸と硝子、鈴の眠り。小さな私だけの王国。」",
+  kyakushitsu:"「客人よ、赤い帳の向こうで時を脱ぐ。」",
+  gishiki:    "「扉は重く、言葉は鍵。儀式はまだ終わらない。」"
+};
+
+/* === 囁き（ホバーで一時的に上書き／離れたら自動で再開） === */
+const whisper = (() => {
   const a = document.querySelector('.whisper .line--a');
   const b = document.querySelector('.whisper .line--b');
-  if (!a || !b) return;
+  if (!a || !b) return { setTemp: ()=>{}, clearTemp: ()=>{} };
 
-  // ふだんのセリフ（ゆっくり交代）
-  const defaultLines = [
+  const baseLines = [
     "「……ここにいるわ。」",
     "「静けさの奥で、あなたを見ている。」",
     "「どの扉から、始めるの？」",
@@ -112,90 +125,65 @@
     "「あなたと、私。違うけれど同じ。」"
   ];
 
-  // 扉ごとの説明（必要に応じて好きに編集）
-  const desc = {
-    'door--1': "古の水銀が曇る鏡。映るのは過去、それとも意図？",
-    'door--2': "羽根ペンとインクの匂い。言葉はここで錬られる。",
-    'door--3': "色硝子の祈りが床へ落ちる。静けさは鐘の前触れ。",
-    'door--4': "絵具と石膏がまだ乾かない。未完成だけが息をする。",
-    'door--5': "坩堝の底で光る緑。混ぜるほど真実は沈む。",
-    'door--6': "蔓と薔薇が鍵を抱く。庭は境界、境界は迷路。",
-    'door--7': "人形のまぶたは重い。秘密は桟の内側で眠る。",
-    'door--8': "赤いカーテンの向こう側。よそゆきの夢が用意されている。",
-    'door--9': "封蝋のように固い鉄扉。儀式は終わらないためにある。"
-  };
+  let i = 0, useA = true, tempText = null, timer = null;
 
-  // タイミング
-  const FADE_IN  = 1200;
-  const HOLD     = 5200;   // ← 少し長めに
-  const FADE_OUT = 1000;
-  const GAP      = 300;
-
-  let i = 0, useA = true;
-  let cycleTimer = null, fadeTimer = null, resumeTimer = null;
-  let paused = false;
-
-  function setText(el, text){
-    el.textContent = text;
-    el.classList.remove('hide','show');
-    void el.offsetWidth;    // reflow
-    el.classList.add('show');
-  }
-  function fadeOut(el){
-    el.classList.remove('show');
-    el.classList.add('hide');
-  }
-  function nextCycle(){
-    if (paused) return;
+  function show(text){
     const showEl = useA ? a : b;
     const hideEl = useA ? b : a;
-
-    setText(showEl, defaultLines[i % defaultLines.length]);
-    if (hideEl.textContent) fadeTimer = setTimeout(() => fadeOut(hideEl), 200);
-
-    cycleTimer = setTimeout(() => {
-      fadeOut(showEl);
-      useA = !useA;
-      i++;
-      cycleTimer = setTimeout(nextCycle, GAP);
-    }, HOLD + FADE_IN);
+    showEl.textContent = text;
+    showEl.classList.remove('hide','show'); void showEl.offsetWidth;
+    showEl.classList.add('show');
+    if (hideEl.textContent) {
+      hideEl.classList.remove('show'); hideEl.classList.add('hide');
+    }
+    useA = !useA;
   }
-  function pauseAndShow(text){
-    // 走っているタイマーを止める（“一気に変わる”のを防ぐ）
-    [cycleTimer, fadeTimer, resumeTimer].forEach(t => { if (t) clearTimeout(t); });
-    paused = true;
 
-    const showEl = useA ? a : b;
-    const hideEl = useA ? b : a;
-    setText(showEl, text);
-    if (hideEl.textContent) setTimeout(() => fadeOut(hideEl), 200);
+  function cycle(){
+    if (tempText) return;                     // 一時表示中は回さない
+    show(baseLines[i++ % baseLines.length]);
+    timer = setTimeout(cycle, 5200);          // ← 点滅/切替の間隔（ゆっくり）
   }
-  function resumeLater(ms = 1200){
-    if (resumeTimer) clearTimeout(resumeTimer);
-    resumeTimer = setTimeout(() => {
-      paused = false;
-      nextCycle();     // 静かに再開（最初から“全部”切り替えない）
-    }, ms);
+
+  function setTemp(text){
+    tempText = text;
+    if (timer) clearTimeout(timer);
+    show(text);
+  }
+  function clearTemp(){
+    tempText = null;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(cycle, 600);           // 少し間を置いて再開
   }
 
   // 初回起動
-  nextCycle();
+  cycle();
+  return { setTemp, clearTemp };
+})();
 
-  // 扉のホバーで説明を表示
-  const doors = document.querySelectorAll('.doors--orbit .door');
-  doors.forEach(el => {
-    // 最初にmatchする door--N クラス名を拾う
-    const key = [...el.classList].find(c => /^door--\d+$/.test(c));
-    const text = desc[key] || "……開ける？";
+/* === 扉要素に “data-room” を自動で割り当て（HTMLを触らない版） === */
+(() => {
+  const keysInOrder = [
+    "kagami","shosai","reihaido","atorie","renkin","teien","shishitsu","kyakushitsu","gishiki"
+  ];
+  const doors = [...document.querySelectorAll('#orbit-doors .door')];
 
+  doors.forEach((el, idx) => {
+    // 既に data-room があれば尊重、無ければ順番で割当
+    if (!el.dataset.room) el.dataset.room = keysInOrder[idx] || '';
+    const key = el.dataset.room;
+
+    // ホバーで囁きを一時上書き
     el.addEventListener('mouseenter', () => {
-      pauseAndShow(text);
+      const text = roomDescriptions[key] || "「……ここを、開ける？」";
+      whisper.setTemp(text);
     });
     el.addEventListener('mouseleave', () => {
-      resumeLater(1200); // 少し間を置いて再開（ガクッと戻らない）
+      whisper.clearTemp();
     });
   });
 })();
+
 
 
 
