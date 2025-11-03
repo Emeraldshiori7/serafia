@@ -41,7 +41,7 @@ body.hall{
 .doors--orbit{position:absolute; inset:0}
 .doors--orbit .door{
   position:absolute; top:0; left:0;
-  width:clamp(140px, 18vmin, 220px);
+  width:clamp(180px, 22vmin, 260px);
   aspect-ratio:3/4;
   --tx:0px; --ty:0px; --pulse:1;
   transform:translate(var(--tx),var(--ty)) translate(-50%,-50%) scale(var(--pulse));
@@ -61,14 +61,7 @@ body.hall{
   }
 }
 /* ラベル（小さな銘板。邪魔なら消してOK） */
-.door__label{
-  margin:10px 0 8px;
-  padding:.28rem .6rem;
-  font-size:14px; letter-spacing:.08em;
-  background:rgba(0,0,0,.45); border:1px solid rgba(235,205,120,.38);
-  border-radius:6px; text-shadow:0 1px 0 rgba(0,0,0,.85);
-  box-shadow:0 0 8px rgba(255,220,150,.12);
-}
+
 
 /* セラフィア（中央＋後光） */
 .seraphia-silhouette{
