@@ -4,62 +4,54 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>セラフィアの館</title>
-
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap"
-    rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="hall">
 
-  <!-- 背景：星屑（キャンバスのみ） -->
-  <div class="bg" aria-hidden="true">
-    <canvas id="dust" aria-hidden="true"></canvas>
-  </div>
+  <!-- 背景（星だけ） -->
+  <canvas id="dust" aria-hidden="true"></canvas>
 
-  <!-- タイトル（扉より前面・縦並び） -->
+  <!-- タイトル（前面） -->
   <header class="hero">
     <h1>セラフィアの館</h1>
     <p class="subtitle">── 静寂の中、あなたを待つ光がある。</p>
   </header>
 
-  <!-- 祭壇ステージ：中央固定（セラフィア＋扉） -->
+  <!-- 祭壇ステージ：中央基準／扉とセラフィア -->
   <section class="hall-stage" id="hall-stage">
-    <!-- 扉（JSが楕円に配置） -->
+    <!-- 楕円リングに並ぶ扉 -->
     <div class="doors doors--orbit" id="orbit-doors">
-      <a href="mirror.html" class="door door--1"><span class="door__label">鏡の間</span></a>
-      <a href="study.html"  class="door door--2"><span class="door__label">書斎の間</span></a>
-      <a href="#" class="door door--3"><span class="door__label">礼拝堂</span></a>
-      <a href="#" class="door door--4"><span class="door__label">アトリエ</span></a>
-      <a href="#" class="door door--5"><span class="door__label">錬金術室</span></a>
-      <a href="#" class="door door--6"><span class="door__label">庭園</span></a>
-      <a href="#" class="door door--7"><span class="door__label">私室</span></a>
-      <a href="#" class="door door--8"><span class="door__label">客室</span></a>
-      <a href="intro.html?ritual" class="door door--9"><span class="door__label">儀式の間</span></a>
+      <a href="mirror.html" class="door door--kagami"><span class="door__label">鏡の間</span></a>
+      <a href="study.html"  class="door door--shosai"><span class="door__label">書斎の間</span></a>
+      <a href="#" class="door door--reihaido"><span class="door__label">礼拝堂</span></a>
+      <a href="#" class="door door--atorie"><span class="door__label">アトリエ</span></a>
+      <a href="#" class="door door--renkin"><span class="door__label">錬金術室</span></a>
+      <a href="#" class="door door--teien"><span class="door__label">庭園</span></a>
+      <a href="#" class="door door--shishitsu"><span class="door__label">私室</span></a>
+      <a href="#" class="door door--kyakushitsu"><span class="door__label">客室</span></a>
+      <a href="#" class="door door--gishiki"><span class="door__label">儀式の間</span></a>
     </div>
 
-    <!-- セラフィア（必ずステージ内の中央） -->
+    <!-- セラフィア（中央固定） -->
     <div class="seraphia-silhouette" aria-hidden="true"></div>
   </section>
 
-  <!-- 囁き（クロスフェード／前景） -->
+  <!-- 囁き（前面・クロスフェード） -->
   <div class="whisper" aria-live="polite">
     <span class="line line--a"></span>
     <span class="line line--b"></span>
   </div>
 
-  <!-- 儀式ボタン -->
-  <footer class="mini" aria-label="補助操作">
-    <button id="reintro" class="ghost ritual-btn" type="button">儀式をもう一度</button>
-  </footer>
+  <!-- 儀式をもう一度（前面右・リップル） -->
+  <button class="ritual-btn" id="reintro" type="button">
+    儀式をもう一度
+    <i aria-hidden="true"></i>
+  </button>
 
-  <!-- 画面遷移：白フェード -->
-  <div class="whiteout" aria-hidden="true"></div>
-
-  <script defer src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
+
