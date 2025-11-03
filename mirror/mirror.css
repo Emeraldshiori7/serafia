@@ -235,4 +235,65 @@ body.mirror .seraphia-silhouette::before{
 
 /* 念のため、他の演出のアニメがあれば無効化（必要なら） */
 /* body.mirror * { animation: none !important; }  ←強すぎるので通常は不要 */
+/* 鏡の間タイトル：金属質＋“キラッ”アニメ */
+body.mirror .mirror-title{
+  position: relative;
+   font-family: "Cinzel Decorative", "Cinzel", serif;        /* 合うなら Cinzel Decorative でもOK */
+  font-weight: 600;
+  letter-spacing: .18em;
+
+  /* 金属（白金〜金）の多層グラデを文字で切り抜く */
+  background:
+    /* ①キラッと走るハイライト（横へ移動） */
+    linear-gradient(115deg,
+      rgba(255,255,255,0) 43%,
+      rgba(255,255,255,.95) 50%,
+      rgba(255,255,255,0) 57%) 0 0 / 220% 100% no-repeat,
+    /* ②ベースの金属質（淡い金） */
+    linear-gradient(180deg,
+      #faf7eb 0%,
+      #e9dcba 22%,
+      #b79a5a 49%,
+      #f2e5c5 66%,
+      #c5a76c 82%,
+      #fff7d9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  /* 立体感（薄い縁取り＆内側の陰影） */
+  -webkit-text-stroke: 0.6px rgba(255,255,255,.35);
+  text-shadow:
+    0 1px 0 rgba(0,0,0,.35),         /* 内側の段差 */
+    0 0 22px rgba(255,230,170,.35);  /* ほんのりグロー */
+
+  /* ハイライトの移動 */
+  animation: mirrorShine 7.5s ease-in-out infinite;
+}
+
+/* サブタイトルも少し鏡寄りに（任意） */
+body.mirror .hero .subtitle{
+  color:#e7decf;
+  text-shadow: 0 0 14px rgba(255,240,210,.35);
+}
+
+/* “キラッ”の走り方（ゆっくり→停止→また走る） */
+@keyframes mirrorShine{
+  0%   { background-position: -120% 0, 0 0; }
+  12%  { background-position:   10%  0, 0 0; }
+  18%  { background-position:  120%  0, 0 0; } /* 通過 */
+  100% { background-position:  120%  0, 0 0; } /* 残りは止めておく */
+}
+
+/* ホバーで一回だけ強めのグリント（任意） */
+@media (hover:hover){
+  body.mirror .mirror-title:hover{
+    animation: mirrorShine 1.2s ease;
+  }
+}
+
+/* 動きが苦手な人向けに止める */
+@media (prefers-reduced-motion: reduce){
+  body.mirror .mirror-title{ animation: none; }
+}
 
