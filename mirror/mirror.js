@@ -209,3 +209,28 @@ $('#reset')?.addEventListener('click', ()=>{
 
 renderMetrics();
 route('entry');
+// 鏡に“時々だけキラッ”を走らせる
+(() => {
+  const mirrors = [...document.querySelectorAll('.mirror-room .mirror')];
+  if (!mirrors.length) return;
+  // glintレイヤーを埋め込む
+  mirrors.forEach(m => {
+    const g = document.createElement('div');
+    g.className = 'glint';
+    m.appendChild(g);
+  });
+  function tick(){
+    // 30〜90秒の乱数感覚で1〜2枚にだけ発生
+    const delay = 30000 + Math.random()*60000;
+    setTimeout(() => {
+      const count = Math.random() < 0.35 ? 2 : 1;
+      const shuffled = mirrors.sort(() => Math.random()-0.5);
+      shuffled.slice(0, count).forEach(m => {
+        m.classList.add('is-glinting');
+        setTimeout(() => m.classList.remove('is-glinting'), 1200);
+      });
+      tick();
+    }, delay);
+  }
+  tick();
+})();
