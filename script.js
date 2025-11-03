@@ -379,3 +379,79 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   requestAnimationFrame(fit);
 })();
 
+/* ===== 囁き：安全イニシャライザ（自己復旧つき） ===== */
+(() => {
+  const wrap = document.querySelector('.whisper');
+  const a = wrap?.querySelector('.line--a');
+  const b = wrap?.querySelector('.line--b');
+  if (!wrap || !a || !b) { console.warn('[whisper] DOM not found'); return; }
+
+  const baseLines = [
+    "「……ここにいるわ。」",
+    "「静けさの奥で、あなたを見ている。」",
+    "「どの扉から、始めるの？」",
+    "「目を閉じれば、光はそばに。」",
+    "「あなたと、私。違うけれど同じ。」"
+  ];
+
+  let i = 0, useA = true, tempText = null, timer = null;
+
+  function show(elShow, elHide, text){
+    elShow.textContent = text || "";
+    elShow.classList.remove('hide','show');
+    void elShow.offsetWidth;          // reflowでアニメ再適用
+    elShow.classList.add('show');
+    if (elHide.textContent) {
+      elHide.classList.remove('show');
+      elHide.classList.add('hide');
+    }
+  }
+
+  function nextBase(){
+    if (tempText) return;             // 一時上書き中は回さない
+    const elShow = useA ? a : b;
+    const elHide = useA ? b : a;
+    show(elShow, elHide, baseLines[i++ % baseLines.length]);
+    timer = setTimeout(nextBase, 5200);
+    useA = !useA;
+  }
+
+  // 一時上書きAPI（既存コードが使えるようwindowに露出）
+  function setTemp(text){
+    tempText = text;
+    if (timer) clearTimeout(timer);
+    const elShow = useA ? a : b;
+    const elHide = useA ? b : a;
+    show(elShow, elHide, text);
+  }
+  function clearTemp(){
+    tempText = null;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(nextBase, 600);
+  }
+  // 既存の hover 制御が使えるように公開（名前かぶりを避ける）
+  window.__whisperSafe = { setTemp, clearTemp };
+
+  // 初期テキストを必ず出す（空で終わらない）
+  if (!a.textContent && !b.textContent) {
+    a.textContent = baseLines[0];
+    a.classList.add('show');
+  }
+  // ベース運転開始
+  nextBase();
+
+  // ★ 自己復旧：5秒ごとに“どちらかが可視か”をチェックし、死んでたら再起動
+  setInterval(() => {
+    const vA = getComputedStyle(a).opacity;
+    const vB = getComputedStyle(b).opacity;
+    const anyVisible = (parseFloat(vA) > 0.05) || (parseFloat(vB) > 0.05);
+    if (!anyVisible) {
+      // クラスを付け直し、再始動
+      a.classList.remove('hide'); a.classList.add('show');
+      b.classList.remove('show','hide');
+      if (timer) clearTimeout(timer);
+      nextBase();
+      console.warn('[whisper] revived');
+    }
+  }, 5000);
+})();
