@@ -31,6 +31,8 @@
 })();
 
 // 扉オービット（脈動ゆるやか）
+
+// ☆ 楕円リング（ゆっくり回転＋やわらか脈動）
 (() => {
   const stage = document.getElementById('hall-stage');
   const wrap  = document.getElementById('orbit-doors');
@@ -38,37 +40,44 @@
   const doors = [...wrap.querySelectorAll('.door')];
   if (doors.length < 2) return;
 
+  // 回転はゆっくり
   const ROT_SPEED = 0.0006;
-  const SWAY_X = 4, SWAY_Y = 3;
+  const SWAY_X = 3, SWAY_Y = 2.2;
 
   const base  = doors.map((_, i) => (i/doors.length)*Math.PI*2);
   const phase = doors.map(() => Math.random()*Math.PI*2);
-  const amp   = doors.map(() => 0.03 + Math.random()*0.04);
-  const freq  = doors.map(() => 0.06 + Math.random()*0.1);
+
+  // ★ 脈動を落ち着かせる（小さめの振幅・低周波）
+  const amp   = doors.map(() => 0.015 + Math.random()*0.02); // 1.5%〜3.5%
+  const freq  = doors.map(() => 0.04  + Math.random()*0.06); // 0.04〜0.10Hz（=10〜25秒周期）
   const phi   = doors.map(() => Math.random()*Math.PI*2);
+
+  // ★ “にじむように”追従するためのスムージング用バッファ
+  const smooth = doors.map(() => 1);
 
   let cx=0, cy=0, rx=0, ry=0;
   const resize = () => {
     const r = stage.getBoundingClientRect();
-    const w = Math.max(900, r.width  || innerWidth*0.9);
-    const h = Math.max(640, r.height || innerHeight*0.7);
+    const w = Math.max(800, r.width  || innerWidth*0.9);
+    const h = Math.max(600, r.height || innerHeight*0.7);
     cx = w/2; cy = h/2;
-    rx = Math.max(380, w*0.5);
-    ry = Math.max(320, h*0.48);
+    rx = Math.max(360, w*0.50);
+    ry = Math.max(300, h*0.48);
   };
   addEventListener('resize', resize, {passive:true}); resize();
 
   let t = 0, rot = 0;
   (function loop(){
     requestAnimationFrame(loop);
-    t += 16/1000; rot += ROT_SPEED;
+    t += 16/1000;
+    rot += ROT_SPEED;
 
     doors.forEach((el, i) => {
       const a  = base[i] + rot;
-      const sx = Math.sin(t*0.8 + phase[i]) * SWAY_X;
-      const sy = Math.cos(t*0.6 + phase[i]) * SWAY_Y;
-      const x = cx + rx * Math.cos(a) + sx;
-      const y = cy + ry * Math.sin(a) + sy;
+      const sx = Math.sin(t*0.7 + phase[i]) * SWAY_X;
+      const sy = Math.cos(t*0.55 + phase[i]) * SWAY_Y;
+      const x  = cx + rx * Math.cos(a) + sx;
+      const y  = cy + ry * Math.sin(a) + sy;
 
       el.style.setProperty('--tx', `${x}px`);
       el.style.setProperty('--ty', `${y}px`);
@@ -76,19 +85,26 @@
       const depth = (y - (cy - ry)) / (ry*2);
       el.style.zIndex = String(100 + Math.round(depth*100));
 
-      const s = 1 + amp[i] * Math.sin(2*Math.PI*freq[i]*t + phi[i]);
-      el.style.setProperty('--pulse', s.toFixed(4));
+      // 目標スケール（遅いサイン波）→ 緩やかに追従（LERP）
+      const target = 1 + amp[i] * Math.sin(2*Math.PI*freq[i]*t + phi[i]);
+      smooth[i] = smooth[i] + (target - smooth[i]) * 0.06; // 0.03〜0.1で好み
+      el.style.setProperty('--pulse', smooth[i].toFixed(4));
     });
   })();
 })();
 
+
+
 // 囁き：初期テキスト＋切替
+
+// === 囁きコントローラ（クロスフェード＋ホバー一時停止） ===
 (() => {
   const a = document.querySelector('.whisper .line--a');
   const b = document.querySelector('.whisper .line--b');
   if (!a || !b) return;
 
-  const lines = [
+  // ふだんのセリフ（ゆっくり交代）
+  const defaultLines = [
     "「……ここにいるわ。」",
     "「静けさの奥で、あなたを見ている。」",
     "「どの扉から、始めるの？」",
@@ -96,62 +112,92 @@
     "「あなたと、私。違うけれど同じ。」"
   ];
 
-  // 各部屋の説明テキスト
-  const doorDescriptions = {
-    kagami:    "「鏡の間── あなたの真実が映る場所。」",
-    shosai:    "「書斎の間── 言葉が記憶を縛る。」",
-    reihaido:  "「礼拝堂── 祈りと沈黙が交わる。」",
-    atorie:    "「アトリエ── 色彩が心を刻む。」",
-    renkin:    "「錬金術室── 光と影の方程式。」",
-    teien:     "「庭園── 枯れぬ花が夢を見る。」",
-    shishitsu: "「私室── 人形の瞳があなたを覗く。」",
-    kyakushitsu:"「客室── 微笑の裏に眠る約束。」",
-    gishiki:   "「儀式の間── 過去と未来が交わる。」"
+  // 扉ごとの説明（必要に応じて好きに編集）
+  const desc = {
+    'door--1': "古の水銀が曇る鏡。映るのは過去、それとも意図？",
+    'door--2': "羽根ペンとインクの匂い。言葉はここで錬られる。",
+    'door--3': "色硝子の祈りが床へ落ちる。静けさは鐘の前触れ。",
+    'door--4': "絵具と石膏がまだ乾かない。未完成だけが息をする。",
+    'door--5': "坩堝の底で光る緑。混ぜるほど真実は沈む。",
+    'door--6': "蔓と薔薇が鍵を抱く。庭は境界、境界は迷路。",
+    'door--7': "人形のまぶたは重い。秘密は桟の内側で眠る。",
+    'door--8': "赤いカーテンの向こう側。よそゆきの夢が用意されている。",
+    'door--9': "封蝋のように固い鉄扉。儀式は終わらないためにある。"
   };
 
-  const FADE_IN=1200, HOLD=4200, GAP=200;
+  // タイミング
+  const FADE_IN  = 1200;
+  const HOLD     = 5200;   // ← 少し長めに
+  const FADE_OUT = 1000;
+  const GAP      = 300;
+
   let i = 0, useA = true;
-  let isHovered = false; // 扉上での状態
+  let cycleTimer = null, fadeTimer = null, resumeTimer = null;
+  let paused = false;
 
   function setText(el, text){
     el.textContent = text;
     el.classList.remove('hide','show');
-    void el.offsetWidth;
+    void el.offsetWidth;    // reflow
     el.classList.add('show');
   }
-  function fadeOut(el){ el.classList.remove('show'); el.classList.add('hide'); }
-
-  function cycle(){
-    if (isHovered) { setTimeout(cycle, 500); return; } // hover中は停止
+  function fadeOut(el){
+    el.classList.remove('show');
+    el.classList.add('hide');
+  }
+  function nextCycle(){
+    if (paused) return;
     const showEl = useA ? a : b;
     const hideEl = useA ? b : a;
-    setText(showEl, lines[i % lines.length]);
-    if (hideEl.textContent) setTimeout(() => fadeOut(hideEl), 200);
-    setTimeout(() => {
-      fadeOut(showEl); useA = !useA; i++; setTimeout(cycle, GAP);
+
+    setText(showEl, defaultLines[i % defaultLines.length]);
+    if (hideEl.textContent) fadeTimer = setTimeout(() => fadeOut(hideEl), 200);
+
+    cycleTimer = setTimeout(() => {
+      fadeOut(showEl);
+      useA = !useA;
+      i++;
+      cycleTimer = setTimeout(nextCycle, GAP);
     }, HOLD + FADE_IN);
   }
-  cycle();
+  function pauseAndShow(text){
+    // 走っているタイマーを止める（“一気に変わる”のを防ぐ）
+    [cycleTimer, fadeTimer, resumeTimer].forEach(t => { if (t) clearTimeout(t); });
+    paused = true;
 
-  // 扉hoverで説明文表示
-  document.querySelectorAll('.door').forEach(door => {
-    const key = [...door.classList].find(c => c.startsWith('door--'))?.replace('door--','');
-    const text = doorDescriptions[key] || "";
-    door.addEventListener('mouseenter', () => {
-      isHovered = true;
-      const showEl = useA ? a : b;
-      const hideEl = useA ? b : a;
-      setText(showEl, text);
-      if (hideEl.textContent) fadeOut(hideEl);
+    const showEl = useA ? a : b;
+    const hideEl = useA ? b : a;
+    setText(showEl, text);
+    if (hideEl.textContent) setTimeout(() => fadeOut(hideEl), 200);
+  }
+  function resumeLater(ms = 1200){
+    if (resumeTimer) clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(() => {
+      paused = false;
+      nextCycle();     // 静かに再開（最初から“全部”切り替えない）
+    }, ms);
+  }
+
+  // 初回起動
+  nextCycle();
+
+  // 扉のホバーで説明を表示
+  const doors = document.querySelectorAll('.doors--orbit .door');
+  doors.forEach(el => {
+    // 最初にmatchする door--N クラス名を拾う
+    const key = [...el.classList].find(c => /^door--\d+$/.test(c));
+    const text = desc[key] || "……開ける？";
+
+    el.addEventListener('mouseenter', () => {
+      pauseAndShow(text);
     });
-    door.addEventListener('mouseleave', () => {
-      isHovered = false;
-      // 再び通常のセラフィア囁きに戻る
-      a.textContent = ""; b.textContent = "";
-      useA = true; i = 0; setTimeout(cycle, 1000);
+    el.addEventListener('mouseleave', () => {
+      resumeLater(1200); // 少し間を置いて再開（ガクッと戻らない）
     });
   });
 })();
+
+
 
 // 儀式をもう一度
 document.getElementById('reintro')?.addEventListener('click', () => {

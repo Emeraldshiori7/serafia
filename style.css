@@ -61,8 +61,7 @@ body.hall{
   }
 }
 /* ラベル（小さな銘板。邪魔なら消してOK） */
-
-
+.door__label { display:none !important; }
 /* セラフィア（中央＋後光） */
 .seraphia-silhouette{
   position:absolute; left:50%; top:50%;
