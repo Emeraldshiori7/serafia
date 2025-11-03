@@ -4,54 +4,120 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>セラフィアの館</title>
+
+  <!-- PWA/色味（任意） -->
+  <meta name="theme-color" content="#0a0a0e" />
+
+  <!-- Fonts: 正しい preconnect + 読み込み -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- 体感改善: 主要画像を先読み（数は控えめに） -->
+  <link rel="preload" as="image" href="assets/seraphia/seraphia_manifest.png" />
+  <link rel="preload" as="image" href="assets/doors/kagami.png" />
+  <link rel="preload" as="image" href="assets/doors/shosai.png" />
+
+  <!-- スタイル -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="hall">
-
-  <!-- 背景（星だけ） -->
+  <!-- 背景の星（非インタラクティブ） -->
   <canvas id="dust" aria-hidden="true"></canvas>
 
-  <!-- タイトル（前面） -->
-  <header class="hero">
+  <!-- タイトル（前面・非ブロッキング） -->
+  <header class="hero" role="banner">
     <h1>セラフィアの館</h1>
     <p class="subtitle">── 静寂の中、あなたを待つ光がある。</p>
   </header>
 
-  <!-- 祭壇ステージ：中央基準／扉とセラフィア -->
-  <section class="hall-stage" id="hall-stage">
-    <!-- 楕円リングに並ぶ扉 -->
+  <!-- 祭壇ステージ：扉とセラフィアを“同じ基準”で中央に -->
+  <section class="hall-stage" id="hall-stage" aria-label="大広間">
+    <!-- 楕円リングに配置される扉たち -->
     <div class="doors doors--orbit" id="orbit-doors">
-      <a href="mirror.html" class="door door--kagami"><span class="door__label">鏡の間</span></a>
-      <a href="study.html"  class="door door--shosai"><span class="door__label">書斎の間</span></a>
-      <a href="#" class="door door--reihaido"><span class="door__label">礼拝堂</span></a>
-      <a href="#" class="door door--atorie"><span class="door__label">アトリエ</span></a>
-      <a href="#" class="door door--renkin"><span class="door__label">錬金術室</span></a>
-      <a href="#" class="door door--teien"><span class="door__label">庭園</span></a>
-      <a href="#" class="door door--shishitsu"><span class="door__label">私室</span></a>
-      <a href="#" class="door door--kyakushitsu"><span class="door__label">客室</span></a>
-      <a href="#" class="door door--gishiki"><span class="door__label">儀式の間</span></a>
+      <!-- data-room: キー／ data-desc: ホバー時の説明（JSがそのまま使う） -->
+      <a href="mirror.html"
+         class="door door--kagami"
+         data-room="kagami"
+         data-desc="鏡は映す。あなたの姿と、まだ見ぬ影。"
+         aria-label="鏡の間"
+         tabindex="0"><span class="door__label">鏡の間</span></a>
+
+      <a href="study.html"
+         class="door door--shosai"
+         data-room="shosai"
+         data-desc="静けさのページに、言葉の灯が滲む。"
+         aria-label="書斎の間"
+         tabindex="0"><span class="door__label">書斎の間</span></a>
+
+      <a href="#"
+         class="door door--reihaido"
+         data-room="reihaido"
+         data-desc="色硝子の祈りが床へ落ちる。静けさは鐘の前触れ。"
+         aria-label="礼拝堂"
+         tabindex="0"><span class="door__label">礼拝堂</span></a>
+
+      <a href="#"
+         class="door door--atorie"
+         data-room="atorie"
+         data-desc="絵具と石膏はまだ乾かない。未完成だけが息をする。"
+         aria-label="アトリエ"
+         tabindex="0"><span class="door__label">アトリエ</span></a>
+
+      <a href="#"
+         class="door door--renkin"
+         data-room="renkin"
+         data-desc="坩堝の底で光る緑。混ぜるほど真実は沈む。"
+         aria-label="錬金術室"
+         tabindex="0"><span class="door__label">錬金術室</span></a>
+
+      <a href="#"
+         class="door door--teien"
+         data-room="teien"
+         data-desc="蔓と薔薇が鍵を抱く。庭は境界、境界は迷路。"
+         aria-label="庭園"
+         tabindex="0"><span class="door__label">庭園</span></a>
+
+      <a href="#"
+         class="door door--shishitsu"
+         data-room="shishitsu"
+         data-desc="糸と硝子、鈴の眠り。小さな私だけの王国。"
+         aria-label="私室"
+         tabindex="0"><span class="door__label">私室</span></a>
+
+      <a href="#"
+         class="door door--kyakushitsu"
+         data-room="kyakushitsu"
+         data-desc="赤いカーテンの向こう側。よそゆきの夢が用意される。"
+         aria-label="客室"
+         tabindex="0"><span class="door__label">客室</span></a>
+
+      <a href="#"
+         class="door door--gishiki"
+         data-room="gishiki"
+         data-desc="封蝋のように固い鉄扉。儀式は終わらないためにある。"
+         aria-label="儀式の間"
+         tabindex="0"><span class="door__label">儀式の間</span></a>
     </div>
 
-    <!-- セラフィア（中央固定） -->
+    <!-- セラフィア（中央固定・装飾的） -->
     <div class="seraphia-silhouette" aria-hidden="true"></div>
   </section>
 
-  <!-- 囁き（前面・クロスフェード） -->
-  <div class="whisper" aria-live="polite">
+  <!-- 囁き（中央下・クロスフェード） -->
+  <div class="whisper" aria-live="polite" aria-atomic="true">
     <span class="line line--a"></span>
     <span class="line line--b"></span>
   </div>
 
-  <!-- 儀式をもう一度（前面右・リップル） -->
-  <button class="ritual-btn" id="reintro" type="button">
+  <!-- 儀式をもう一度（右下・波紋） -->
+  <button class="ritual-btn" id="reintro" type="button" aria-label="儀式をもう一度">
     儀式をもう一度
     <i aria-hidden="true"></i>
   </button>
 
-  <script src="script.js"></script>
+  <!-- スクリプトは必ず defer で非ブロッキング -->
+  <script defer src="script.js"></script>
 </body>
 </html>
 
