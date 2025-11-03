@@ -107,6 +107,28 @@ body.hall{
   mix-blend-mode: screen;
   opacity: .5;
 }
+/* まずデフォルト値（保険） */
+.doors--orbit .door{ --depth: .5 }
+
+/* depth=0(一番上/奥) → 暗く小さく / depth=1(一番下/手前) → 明るく大きく */
+.doors--orbit .door{
+  /* 既存の transform に calc を足して“連続スケール” */
+  transform:
+    translate(var(--tx),var(--ty)) translate(-50%,-50%)
+    scale(calc(var(--pulse) * (0.96 + var(--depth)*0.10)));
+  /* 影と色調に連続補正を掛ける */
+  filter:
+    drop-shadow(0 6px 18px rgba(0,0,0, calc(0.55 + var(--depth)*0.25)))
+    brightness(calc(0.82 + var(--depth)*0.28))
+    contrast(calc(0.96 + var(--depth)*0.10))
+    saturate(calc(0.85 + var(--depth)*0.25));
+}
+
+/* 内側の淡い光（::after）の強さも depth に連動 */
+.doors--orbit .door::after{
+  opacity: calc(0.22 + var(--depth)*0.55);
+  filter: blur(calc(8px + var(--depth)*8px));
+}
 
 /* ランダム暗転演出用（JSが付け外し） */
 .door--dim{
