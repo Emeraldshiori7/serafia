@@ -415,3 +415,27 @@ body.hall{
   animation: doorFlash .24s ease;
 }
 @keyframes doorFlash{ from{opacity:0} to{opacity:.9} }
+
+/* ==== whisper 強制オーバーライド（デバッグ用） ==== */
+.whisper{
+  z-index: 2147483647 !important;     /* いちばん前へ */
+  -webkit-mask-image: none !important;/* マスク完全オフ（隠れてないか確認） */
+          mask-image: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+  /* ↓見えるか確認用の薄いガイド。確認できたら消してOK */
+  /* outline: 1px dashed rgba(255,255,255,.2); */
+}
+
+.whisper .line{
+  position: relative !important;
+  display: inline-block !important;
+  opacity: 1 !important;              /* アニメ無視で強制表示 */
+  filter: none !important;
+  max-width: 96vw !important;
+  max-height: 40vh !important;
+  white-space: pre-wrap !important;
+  color: #e8ddd2 !important;
+  text-shadow: 0 0 10px rgba(255,240,210,.35) !important;
+}
