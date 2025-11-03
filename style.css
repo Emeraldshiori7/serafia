@@ -416,26 +416,92 @@ body.hall{
 }
 @keyframes doorFlash{ from{opacity:0} to{opacity:.9} }
 
-/* ==== whisper 強制オーバーライド（デバッグ用） ==== */
+/* ===== 囁き（馴染む仕上げ） ===== */
 .whisper{
-  z-index: 2147483647 !important;     /* いちばん前へ */
-  -webkit-mask-image: none !important;/* マスク完全オフ（隠れてないか確認） */
-          mask-image: none !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: none !important;
-  /* ↓見えるか確認用の薄いガイド。確認できたら消してOK */
-  /* outline: 1px dashed rgba(255,255,255,.2); */
+  position: fixed;
+  left: 50%;
+  bottom: clamp(6vh, 10vh, 14vh);
+  transform: translateX(-50%);
+  width: min(96vw, 960px);
+  padding: 0 10px;
+  text-align: center;
+  z-index: 1200;                 /* 扉より前、過度ではない値に */
+  pointer-events: none;
+  user-select: none;
+
+  /* ふちで自然に薄まる */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 88%, rgba(0,0,0,0) 100%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 88%, rgba(0,0,0,0) 100%);
 }
 
+/* 背面にごく薄い“空気の揺らぎ”を敷いて可読性UP（画面を白くしない） */
+.whisper::before{
+  content:"";
+  position:absolute; inset:-6% -8%;
+  pointer-events:none;
+  background:
+    radial-gradient(40% 70% at 50% 60%, rgba(255,240,210,.08), transparent 70%);
+  mix-blend-mode: lighten;
+  filter: blur(12px);
+  opacity: .6;
+}
+
+/* 2レイヤー（クロスフェード） */
 .whisper .line{
-  position: relative !important;
-  display: inline-block !important;
-  opacity: 1 !important;              /* アニメ無視で強制表示 */
-  filter: none !important;
-  max-width: 96vw !important;
-  max-height: 40vh !important;
-  white-space: pre-wrap !important;
-  color: #e8ddd2 !important;
-  text-shadow: 0 0 10px rgba(255,240,210,.35) !important;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-block;
+
+  font-size: var(--whisper-fs, clamp(14px, 2.1vw, 18px));  /* JSの自動調整と連携 */
+  line-height: 1.86;
+  max-width: 96%;
+  max-height: 34vh;
+  white-space: pre-line;     /* \n 改行 */
+  word-break: keep-all;      /* 日本語の自然な折返し */
+  overflow: hidden;
+
+  color: #cbbfb6;
+  font-style: italic;
+  letter-spacing: .055em;
+  text-shadow:
+    0 0 6px rgba(255,240,210,.18),
+    0 0 18px rgba(255,230,180,.12);
+  opacity: 0;
+  filter: blur(.25px);
+}
+
+.whisper .show{
+  animation: whisperIn 1100ms ease forwards, whisperBreathe 9s ease-in-out infinite;
+}
+.whisper .hide{
+  animation: whisperOut 900ms ease forwards;
+}
+
+/* 入退場と“呼吸” */
+@keyframes whisperIn{
+  0%   { opacity: 0; transform: translate(-50%, 6px) }
+  100% { opacity: .85; transform: translate(-50%, 0) }
+}
+@keyframes whisperOut{
+  0%   { opacity: .85; transform: translate(-50%, 0) }
+  100% { opacity: 0;   transform: translate(-50%, -4px) }
+}
+@keyframes whisperBreathe{
+  0%,100% { opacity: .85; transform: translate(-50%, 0) }
+  50%     { opacity: .52; transform: translate(-50%, -2px) }
+}
+
+/* モバイルは少しだけタイトに */
+@media (max-width: 768px){
+  .whisper{
+    bottom: max(10px, env(safe-area-inset-bottom));
+    width: min(98vw, 720px);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 92%, rgba(0,0,0,0) 100%);
+  }
+  .whisper .line{
+    line-height: 1.78;
+    max-height: 40vh;
+  }
 }

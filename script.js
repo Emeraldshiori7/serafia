@@ -379,30 +379,3 @@ document.getElementById('reintro')?.addEventListener('click', () => {
   requestAnimationFrame(fit);
 })();
 
-/* ==== whisper レスキュー（必ず何かが見える状態に） ==== */
-(() => {
-  try {
-    const wrap = document.querySelector('.whisper');
-    if (!wrap) { console.warn('[whisper] .whisper が見つかりません'); return; }
-    const a = wrap.querySelector('.line--a');
-    const b = wrap.querySelector('.line--b');
-    if (!a || !b) { console.warn('[whisper] .line--a / .line--b が見つかりません'); return; }
-
-    // すでにテキストがなければテスト文を入れる
-    if (!a.textContent && !b.textContent) {
-      a.textContent = "「……ここにいるわ。」";
-      b.textContent = "";
-    }
-
-    // “見える”クラスを最低限付与（既存アニメが死んでいても表示される）
-    a.classList.remove('hide'); a.classList.add('show');
-    b.classList.remove('show', 'hide');
-
-    // 画面に存在しているか・サイズはどうかをコンソールに出す
-    const rect = wrap.getBoundingClientRect();
-    console.log('[whisper] rect=', rect, 'computed', getComputedStyle(a).fontSize);
-
-  } catch (e) {
-    console.error('[whisper rescue error]', e);
-  }
-})();
