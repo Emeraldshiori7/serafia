@@ -121,10 +121,14 @@
       el.style.setProperty('--tx', `${x}px`);
       el.style.setProperty('--ty', `${y}px`);
 
+      // depth: 0(奥) → 1(手前)
+      let depth = (y - (cy - ry)) / (ry * 2);
+      depth = Math.max(0, Math.min(1, depth));
+      el.style.setProperty('--depth', depth.toFixed(3));
+
       // ★ 奥行き：下側（y > cy）は“手前”＝セラフィアより前、上側は“奥”
-      const front = y > cy;
-      el.style.zIndex = front ? 6 : 1;
-      el.dataset.depth = front ? 'front' : 'back';
+     const front = depth > 0.52;
+     el.style.zIndex = front ? 6 : 1;
 
       // ゆっくり脈動（にじむ追従）
       const target = 1 + amp[i] * Math.sin(2*Math.PI*freq[i]*t + phi[i]);
