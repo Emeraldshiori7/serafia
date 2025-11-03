@@ -210,4 +210,48 @@ body.mirror{ background:#000; color:#e9dfd6; overflow:hidden; }
     rgba(255,255,255,.22), rgba(255,255,255,.06) 35%, transparent 70%);
   mix-blend-mode: screen; filter: blur(10px); opacity:.9; pointer-events:none; z-index:-1;
 }
+/* ── 鏡の間：背景画像を画面いっぱいに敷き込む ── */
+body.mirror { background:#000; }
+
+/* 背景レイヤ（最背面） */
+body.mirror .mirror-bg{
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+}
+
+/* 画像をコンテナいっぱいにフィット。横幅/縦幅に自動追従 */
+body.mirror .mirror-bg__img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                     /* 余白なく敷き詰める */
+  object-position: var(--bg-x,50%) var(--bg-y,50%); /* 位置微調整用 */
+  filter: brightness(0.92) contrast(1.06) saturate(0.96);
+  pointer-events: none;
+}
+
+/* 位置が気になる時は --bg-x を 48% などに調整できる */
+body.mirror { --bg-x: 50%; --bg-y: 50%; }
+
+/* ふちを落として奥行き（任意） */
+body.mirror .mirror-bg::after{
+  content:"";
+  position:absolute; inset:-6vmax;
+  pointer-events:none;
+  background: radial-gradient(80% 60% at 50% 45%,
+    transparent 55%, rgba(0,0,0,.45) 85%, rgba(0,0,0,.65) 100%);
+}
+
+/* ── 鏡の間だけ、“回ってる光”を止める/消す ── */
+               /* 星のキャンバスを消す */
+
+body.mirror .seraphia-silhouette::before{
+  animation: none !important;                       /* 後光の回転停止 */
+  opacity: 0 !important;                            /* 完全に消したいなら0 */
+  /* 薄く残したい時は 0.25 くらいに */
+}
+
+/* 念のため、他の演出のアニメがあれば無効化（必要なら） */
+/* body.mirror * { animation: none !important; }  ←強すぎるので通常は不要 */
 
