@@ -129,4 +129,54 @@ body.mirror{
   .metrics{ grid-template-columns:1fr 1fr }
   .seraphia{ width:min(52vmin,360px) }
 }
+/* ===== 鏡の間：背景一式 ===== */
+body.mirror{
+  background:#000;
+  color:#e9dfd6;
+  overflow:hidden;
+}
+
+/* 背景画像（最背面） */
+.mirror-bg{
+  position:fixed; inset:0;
+  z-index:-3;
+  background:url('assets/rooms/mirror/bg_mirror.png') center/cover no-repeat;
+  filter: brightness(0.9) contrast(1.06) saturate(0.96);
+}
+
+/* 周辺を落として奥行き（ビネット） */
+.mirror-bg::before{
+  content:"";
+  position:absolute; inset:-6vmax;
+  background:
+    radial-gradient(80% 60% at 50% 45%,
+      rgba(0,0,0,0) 55%,
+      rgba(0,0,0,.45) 85%,
+      rgba(0,0,0,.65) 100%);
+  pointer-events:none;
+}
+
+/* スポットライトを白く強調（画像のライトを下支え） */
+.mirror-bg::after{
+  content:"";
+  position:absolute;
+  left:50%; top:46%;
+  width:min(90vw, 1200px);
+  height:min(60vh, 700px);
+  transform:translate(-50%,-50%);
+  background:
+    radial-gradient(40% 55% at 50% 38%,
+      rgba(255,255,255,.22), rgba(255,255,255,.06) 35%, transparent 70%);
+  mix-blend-mode: screen;
+  filter: blur(10px);
+  opacity:.9;
+  pointer-events:none;
+  z-index:-1;
+}
+
+/* “キラッ”用キャンバスは背景の一段上 */
+#mirror-glints{
+  position:fixed; inset:0; z-index:-2;
+  display:block; pointer-events:none;
+}
 

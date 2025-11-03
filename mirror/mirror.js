@@ -207,3 +207,58 @@ $('#reset')?.addEventListener('click', ()=>{
   renderMetrics(); route('entry');
 });
 
+
+(() => {
+  const cvs = document.getElementById('mirror-glints'); if(!cvs) return;
+  const ctx = cvs.getContext('2d', {alpha:true});
+
+  function fit(){
+    const dpr = Math.min(2, Math.max(1, devicePixelRatio||1));
+    cvs.width  = Math.floor(innerWidth  * dpr);
+    cvs.height = Math.floor(innerHeight * dpr);
+    cvs.style.width  = innerWidth + 'px';
+    cvs.style.height = innerHeight + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  addEventListener('resize', fit, {passive:true}); fit();
+
+  // 画面中央〜上寄りに“キラ”を少量
+  const GLINTS = Array.from({length: 8}, () => ({
+    x: innerWidth * (0.25 + Math.random()*0.5),
+    y: innerHeight * (0.18 + Math.random()*0.36),
+    r: 0.8 + Math.random()*1.6,
+    t: Math.random()*Math.PI*2,
+    sp: 0.3 + Math.random()*0.6
+  }));
+
+  function drawStar(x,y,r,alpha){
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    const g = ctx.createRadialGradient(x,y,0, x,y,r);
+    g.addColorStop(0, 'rgba(255, 245, 210, 1)');
+    g.addColorStop(0.35, 'rgba(255, 245, 210, .85)');
+    g.addColorStop(1, 'rgba(255, 245, 210, 0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  let t = 0;
+  (function loop(){
+    requestAnimationFrame(loop);
+    t += 0.016;
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+
+    for(const s of GLINTS){
+      // ゆっくり漂う
+      s.x += Math.sin((t+s.t)*0.3)*0.05;
+      s.y += Math.cos((t+s.t)*0.25)*0.04;
+
+      // たまに強く光る（周期ランダム）
+      const pulse = 0.3 + 0.7*Math.max(0, Math.sin(t*s.sp + s.t));
+      const alpha = Math.pow(pulse, 3) * 0.55;   // 強い瞬間だけ見える
+      if (alpha > 0.03) drawStar(s.x, s.y, s.r*12, alpha);
+    }
+  })();
+})();
+
