@@ -213,7 +213,7 @@ body.mirror .mirror-bg__img{
 }
 
 /* 位置が気になる時は --bg-x を 48% などに調整できる */
-body.mirror { --bg-x: 60%; --bg-y: 50%; }
+body.mirror { --bg-x: 100%; --bg-y: 50%; }
 
 /* ふちを落として奥行き（任意） */
 body.mirror .mirror-bg::after{
