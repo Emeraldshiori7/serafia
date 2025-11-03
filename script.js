@@ -127,8 +127,20 @@
       el.style.setProperty('--depth', depth.toFixed(3));
 
       // ★ 奥行き：下側（y > cy）は“手前”＝セラフィアより前、上側は“奥”
-     const front = depth > 0.52;
-     el.style.zIndex = front ? 6 : 1;
+        // 深度と前後関係
+    const isFront = y >= cy; // 下半分=手前、上半分=奥
+    // セラフィアを 500 に固定して、その上下に帯域を作る
+    // 400台 = 奥（セラフィアの後ろ） / 600台 = 手前（セラフィアの前）
+    let z;
+    if (isFront) {
+      const k = (y - cy) / ry;                 // 0〜1
+      z = 600 + Math.round(k * 200);           // 600〜800
+    } else {
+      const k = (cy - y) / ry;                 // 0〜1
+      z = 400 - Math.round(k * 200);           // 400〜200
+    }
+    el.style.zIndex = String(z);
+
 
       // ゆっくり脈動（にじむ追従）
       const target = 1 + amp[i] * Math.sin(2*Math.PI*freq[i]*t + phi[i]);

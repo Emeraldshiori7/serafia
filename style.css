@@ -271,3 +271,17 @@ body.hall{
   .seraphia-silhouette{ width:min(46vmin,360px); opacity:.12 }
   .ritual-btn{ right:14px; bottom:14px }
 }
+/* ステージは積層を分離しておく */
+.hall-stage{ isolation:isolate; }
+
+/* セラフィア本体は“中央レイヤー”に固定 */
+.seraphia-silhouette{
+  z-index: 500;         /* ← ここが基準 */
+}
+
+/* セラフィアの後光は必ず背面（この値の範囲内） */
+.seraphia-silhouette::before{ z-index: -1; }
+.seraphia-silhouette::after { z-index: -2; }
+
+/* 扉の初期 z-index はゼロ（JSで上書き） */
+.doors--orbit .door{ z-index: 0; }
