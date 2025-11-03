@@ -223,7 +223,7 @@ body.hall{
   width: min(96vw, 960px);            /* 横幅を広く */
   padding: 0 12px;                    /* 端で折り返しやすく */
   text-align: center;
-  z-index: 6;
+  z-index: 1200;
   pointer-events: none;
   user-select: none;
 
