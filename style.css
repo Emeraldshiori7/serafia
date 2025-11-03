@@ -240,30 +240,62 @@ body.hall{
   left: 50%;
   bottom: 6vh;
   transform: translateX(-50%);
-  z-index: 999;              /* ← 一番前に持ってくる */
+  z-index: 999;
   pointer-events: none;
 }
 
+/* ── 儀式ボタン：金属とガラスの中間のような静かな光 ── */
 .mini .ghost{
   pointer-events: auto;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.4);
-  color: #fff;
+  position: relative;
   font-family: "Cinzel", serif;
-  font-size: clamp(14px, 2vw, 16px);
-  padding: .6rem 1.4rem;
-  border-radius: 10px;
-  letter-spacing: .06em;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0 12px rgba(255,255,255,0.25);
-  transition: all .25s ease;
+  font-size: clamp(14px, 2vw, 17px);
+  letter-spacing: 0.12em;
+  color: #e9e1d9;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 235, 200, 0.25);
+  border-radius: 6px;
+  padding: 0.6rem 1.6rem;
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 0 20px rgba(255, 230, 180, 0.08),
+    0 0 20px rgba(255, 220, 150, 0.1);
+  transition: all 0.4s ease;
+  overflow: hidden;
 }
+
+/* 内側から淡く光を放つアニメーション */
+.mini .ghost::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 70%, rgba(255, 240, 200, 0.12), transparent 70%);
+  opacity: 0.6;
+  transition: opacity 0.4s ease, transform 0.8s ease;
+  transform: scale(1);
+  pointer-events: none;
+}
+
 .mini .ghost:hover{
-  transform: scale(1.05);
-  background: rgba(255,255,255,0.2);
-  border-color: rgba(255,255,255,0.6);
-  box-shadow: 0 0 18px rgba(255,255,255,0.35);
+  color: #fff7ea;
+  border-color: rgba(255, 235, 200, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 0 30px rgba(255, 230, 180, 0.15),
+    0 0 24px rgba(255, 220, 150, 0.18);
+  transform: translateY(-2px);
 }
+
+.mini .ghost:hover::before{
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.mini .ghost:active{
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
 
 
 /* ===== 白フェード（遷移演出） ===== */
