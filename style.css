@@ -236,69 +236,73 @@ body.hall{
 
 /* ===== 儀式ボタン（左下） ===== */
 /* 儀式ボタン（右下配置・ぼんやり浮かぶ） */
+/* 右下に控えめに浮かぶ配置 */
 .mini{
   position: fixed;
-  right: max(4vw, 32px);   /* ← 右下に配置 */
+  right: max(4vw, 32px);
   bottom: max(4vh, 28px);
   z-index: 999;
-  pointer-events: none;
+  pointer-events: none;   /* ボタン以外は透過 */
 }
 
-/* ── 儀式ボタン：薄く淡く、浮かぶように光る ── */
+/* ── 儀式ボタン：枠なし・背景なし・言葉だけが光る ── */
 .mini .ghost{
   pointer-events: auto;
   position: relative;
+  background: transparent;      /* ← 囲み無し */
+  border: none;                 /* ← 囲み無し */
+  padding: .35rem .2rem;        /* クリック余白だけ薄く確保 */
   font-family: "Cinzel", serif;
   font-size: clamp(13px, 1.8vw, 16px);
   letter-spacing: 0.14em;
-  color: rgba(255, 245, 230, 0.85);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  padding: 0.55rem 1.4rem;
-  backdrop-filter: blur(10px);
-  box-shadow:
-    0 0 12px rgba(255, 255, 255, 0.06),
-    inset 0 0 18px rgba(255, 255, 255, 0.04);
-  transition: all 0.6s ease;
-  overflow: hidden;
-  opacity: 0.8;
+  color: rgba(255, 245, 230, 0.82);
+  text-shadow:
+    0 0 8px rgba(255,240,210,.18),
+    0 0 18px rgba(255,230,180,.12);
+  transition: color .35s ease, text-shadow .35s ease, transform .25s ease;
+  outline: none;               /* 見た目の枠は消す */
 }
 
-/* 内部に淡く脈打つ光 */
-.mini .ghost::before{
+/* 波紋（初期は見えない） */
+.mini .ghost::after{
   content: "";
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 60%, rgba(255, 240, 210, 0.09), transparent 70%);
-  opacity: 0.5;
-  transition: opacity 0.6s ease, transform 2s ease;
-  transform: scale(1);
+  left: 50%; top: 50%;
+  width: 10px; height: 10px;          /* 開始半径（小さく） */
+  transform: translate(-50%,-50%) scale(0.001);
+  border-radius: 50%;
   pointer-events: none;
-  animation: ritualPulse 6s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(255,245,220,.35) 0%, rgba(255,245,220,0) 60%);
+  opacity: 0;
 }
 
-/* マウスを当てるとふわっと明るく */
-.mini .ghost:hover{
+/* ホバー：文字が少し明るく、波紋が一度だけ広がる */
+@media (hover:hover){
+  .mini .ghost:hover{
+    color: #fff8ef;
+    text-shadow:
+      0 0 10px rgba(255,240,210,.26),
+      0 0 26px rgba(255,230,180,.18);
+    transform: translateY(-1px);
+  }
+  .mini .ghost:hover::after{
+    animation: ritualRipple 900ms ease-out 1;
+  }
+}
+
+/* キーボード操作でも雰囲気を壊さず可視化 */
+.mini .ghost:focus-visible{
   color: #fff8ef;
-  border-color: rgba(255, 240, 220, 0.15);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow:
-    0 0 24px rgba(255, 245, 220, 0.08),
-    inset 0 0 28px rgba(255, 255, 255, 0.05);
-  transform: translateY(-1px);
-  opacity: 1;
+  text-shadow:
+    0 0 10px rgba(255,240,210,.3),
+    0 0 28px rgba(255,230,180,.22);
 }
 
-.mini .ghost:hover::before{
-  opacity: 0.8;
-  transform: scale(1.1);
-}
-
-/* 儀式ボタンの光の“呼吸”アニメーション */
-@keyframes ritualPulse{
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50%      { opacity: 0.7; transform: scale(1.05); }
+/* 波紋アニメーション（中心→外側に淡く消える） */
+@keyframes ritualRipple{
+  0%   { opacity: .55; transform: translate(-50%,-50%) scale(0.001); filter: blur(0px); }
+  60%  { opacity: .35; transform: translate(-50%,-50%) scale(16);    filter: blur(1px); }
+  100% { opacity: 0;   transform: translate(-50%,-50%) scale(22);    filter: blur(2px); }
 }
 
 
