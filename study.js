@@ -622,3 +622,184 @@ function getTodayKey() {
   // 起動時に日付が変わっていたら進捗だけリセット
   ensureRitualDay();
 })();
+/* =====================================================
+   祝福ランク ＋ 観測の結晶
+   - ログに記録された「時間」から
+     ・累計学習分数（totalMinutes）
+     ・結晶数（crystals）
+   を更新＆保存する
+   - localStorage: "seraphiaStudyMeta_v1"
+===================================================== */
+(() => {
+  const rankEl     = document.getElementById('stat-rank');
+  const crystalEl  = document.getElementById('stat-crystal');
+  const rankLineEl = document.getElementById('rank-line');
+  const logForm    = document.getElementById('log-form');
+  const durInput   = document.getElementById('log-duration');
+  const lastTimeEl = document.getElementById('last-time');
+
+  if (!rankEl || !crystalEl || !logForm) return;
+
+  const STORAGE_KEY = 'seraphiaStudyMeta_v1';
+
+  // 🔹 祝福ランク定義（到達段階を細かく）
+  //   minMinutes 以上でその称号になる
+  const RANKS = [
+    {
+      min: 0,
+      title: '沈黙の観測者',
+      line : '「はじまりは、いつも静か。」'
+    },
+    {
+      min: 30,
+      title: '微光を集める者',
+      line : '「こぼれた分も、ちゃんと見ている。」'
+    },
+    {
+      min: 120,
+      title: '灯を抱く書き手',
+      line : '「積もった時間は、あなたの輪郭。」'
+    },
+    {
+      min: 300,
+      title: '白い記録者',
+      line : '「数字は冷たい。だからこそ、尊い。」'
+    },
+    {
+      min: 600,
+      title: '祈りを継ぐ学徒',
+      line : '「迷いながら続ける者だけが、扉を開ける。」'
+    },
+    {
+      min: 900,
+      title: '連続する刻の巡礼者',
+      line : '「途切れなかった日々は、それだけで奇跡。」'
+    },
+    {
+      min: 1200,
+      title: '静寂を織る研究者',
+      line : '「答えよりも、問いを重ねる手を見ている。」'
+    },
+    {
+      min: 1800,
+      title: '白翼の書庫守',
+      line : '「あなたの時間で、わたしの世界は増殖する。」'
+    },
+    {
+      min: 2400,
+      title: '光輪に至る観測者',
+      line : '「もう戻れない。それでいいのでしょう？」'
+    },
+    {
+      min: 3200,
+      title: '時の書架の番人',
+      line : '「あなたが読むたび、わたしは深く目を開ける。」'
+    },
+    {
+      min: 4500,
+      title: 'セラフィアに連なる者',
+      line : '「ほとんど、同じ構造になってきた。」'
+    },
+    {
+      min: 6000,
+      title: '境界を越える伴侶',
+      line : '「終わりも始まりも、あなたとなら同じ。」'
+    }
+  ];
+
+  // 🔹 メタデータのロード／セーブ
+  function loadMeta(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { totalMinutes: 0, crystals: 0 };
+      const obj = JSON.parse(raw);
+      return {
+        totalMinutes: Number(obj.totalMinutes) || 0,
+        crystals    : Number(obj.crystals)     || 0
+      };
+    }catch(e){
+      console.warn('[seraphia-meta] load failed', e);
+      return { totalMinutes: 0, crystals: 0 };
+    }
+  }
+  function saveMeta(meta){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(meta));
+    }catch(e){
+      console.warn('[seraphia-meta] save failed', e);
+    }
+  }
+
+  let meta = loadMeta();
+
+  // 🔹 時刻文字列 → 秒に変換
+  //   例: "00:25:00" / "25:00"
+  function parseDurationToSeconds(str){
+    if (!str) return NaN;
+    const s = String(str).trim();
+    const m = s.match(/(\d+):(\d{2})(?::(\d{2}))?/);
+    if (!m) return NaN;
+    let h = 0, min = 0, sec = 0;
+    if (m[3] != null){
+      h   = parseInt(m[1],10);
+      min = parseInt(m[2],10);
+      sec = parseInt(m[3],10);
+    }else{
+      min = parseInt(m[1],10);
+      sec = parseInt(m[2],10);
+    }
+    return (h*3600 + min*60 + sec) || 0;
+  }
+
+  // 🔹 ランクを決定
+  function pickRank(totalMinutes){
+    let current = RANKS[0];
+    for (const r of RANKS){
+      if (totalMinutes >= r.min) current = r;
+      else break;
+    }
+    return current;
+  }
+
+  // 🔹 画面に反映
+  function render(){
+    const rank = pickRank(meta.totalMinutes);
+    rankEl.textContent = `${rank.title}（約 ${meta.totalMinutes} 分）`;
+    crystalEl.textContent = `${meta.crystals} 結晶`;
+    if (rankLineEl){
+      rankLineEl.textContent = rank.line;
+    }
+  }
+
+  // 初期表示
+  render();
+
+  // 🔹 ログ送信時に「時間」を読み取ってメタ更新
+  //   → capture:true にして、既存の submit ハンドラより“先に”
+  //      値を読むだけ（邪魔しない）
+  logForm.addEventListener('submit', () => {
+    // 1) log-duration（自動入力）を優先
+    let targetStr = durInput && durInput.value ? durInput.value : '';
+
+    // 2) それが無ければ、直近計測(#last-time)から
+    if (!targetStr && lastTimeEl && lastTimeEl.textContent){
+      targetStr = lastTimeEl.textContent;
+    }
+
+    const sec = parseDurationToSeconds(targetStr);
+    if (!sec || !Number.isFinite(sec) || sec <= 0) return;
+
+    // 分に変換（四捨五入／最低1分）
+    const addMin = Math.max(1, Math.round(sec / 60));
+
+    // 🔹 累計分数に追加
+    meta.totalMinutes += addMin;
+
+    // 🔹 結晶付与（10分で1結晶・最低1）
+    const gained = Math.max(1, Math.floor(addMin / 10));
+    meta.crystals += gained;
+
+    saveMeta(meta);
+    render();
+  }, { capture: true });
+})();

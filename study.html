@@ -54,7 +54,6 @@
 <section class="panel panel--stats">
   <div class="card card--stats">
     <h2 class="card__title">記録と連続日数</h2>
-
     <dl class="stats">
       <div class="stats__row">
         <dt>今日の学習時間</dt>
@@ -68,13 +67,31 @@
         <dt>連続日数</dt>
         <dd id="stat-streak">0日</dd>
       </div>
+
+      <!-- ★ 祝福ランク -->
+      <div class="stats__row stats__row--rank">
+        <dt>祝福ランク</dt>
+        <dd id="stat-rank">未観測</dd>
+      </div>
+
+      <!-- ★ 観測の結晶 -->
+      <div class="stats__row stats__row--crystal">
+        <dt>観測の結晶</dt>
+        <dd id="stat-crystal">0 結晶</dd>
+      </div>
     </dl>
+
+    <!-- ランクに応じたセラフィアからのひとこと -->
+    <p class="rank-line" id="rank-line">
+      「まだ静かね。でも、その静けさから始まるの。」
+    </p>
 
     <button type="button" id="stat-add-manual" class="btn ghost small">
       ＋ 学習時間を手動で追加
     </button>
   </div>
 </section>
+
 
 
       <!-- 左：計測エリア -->

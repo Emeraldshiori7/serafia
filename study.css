@@ -574,3 +574,28 @@ input[readonly]{
 #stat-add-manual{
   margin-top:6px;
 }
+/* === 祝福ランク＆観測の結晶 表示まわり === */
+.stats__row--rank dt,
+.stats__row--crystal dt{
+  font-weight: 600;
+}
+
+#stat-rank{
+  font-family: "Cormorant Garamond","Yu Mincho",serif;
+  letter-spacing: .06em;
+}
+
+#stat-crystal{
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-line{
+  margin-top: .6rem;
+  font-size: .85rem;
+  letter-spacing: .06em;
+  color:#cbbfb6;
+  font-style: italic;
+  text-shadow:
+    0 0 6px rgba(255,240,210,.18),
+    0 0 18px rgba(255,230,180,.12);
+}
