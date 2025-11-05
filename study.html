@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>書斎の間 - セラフィアの館</title>
+
+  <!-- フォント（大広間と同じ） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- 書斎専用スタイル -->
+  <link rel="stylesheet" href="study.css" />
+</head>
+<body class="study">
+  <!-- 背景の星 -->
+  <canvas id="dust" aria-hidden="true"></canvas>
+
+  <!-- タイトル帯 -->
+  <header class="study-header">
+    <div class="study-header__inner">
+      <div>
+        <h1>書斎の間</h1>
+        <p class="tagline">── ここでは、時間そのものが観測される。</p>
+      </div>
+      <a href="index.html" class="back-link">大広間へ戻る</a>
+    </div>
+  </header>
+
+  <!-- メインレイアウト -->
+  <main class="study-main">
+    <div class="study-grid">
+
+      <!-- 左：計測エリア -->
+      <section class="panel panel--time">
+        <!-- ストップウォッチ -->
+        <div class="card card--watch">
+          <h2 class="card__title">観測の輪（ストップウォッチ）</h2>
+          <div class="time-display" id="sw-display">00:00:00</div>
+          <div class="time-controls">
+            <button type="button" id="sw-start" class="btn primary">開始 / 再開</button>
+            <button type="button" id="sw-pause" class="btn">一時停止</button>
+            <button type="button" id="sw-reset" class="btn ghost">リセット</button>
+          </div>
+        </div>
+
+        <!-- タイマー -->
+        <div class="card card--timer">
+          <h2 class="card__title">刻限の砂（タイマー）</h2>
+          <label class="timer-input">
+            <span>分数：</span>
+            <input type="number" id="tm-minutes" min="1" max="180" value="25">
+          </label>
+          <div class="time-display time-display--small" id="tm-display">00:25:00</div>
+          <div class="time-controls">
+            <button type="button" id="tm-start" class="btn primary">スタート</button>
+            <button type="button" id="tm-stop" class="btn">停止</button>
+            <button type="button" id="tm-reset" class="btn ghost">リセット</button>
+          </div>
+        </div>
+
+        <!-- 直近の計測 -->
+        <div class="card card--last">
+          <h2 class="card__title">直近の計測</h2>
+          <p class="last-label">
+            <span>時間：</span>
+            <span id="last-time">まだ記録がありません。</span>
+          </p>
+          <p class="last-hint">※ストップウォッチ停止 / タイマー終了で更新されます。</p>
+        </div>
+      </section>
+
+      <!-- 右：ログ＋セラフィア -->
+      <section class="panel panel--log">
+        <!-- ログフォーム -->
+        <div class="card card--log">
+          <h2 class="card__title">観測の記録</h2>
+          <form id="log-form" class="log-form">
+            <div class="form-row">
+              <label>
+                科目 / 作業内容
+                <input type="text" id="log-subject" placeholder="例）数学・英語・物理・セラフィアの館 など">
+              </label>
+            </div>
+            <div class="form-row form-row--split">
+              <label>
+                集中度
+                <select id="log-intensity">
+                  <option value="3">★★★ とても集中</option>
+                  <option value="2" selected>★★ ふつう</option>
+                  <option value="1">★ ぼんやり</option>
+                </select>
+              </label>
+              <label>
+                使用時間（自動）
+                <input type="text" id="log-duration" readonly placeholder="直近の計測が使われます">
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                メモ
+                <textarea id="log-note" rows="2" placeholder="感じたこと、できたこと、つまずいたところなど自由に"></textarea>
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn primary">記録する</button>
+              <button type="button" id="log-clear" class="btn ghost small">記録をすべて初期化</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ログ一覧 -->
+        <div class="card card--history">
+          <h2 class="card__title card__title--small">記録一覧</h2>
+          <div class="history-summary">
+            合計時間：<span id="total-time">00:00:00</span>
+          </div>
+          <div id="log-list" class="history-list">
+            <p class="history-empty">まだ記録がありません。<br>時間を測って、ここに残していきましょう。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- セラフィア・パネル -->
+      <aside class="panel panel--seraphia">
+        <div class="seraphia-frame">
+          <div class="seraphia-portrait"></div>
+          <div class="seraphia-glow"></div>
+        </div>
+        <p class="seraphia-line" id="seraphia-line">
+          「……観測しているわ。あなたと、あなたの時間を。」
+        </p>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- 書斎専用スクリプト -->
+  <script src="study.js" defer></script>
+</body>
+</html>
