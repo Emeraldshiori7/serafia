@@ -381,3 +381,87 @@ function updateSeraphiaLineAfterLog(entry){
   const line = pool[Math.floor(Math.random()*pool.length)];
   seraphiaLineEl.textContent = line;
 }
+/* =====================================================
+   7. 儀式チェックリスト（ToDo機能）
+===================================================== */
+const RITUAL_KEY = 'seraphia_ritual_v1';
+let rituals = [];
+
+const ritualList = document.getElementById('ritual-list');
+const ritualInput = document.getElementById('ritual-input');
+const ritualAdd = document.getElementById('ritual-add');
+const ritualClear = document.getElementById('ritual-clear');
+const ritualProgressValue = document.getElementById('ritual-progress-value');
+const ritualBarFill = document.getElementById('ritual-bar-fill');
+
+function loadRituals(){
+  try{
+    const raw = localStorage.getItem(RITUAL_KEY);
+    if(!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){return [];}
+}
+function saveRituals(){
+  localStorage.setItem(RITUAL_KEY, JSON.stringify(rituals));
+}
+
+function renderRituals(){
+  ritualList.innerHTML = '';
+  let completed = 0;
+  rituals.forEach((r,i)=>{
+    const li = document.createElement('li');
+    li.className = 'ritual-item' + (r.done ? ' completed':'');
+    li.textContent = r.text;
+    li.addEventListener('click',()=>{
+      r.done = !r.done;
+      saveRituals();
+      renderRituals();
+      if(r.done){
+        showSeraphiaLineRitual();
+      }
+    });
+    ritualList.appendChild(li);
+    if(r.done) completed++;
+  });
+  const rate = rituals.length ? Math.round(completed/rituals.length*100) : 0;
+  ritualProgressValue.textContent = rate+'%';
+  ritualBarFill.style.width = rate+'%';
+}
+
+function showSeraphiaLineRitual(){
+  if(!seraphiaLineEl) return;
+  const lines = [
+    "「……ひとつ、終えたのね。儀式は静かに続く。」",
+    "「あなたの小さな完了、それが世界を少し整える。」",
+    "「終わりはない。ただ、次の始まりがあるだけ。」",
+    "「手を止めた？……いいの、またすぐ戻ってくるのでしょう。」"
+  ];
+  seraphiaLineEl.textContent = lines[Math.floor(Math.random()*lines.length)];
+}
+
+function addRitual(){
+  const text = ritualInput.value.trim();
+  if(!text) return;
+  rituals.push({ text, done:false });
+  ritualInput.value = '';
+  saveRituals();
+  renderRituals();
+}
+
+if(ritualAdd) ritualAdd.addEventListener('click', addRitual);
+if(ritualInput) ritualInput.addEventListener('keypress', e=>{
+  if(e.key==='Enter'){ addRitual(); }
+});
+if(ritualClear){
+  ritualClear.addEventListener('click', ()=>{
+    if(!confirm('儀式リストをすべて削除しますか？')) return;
+    rituals = [];
+    saveRituals();
+    renderRituals();
+  });
+}
+
+// 初期読み込み
+rituals = loadRituals();
+renderRituals();

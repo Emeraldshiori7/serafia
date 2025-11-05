@@ -31,6 +31,25 @@
   <!-- メインレイアウト -->
   <main class="study-main">
     <div class="study-grid">
+<!-- 儀式チェックリスト -->
+<section class="panel panel--ritual">
+  <div class="card card--ritual">
+    <h2 class="card__title">今日の儀式メニュー</h2>
+
+    <div class="ritual-progress">
+      完了率：<span id="ritual-progress-value">0%</span>
+      <div class="ritual-bar"><div id="ritual-bar-fill"></div></div>
+    </div>
+
+    <ul id="ritual-list" class="ritual-list"></ul>
+
+    <div class="ritual-actions">
+      <input type="text" id="ritual-input" placeholder="新しい儀式（例：数学 例題15〜18）">
+      <button type="button" id="ritual-add" class="btn primary">＋追加</button>
+      <button type="button" id="ritual-clear" class="btn ghost small">全削除</button>
+    </div>
+  </div>
+</section>
 
       <!-- 左：計測エリア -->
       <section class="panel panel--time">
