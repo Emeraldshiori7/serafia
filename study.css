@@ -477,3 +477,100 @@ input[readonly]{
   padding:.3rem .5rem;
   font-family:inherit;
 }
+.card--ritual{
+  background: radial-gradient(120% 160% at 50% 0%, rgba(255,255,255,.1), rgba(0,0,0,.95));
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.ritual-progress{
+  font-size:12px;
+  color:#d9cdb8;
+  margin-bottom:6px;
+}
+.ritual-bar{
+  width:100%;
+  height:6px;
+  border-radius:6px;
+  background:rgba(255,255,255,.06);
+  overflow:hidden;
+  margin-top:4px;
+}
+#ritual-bar-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg, rgba(215,185,120,.6), rgba(255,240,200,.9));
+  transition:width .3s ease;
+}
+
+.ritual-list{
+  list-style:none;
+  padding:0;
+  margin:6px 0 10px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.ritual-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:rgba(10,10,16,.8);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:13px;
+  cursor:pointer;
+  transition:all .25s ease;
+}
+.ritual-item.completed{
+  color:#d8c78f;
+  text-decoration:line-through;
+  border-color:rgba(215,185,120,.4);
+  background:rgba(255,240,180,.1);
+  box-shadow:0 0 12px rgba(215,185,120,.2);
+}
+.ritual-item:hover{
+  border-color:rgba(255,255,255,.2);
+}
+.ritual-actions{
+  display:flex;
+  gap:6px;
+}
+#ritual-input{
+  flex:1;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(8,8,12,.95);
+  color:#f0e7dd;
+  padding:.3rem .5rem;
+  font-family:inherit;
+}
+/* 学習記録・連続日数 */
+.card--stats{
+  background: radial-gradient(140% 180% at 50% 0%, rgba(255,255,255,.06), rgba(0,0,0,.96));
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.stats{
+  margin:4px 0 10px;
+  padding:0;
+}
+.stats__row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:13px;
+  padding:3px 0;
+}
+.stats__row dt{
+  color:#c6bbad;
+}
+.stats__row dd{
+  margin:0;
+  font-variant-numeric: tabular-nums;
+  color:#f3eadf;
+}
+
+#stat-add-manual{
+  margin-top:6px;
+}

@@ -50,6 +50,32 @@
     </div>
   </div>
 </section>
+<!-- 学習記録・連続日数 -->
+<section class="panel panel--stats">
+  <div class="card card--stats">
+    <h2 class="card__title">記録と連続日数</h2>
+
+    <dl class="stats">
+      <div class="stats__row">
+        <dt>今日の学習時間</dt>
+        <dd id="stat-today">0分</dd>
+      </div>
+      <div class="stats__row">
+        <dt>今週の累計</dt>
+        <dd id="stat-week">0分</dd>
+      </div>
+      <div class="stats__row">
+        <dt>連続日数</dt>
+        <dd id="stat-streak">0日</dd>
+      </div>
+    </dl>
+
+    <button type="button" id="stat-add-manual" class="btn ghost small">
+      ＋ 学習時間を手動で追加
+    </button>
+  </div>
+</section>
+
 
       <!-- 左：計測エリア -->
       <section class="panel panel--time">

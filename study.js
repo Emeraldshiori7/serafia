@@ -382,10 +382,11 @@ function updateSeraphiaLineAfterLog(entry){
   seraphiaLineEl.textContent = line;
 }
 /* =====================================================
-   7. 儀式チェックリスト（ToDo機能）
+   7. 儀式チェックリスト（ToDo機能）＋ 日付で自動リセット
 ===================================================== */
 const RITUAL_KEY = 'seraphia_ritual_v1';
 let rituals = [];
+let ritualDate = null;
 
 const ritualList = document.getElementById('ritual-list');
 const ritualInput = document.getElementById('ritual-input');
@@ -394,16 +395,36 @@ const ritualClear = document.getElementById('ritual-clear');
 const ritualProgressValue = document.getElementById('ritual-progress-value');
 const ritualBarFill = document.getElementById('ritual-bar-fill');
 
+// セラフィアのひと言を出す要素（あれば）
+const seraphiaLineElRitual = document.getElementById('seraphia-line'); // なければ null でも安全
+
+function todayStr(){
+  return new Date().toISOString().slice(0,10); // YYYY-MM-DD
+}
+
 function loadRituals(){
+  ritualDate = todayStr();
   try{
     const raw = localStorage.getItem(RITUAL_KEY);
-    if(!raw) return [];
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr : [];
-  }catch(e){return [];}
+    if(!raw){
+      return [];
+    }
+    const obj = JSON.parse(raw);
+    // {date:'YYYY-MM-DD', items:[...]} という形式を想定
+    if(!obj || typeof obj !== 'object') return [];
+    if(obj.date !== ritualDate){
+      // 日付が違う → 自動リセット
+      return [];
+    }
+    return Array.isArray(obj.items) ? obj.items : [];
+  }catch(e){
+    return [];
+  }
 }
 function saveRituals(){
-  localStorage.setItem(RITUAL_KEY, JSON.stringify(rituals));
+  ritualDate = ritualDate || todayStr();
+  const payload = { date: ritualDate, items: rituals };
+  localStorage.setItem(RITUAL_KEY, JSON.stringify(payload));
 }
 
 function renderRituals(){
@@ -430,14 +451,14 @@ function renderRituals(){
 }
 
 function showSeraphiaLineRitual(){
-  if(!seraphiaLineEl) return;
+  if(!seraphiaLineElRitual) return;
   const lines = [
     "「……ひとつ、終えたのね。儀式は静かに続く。」",
     "「あなたの小さな完了、それが世界を少し整える。」",
     "「終わりはない。ただ、次の始まりがあるだけ。」",
     "「手を止めた？……いいの、またすぐ戻ってくるのでしょう。」"
   ];
-  seraphiaLineEl.textContent = lines[Math.floor(Math.random()*lines.length)];
+  seraphiaLineElRitual.textContent = lines[Math.floor(Math.random()*lines.length)];
 }
 
 function addRitual(){
@@ -457,6 +478,7 @@ if(ritualClear){
   ritualClear.addEventListener('click', ()=>{
     if(!confirm('儀式リストをすべて削除しますか？')) return;
     rituals = [];
+    ritualDate = todayStr();
     saveRituals();
     renderRituals();
   });
@@ -465,3 +487,136 @@ if(ritualClear){
 // 初期読み込み
 rituals = loadRituals();
 renderRituals();
+
+// ★ 日付変化チェック：1分ごとに監視して、変わっていたら自動リセット
+setInterval(() => {
+  const now = todayStr();
+  if(now !== ritualDate){
+    ritualDate = now;
+    rituals = [];
+    saveRituals();
+    renderRituals();
+  }
+}, 60_000);
+
+/* =====================================================
+   8. 学習時間ログ（今日・今週・連続日数）
+   - 手動追加ボタンあり
+   - 後でストップウォッチからも呼べるように window.logStudySession も用意
+===================================================== */
+const STUDY_LOG_KEY = 'seraphia_study_log_v1';
+
+const statTodayEl   = document.getElementById('stat-today');
+const statWeekEl    = document.getElementById('stat-week');
+const statStreakEl  = document.getElementById('stat-streak');
+const statAddManual = document.getElementById('stat-add-manual');
+
+function loadStudyLog(){
+  try{
+    const raw = localStorage.getItem(STUDY_LOG_KEY);
+    const arr = JSON.parse(raw);
+    if(!Array.isArray(arr)) return [];
+    return arr;
+  }catch(e){
+    return [];
+  }
+}
+
+function saveStudyLog(log){
+  // 過去60日分くらいに間引いておく（肥大化防止）
+  const today = new Date(todayStr());
+  const cutoff = new Date(today);
+  cutoff.setDate(cutoff.getDate() - 60);
+  const filtered = log.filter(entry => {
+    const d = new Date(entry.date);
+    return d >= cutoff;
+  });
+  localStorage.setItem(STUDY_LOG_KEY, JSON.stringify(filtered));
+}
+
+// 秒数 → "X時間Y分" / "Y分"
+function formatDuration(sec){
+  const m = Math.round(sec / 60);
+  if(m < 60) return m + '分';
+  const h = Math.floor(m / 60);
+  const mm = m % 60;
+  return h + '時間' + (mm ? mm + '分' : '');
+}
+
+// 今日・今週・連続日数を計算
+function updateStudyStats(){
+  const log = loadStudyLog();
+  const today = todayStr();
+
+  // 日付→秒 のマップ
+  const map = {};
+  for(const entry of log){
+    if(!entry || !entry.date) continue;
+    map[entry.date] = (map[entry.date] || 0) + (entry.seconds || 0);
+  }
+
+  // 今日
+  const todaySec = map[today] || 0;
+
+  // 直近7日間
+  let weekSec = 0;
+  const base = new Date(today);
+  for(let i=0;i<7;i++){
+    const d = new Date(base);
+    d.setDate(base.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    weekSec += map[key] || 0;
+  }
+
+  // 連続日数（今日からさかのぼって、勉強した日が途切れるまで）
+  let streak = 0;
+  for(let i=0;i<60;i++){
+    const d = new Date(base);
+    d.setDate(base.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    const sec = map[key] || 0;
+    if(sec > 0){
+      streak++;
+    }else{
+      // 今日がゼロなら、連続日数は 0 から
+      if(i === 0) streak = 0;
+      break;
+    }
+  }
+
+  if(statTodayEl)  statTodayEl.textContent  = formatDuration(todaySec);
+  if(statWeekEl)   statWeekEl.textContent   = formatDuration(weekSec);
+  if(statStreakEl) statStreakEl.textContent = streak + '日';
+}
+
+// セッションを秒数で追加（ストップウォッチ等からも使える）
+function logStudySession(seconds){
+  if(!seconds || seconds <= 0) return;
+  const log = loadStudyLog();
+  const t = todayStr();
+  const found = log.find(e => e.date === t);
+  if(found){
+    found.seconds += seconds;
+  }else{
+    log.push({ date: t, seconds });
+  }
+  saveStudyLog(log);
+  updateStudyStats();
+}
+
+// 手動追加ボタン（「◯分やった」を後から足せる）
+if(statAddManual){
+  statAddManual.addEventListener('click', () => {
+    const input = prompt('何分勉強しましたか？（半角数字で）');
+    if(!input) return;
+    const m = Number(input);
+    if(!Number.isFinite(m) || m <= 0) return;
+    logStudySession(m * 60);
+  });
+}
+
+// グローバルに公開しておく（後でストップウォッチと連携する用）
+window.logStudySession = logStudySession;
+
+// 初期表示
+updateStudyStats();
