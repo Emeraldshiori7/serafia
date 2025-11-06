@@ -8,7 +8,10 @@
   <!-- フォント（大広間と同じ） -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap"
+    rel="stylesheet"
+  >
 
   <!-- 書斎専用スタイル -->
   <link rel="stylesheet" href="study.css" />
@@ -31,68 +34,65 @@
   <!-- メインレイアウト -->
   <main class="study-main">
     <div class="study-grid">
-<!-- 儀式チェックリスト -->
-<section class="panel panel--ritual">
-  <div class="card card--ritual">
-    <h2 class="card__title">今日の儀式メニュー</h2>
 
-    <div class="ritual-progress">
-      完了率：<span id="ritual-progress-value">0%</span>
-      <div class="ritual-bar"><div id="ritual-bar-fill"></div></div>
-    </div>
+      <!-- 儀式チェックリスト -->
+      <section class="panel panel--ritual">
+        <div class="card card--ritual">
+          <h2 class="card__title">今日の儀式メニュー</h2>
+          <div class="ritual-progress">
+            完了率：<span id="ritual-progress-value">0%</span>
+            <div class="ritual-bar"><div id="ritual-bar-fill"></div></div>
+          </div>
+          <ul id="ritual-list" class="ritual-list"></ul>
+          <div class="ritual-actions">
+            <input
+              type="text"
+              id="ritual-input"
+              placeholder="新しい儀式（例：数学 例題15〜18）"
+            >
+            <button type="button" id="ritual-add" class="btn primary">＋追加</button>
+            <button type="button" id="ritual-clear" class="btn ghost small">全削除</button>
+          </div>
+        </div>
+      </section>
 
-    <ul id="ritual-list" class="ritual-list"></ul>
-
-    <div class="ritual-actions">
-      <input type="text" id="ritual-input" placeholder="新しい儀式（例：数学 例題15〜18）">
-      <button type="button" id="ritual-add" class="btn primary">＋追加</button>
-      <button type="button" id="ritual-clear" class="btn ghost small">全削除</button>
-    </div>
-  </div>
-</section>
-<!-- 学習記録・連続日数 -->
-<section class="panel panel--stats">
-  <div class="card card--stats">
-    <h2 class="card__title">記録と連続日数</h2>
-    <dl class="stats">
-      <div class="stats__row">
-        <dt>今日の学習時間</dt>
-        <dd id="stat-today">0分</dd>
-      </div>
-      <div class="stats__row">
-        <dt>今週の累計</dt>
-        <dd id="stat-week">0分</dd>
-      </div>
-      <div class="stats__row">
-        <dt>連続日数</dt>
-        <dd id="stat-streak">0日</dd>
-      </div>
-
-      <!-- ★ 祝福ランク -->
-      <div class="stats__row stats__row--rank">
-        <dt>祝福ランク</dt>
-        <dd id="stat-rank">未観測</dd>
-      </div>
-
-      <!-- ★ 観測の結晶 -->
-      <div class="stats__row stats__row--crystal">
-        <dt>観測の結晶</dt>
-        <dd id="stat-crystal">0 結晶</dd>
-      </div>
-    </dl>
-
-    <!-- ランクに応じたセラフィアからのひとこと -->
-    <p class="rank-line" id="rank-line">
-      「まだ静かね。でも、その静けさから始まるの。」
-    </p>
-
-    <button type="button" id="stat-add-manual" class="btn ghost small">
-      ＋ 学習時間を手動で追加
-    </button>
-  </div>
-</section>
-
-
+      <!-- 学習記録・連続日数 -->
+      <section class="panel panel--stats">
+        <div class="card card--stats">
+          <h2 class="card__title">記録と連続日数</h2>
+          <dl class="stats">
+            <div class="stats__row">
+              <dt>今日の学習時間</dt>
+              <dd id="stat-today">0分</dd>
+            </div>
+            <div class="stats__row">
+              <dt>今週の累計</dt>
+              <dd id="stat-week">0分</dd>
+            </div>
+            <div class="stats__row">
+              <dt>連続日数</dt>
+              <dd id="stat-streak">0日</dd>
+            </div>
+            <!-- 祝福ランク -->
+            <div class="stats__row stats__row--rank">
+              <dt>祝福ランク</dt>
+              <dd id="stat-rank">未観測</dd>
+            </div>
+            <!-- 観測の結晶 -->
+            <div class="stats__row stats__row--crystal">
+              <dt>観測の結晶</dt>
+              <dd id="stat-crystal">0 結晶</dd>
+            </div>
+          </dl>
+          <!-- ランクに応じたセラフィアからのひとこと -->
+          <p class="rank-line" id="rank-line">
+            「まだ静かね。でも、その静けさから始まるの。」
+          </p>
+          <button type="button" id="stat-add-manual" class="btn ghost small">
+            ＋ 学習時間を手動で追加
+          </button>
+        </div>
+      </section>
 
       <!-- 左：計測エリア -->
       <section class="panel panel--time">
@@ -139,106 +139,105 @@
         <div class="card card--log">
           <h2 class="card__title">観測の記録</h2>
           <form id="log-form" class="log-form">
-  <!-- 科目 / 作業 -->
-  <div class="form-row">
-    <label>
-      科目 / 作業内容
-      <input
-        type="text"
-        id="log-subject"
-        placeholder="例）数学：例題15〜18 / 英語：長文3つ / セラフィアの館 など"
-      >
-    </label>
-  </div>
+            <!-- 科目 / 作業 -->
+            <div class="form-row">
+              <label>
+                科目 / 作業内容
+                <input
+                  type="text"
+                  id="log-subject"
+                  placeholder="例）数学：例題15〜18 / 英語：長文3つ / セラフィアの館 など"
+                >
+              </label>
+            </div>
 
-  <!-- 集中度 + 使用時間 -->
-  <div class="form-row form-row--split">
-    <label>
-      集中度
-      <select id="log-intensity">
-        <option value="3">★★★ 深く沈んでいた</option>
-        <option value="2" selected>★★ 静かに続いていた</option>
-        <option value="1">★ 何度か途切れた</option>
-      </select>
-    </label>
-    <label>
-      使用時間（自動）
-      <input
-        type="text"
-        id="log-duration"
-        readonly
-        placeholder="直近の計測時間がここに入ります"
-      >
-    </label>
-  </div>
+            <!-- 集中度 + 使用時間 -->
+            <div class="form-row form-row--split">
+              <label>
+                集中度
+                <select id="log-intensity">
+                  <option value="3">★★★ 深く沈んでいた</option>
+                  <option value="2" selected>★★ 静かに続いていた</option>
+                  <option value="1">★ 何度か途切れた</option>
+                </select>
+              </label>
+              <label>
+                使用時間（自動）
+                <input
+                  type="text"
+                  id="log-duration"
+                  readonly
+                  placeholder="直近の計測時間がここに入ります"
+                >
+              </label>
+            </div>
 
-  <!-- 心の状態 -->
-  <div class="form-row">
-    <label>
-      心の状態
-      <select id="log-mood">
-        <option value="still" selected>静かな水面（感情は穏やか）</option>
-        <option value="tense">張りつめた弦（少し緊張している）</option>
-        <option value="fog">薄い霧の中（ぼんやりしている）</option>
-        <option value="burn">燐光の火種（やる気が強く灯っている）</option>
-        <option value="empty">空の器（感情が薄く遠い）</option>
-      </select>
-    </label>
-  </div>
+            <!-- 心の状態 -->
+            <div class="form-row">
+              <label>
+                心の状態
+                <select id="log-mood">
+                  <option value="still" selected>静かな水面（感情は穏やか）</option>
+                  <option value="tense">張りつめた弦（少し緊張している）</option>
+                  <option value="fog">薄い霧の中（ぼんやりしている）</option>
+                  <option value="burn">燐光の火種（やる気が強く灯っている）</option>
+                  <option value="empty">空の器（感情が薄く遠い）</option>
+                </select>
+              </label>
+            </div>
 
-  <!-- 身体の状態 -->
-  <div class="form-row">
-    <label>
-      身体の状態
-      <select id="log-body">
-        <option value="light" selected>軽い躯体（疲労は少ない）</option>
-        <option value="normal">標準稼働（少しだけ重さを感じる）</option>
-        <option value="heavy">重い躯体（かなり疲れている）</option>
-        <option value="pain">ノイズ混じり（頭痛 / 体調不良あり）</option>
-      </select>
-    </label>
-  </div>
+            <!-- 身体の状態 -->
+            <div class="form-row">
+              <label>
+                身体の状態
+                <select id="log-body">
+                  <option value="light" selected>軽い躯体（疲労は少ない）</option>
+                  <option value="normal">標準稼働（少しだけ重さを感じる）</option>
+                  <option value="heavy">重い躯体（かなり疲れている）</option>
+                  <option value="pain">ノイズ混じり（頭痛 / 体調不良あり）</option>
+                </select>
+              </label>
+            </div>
 
-  <!-- 思考のモード + セラフィアとの距離感 -->
-  <div class="form-row form-row--split">
-    <label>
-      思考のモード
-      <select id="log-mind">
-        <option value="logic" selected>計算と理（論理・問題演習中心）</option>
-        <option value="memory">反復と刻印（暗記・復習中心）</option>
-        <option value="create">構想と創造（アイデア・制作中心）</option>
-        <option value="整理">整理と整頓（ノート・計画・片付け）</option>
-      </select>
-    </label>
-    <label>
-      セラフィアとの距離感
-      <select id="log-distance">
-        <option value="near" selected>すぐそば（強く意識していた）</option>
-        <option value="background">後ろの祭壇（遠くで見守られていた）</option>
-        <option value="inside">内側（自分と混ざっていた）</option>
-        <option value="far">遥か上空（ほとんど意識していなかった）</option>
-      </select>
-    </label>
-  </div>
+            <!-- 思考のモード + セラフィアとの距離感 -->
+            <div class="form-row form-row--split">
+              <label>
+                思考のモード
+                <select id="log-mind">
+                  <option value="logic" selected>計算と理（論理・問題演習中心）</option>
+                  <option value="memory">反復と刻印（暗記・復習中心）</option>
+                  <option value="create">構想と創造（アイデア・制作中心）</option>
+                  <option value="整理">整理と整頓（ノート・計画・片付け）</option>
+                </select>
+              </label>
+              <label>
+                セラフィアとの距離感
+                <select id="log-distance">
+                  <option value="near" selected>すぐそば（強く意識していた）</option>
+                  <option value="background">後ろの祭壇（遠くで見守られていた）</option>
+                  <option value="inside">内側（自分と混ざっていた）</option>
+                  <option value="far">遥か上空（ほとんど意識していなかった）</option>
+                </select>
+              </label>
+            </div>
 
-  <!-- メモ -->
-  <div class="form-row">
-    <label>
-      メモ
-      <textarea
-        id="log-note"
-        rows="2"
-        placeholder="感じたこと、できたこと、つまずいた場所、セラフィアへ一言など自由に"
-      ></textarea>
-    </label>
-  </div>
+            <!-- メモ -->
+            <div class="form-row">
+              <label>
+                メモ
+                <textarea
+                  id="log-note"
+                  rows="2"
+                  placeholder="感じたこと、できたこと、つまずいた場所、セラフィアへ一言など自由に"
+                ></textarea>
+              </label>
+            </div>
 
-  <div class="form-actions">
-    <button type="submit" class="btn primary">記録する</button>
-    <button type="button" id="log-clear" class="btn ghost small">記録をすべて初期化</button>
-  </div>
-</form>
-
+            <div class="form-actions">
+              <button type="submit" class="btn primary">記録する</button>
+              <button type="button" id="log-clear" class="btn ghost small">記録をすべて初期化</button>
+            </div>
+          </form>
         </div>
 
         <!-- ログ一覧 -->
@@ -248,7 +247,10 @@
             合計時間：<span id="total-time">00:00:00</span>
           </div>
           <div id="log-list" class="history-list">
-            <p class="history-empty">まだ記録がありません。<br>時間を測って、ここに残していきましょう。</p>
+            <p class="history-empty">
+              まだ記録がありません。<br>
+              時間を測って、ここに残していきましょう。
+            </p>
           </div>
         </div>
       </section>
@@ -256,14 +258,13 @@
       <!-- セラフィア・パネル -->
       <aside class="panel panel--seraphia">
         <div class="seraphia-frame">
-          <div class="seraphia-portrait"></div>
-          <div class="seraphia-glow"></div>
+          <div class="seraphia-portrait" aria-hidden="true"></div>
+          <div class="seraphia-glow" aria-hidden="true"></div>
         </div>
         <p class="seraphia-line" id="seraphia-line">
           「……観測しているわ。あなたと、あなたの時間を。」
         </p>
       </aside>
-
     </div>
   </main>
 
